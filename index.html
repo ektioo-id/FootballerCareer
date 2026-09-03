@@ -1,0 +1,1387 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pro Football Career Simulator</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap');
+
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            --text-main: #ffffff;
+            --text-muted: #b3b3b3;
+            --accent: #00ffcc;
+            --accent-hover: #00cca3;
+            --danger: #ff4d4d;
+            --success: #00cc66;
+            --warning: #ffcc00;
+            --elite: #d4af37;
+            --pink: #ff007f;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+
+        body {
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            padding: 20px;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
+            width: 100%;
+            max-width: 950px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            box-shadow: var(--glass-shadow);
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+            overflow-y: auto;
+            max-height: 90vh;
+        }
+
+        .shape { position: absolute; filter: blur(60px); z-index: -1; opacity: 0.5; }
+        .shape-1 { width: 350px; height: 350px; background: #00ffcc; top: -100px; left: -100px; border-radius: 50%; }
+        .shape-2 { width: 450px; height: 450px; background: var(--pink); bottom: -150px; right: -100px; border-radius: 50%; }
+
+        h1, h2, h3 { font-weight: 800; margin-bottom: 15px; }
+        h1 { font-size: 2.2rem; text-align: center; background: -webkit-linear-gradient(#fff, var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        p { color: var(--text-muted); margin-bottom: 15px; line-height: 1.5; font-size: 0.95rem; }
+
+        .screen { display: none; animation: fadeIn 0.4s ease; }
+        .screen.active { display: block; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.9rem; }
+        input, select {
+            width: 100%; padding: 14px 15px; background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--glass-border); border-radius: 12px;
+            color: #fff; font-size: 1rem; outline: none; transition: all 0.3s;
+            appearance: none; -webkit-appearance: none;
+        }
+        input:focus, select:focus { border-color: var(--accent); background: rgba(0, 0, 0, 0.4); }
+        option { background: #203a43; color: #fff; }
+
+        .btn {
+            display: inline-block; width: 100%; padding: 15px; border: none; border-radius: 12px;
+            background: var(--accent); color: #000; font-weight: 800; font-size: 1.1rem;
+            cursor: pointer; transition: all 0.3s; text-transform: uppercase; letter-spacing: 1px; margin-top: 10px;
+        }
+        .btn:hover { background: var(--accent-hover); transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0, 255, 204, 0.4); }
+        .btn:active { transform: translateY(0); }
+        .btn-secondary { background: rgba(255, 255, 255, 0.1); color: #fff; border: 1px solid var(--glass-border); }
+        .btn-secondary:hover { background: rgba(255, 255, 255, 0.2); box-shadow: none; }
+        .btn-danger { background: var(--danger); color: #fff; }
+        .btn-danger:hover { background: #ff3333; box-shadow: 0 5px 15px rgba(255, 77, 77, 0.4); }
+        .btn-small { padding: 10px 15px; font-size: 0.9rem; width: auto; margin: 0; border-radius: 8px;}
+
+        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 20px; }
+        .card { background: rgba(0, 0, 0, 0.2); border: 1px solid var(--glass-border); border-radius: 16px; padding: 15px; text-align: center; position: relative;}
+        .card h3 { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 8px; }
+        .card .value { font-size: 1.3rem; font-weight: 800; color: var(--accent); }
+        
+        .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        .stat-box { background: rgba(255,255,255,0.05); padding: 10px; border-radius: 10px; font-size: 0.85rem; text-align: center; font-weight: 600;}
+        
+        .ovr-container { width: 100%; background: rgba(0,0,0,0.3); border-radius: 20px; height: 8px; margin-top: 8px; overflow: hidden; }
+        .ovr-bar { height: 100%; background: var(--accent); width: 0%; transition: width 1s ease; }
+
+        .offer-card { background: rgba(0,255,204,0.05); border: 1px solid var(--glass-border); border-radius: 12px; padding: 15px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;}
+        .offer-card.loan { border-color: var(--warning); background: rgba(255,204,0,0.05); }
+        .offer-card.brand { border-color: var(--pink); background: rgba(255,0,127,0.05); }
+        .offer-card.agent { border-color: var(--elite); background: rgba(212,175,55,0.05); }
+        .offer-card.renewal { border-color: var(--success); background: rgba(0,204,102,0.05); }
+        .offer-details h4 { font-size: 1.1rem; color: #fff; margin-bottom: 4px;}
+        .offer-details p { margin: 0; font-size: 0.85rem; color: #ccc;}
+        .badge { padding: 3px 8px; border-radius: 8px; font-size: 0.7rem; font-weight: bold; margin-left: 5px; }
+        .badge-loan { background: var(--warning); color: #000; }
+        .badge-free { background: var(--danger); color: #fff; }
+        .badge-agent { background: var(--elite); color: #000; }
+        
+        .table-responsive { overflow-x: auto; margin-top: 10px; -webkit-overflow-scrolling: touch; border-radius: 10px; background: rgba(0,0,0,0.1); }
+        table { width: 100%; border-collapse: collapse; min-width: 600px; }
+        th, td { padding: 12px 10px; text-align: center; border-bottom: 1px solid var(--glass-border); font-size: 0.85rem; }
+        th { color: var(--accent); font-weight: 600; text-align: center; background: rgba(0,0,0,0.2); }
+        td.text-left { text-align: left; }
+
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(8px); }
+        .modal-content { background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 20px; padding: 25px; width: 90%; max-width: 400px; box-shadow: var(--glass-shadow); text-align: center;}
+        
+        .nego-content { text-align: left; max-width: 400px; }
+        .info-content h2 { color: var(--accent); }
+        .confirm-content h2 { color: var(--warning); }
+
+        @media (max-width: 768px) {
+            body { padding: 0; align-items: flex-start; }
+            .container { max-width: 100%; min-height: 100vh; max-height: none; border-radius: 0; border: none; padding: 20px 15px 40px 15px; box-shadow: none; }
+            .dashboard-grid { grid-template-columns: repeat(2, 1fr); }
+            h1 { font-size: 1.8rem; }
+            .offer-card { flex-direction: column; align-items: stretch; }
+            .offer-card .btn-small { width: 100%; text-align: center; margin-top: 5px; }
+            .card .value { font-size: 1.15rem; }
+            .modal-content { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+
+    <div class="container">
+        
+        <!-- START SCREEN -->
+        <div id="screen-start" class="screen active">
+            <h1>Pro Football Simulator</h1>
+            <p style="text-align: center;">Mulai dari akademi, buktikan bakatmu. Raih masa kejayaan hingga menjadi Legenda!</p>
+            
+            <div class="form-group">
+                <label>Nama Pemain</label>
+                <input type="text" id="playerName" placeholder="Masukkan nama..." required>
+            </div>
+            
+            <div class="form-group">
+                <label>Kewarganegaraan</label>
+                <select id="playerNat">
+                    <option value="Indonesia">Indonesia</option>
+                    <option value="Korea Selatan">Korea Selatan</option>
+                    <option value="Thailand">Thailand</option>
+                    <option value="Malaysia">Malaysia</option>
+                    <option value="India">India</option>
+                    <option value="Inggris">Inggris</option>
+                    <option value="Spanyol">Spanyol</option>
+                    <option value="Jerman">Jerman</option>
+                    <option value="Italia">Italia</option>
+                    <option value="Prancis">Prancis</option>
+                    <option value="Belanda">Belanda</option>
+                    <option value="Portugal">Portugal</option>
+                    <option value="Turki">Turki</option>
+                    <option value="Belgia">Belgia</option>
+                    <option value="Brazil">Brazil</option>
+                    <option value="Argentina">Argentina</option>
+                    <option value="Meksiko">Meksiko</option>
+                    <option value="Jepang">Jepang</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Posisi</label>
+                <select id="playerPos">
+                    <option value="ST">Striker (ST)</option>
+                    <option value="Winger">Winger (LW/RW)</option>
+                    <option value="CAM">Attacking Midfielder (CAM)</option>
+                    <option value="CM">Central Midfielder (CM)</option>
+                    <option value="CB">Center Back (CB)</option>
+                    <option value="FB">Fullback (LB/RB)</option>
+                    <option value="GK">Goalkeeper (GK)</option>
+                </select>
+            </div>
+
+            <button class="btn" onclick="startGame()">Masuk Akademi (Usia 15)</button>
+        </div>
+
+        <!-- ACADEMY SCREEN -->
+        <div id="screen-academy" class="screen">
+            <h1>Fase Akademi</h1>
+            <p>Bergabung dengan akademi <strong id="academyClub" style="color:var(--accent)"></strong>. Berlatihlah keras agar dilirik pelatih utama!</p>
+            
+            <div class="dashboard-grid">
+                <div class="card"><h3>Usia</h3><div class="value" id="acadAge">15</div></div>
+                <div class="card" style="grid-column: span 2;">
+                    <h3>Rating (OVR)</h3>
+                    <div class="value" id="acadOvr">45</div>
+                    <div class="ovr-container"><div class="ovr-bar" id="acadOvrBar" style="width: 45%"></div></div>
+                </div>
+            </div>
+            
+            <div class="card" style="margin-bottom: 15px; text-align:left;">
+                <h3 style="color:var(--accent)">Laporan Pelatih Akademi</h3>
+                <p id="acadStatsInfo" style="font-size:0.9rem; margin:0;">Belum ada data. Mulai simulasi musim pertamamu!</p>
+            </div>
+            
+            <button class="btn" onclick="simAcademyYear()" id="btnSimAcad">Simulasi 1 Tahun Akademi</button>
+        </div>
+
+        <!-- MAIN DASHBOARD -->
+        <div id="screen-dashboard" class="screen">
+            <h1 id="dashName" style="margin-bottom: 5px;">Nama Pemain</h1>
+            <div style="text-align: center; margin-bottom: 20px;">
+                <span id="dashInfo">ST | Indonesia | Usia: 18</span><br>
+                <span style="color: var(--accent); font-weight: 800; font-size: 1.2rem; display: block; margin-top: 5px;" id="dashClub">Klub</span>
+                <p style="margin: 5px 0 0 0; font-size: 0.85rem;">Musim: <span id="dashSeason">2026/2027</span> | Status: <strong id="dashStatus" style="color:var(--warning)">Starter</strong></p>
+                <p style="margin: 2px 0 0 0; font-size: 0.8rem; color: var(--elite);">Agen: <strong id="dashAgent">Agen Standar</strong></p>
+                <p style="margin: 2px 0 0 0; font-size: 0.8rem; color: #fff;">Fisik: <strong id="dashInjuryTrait" style="color:#aaa;">Normal</strong></p>
+            </div>
+
+            <div class="dashboard-grid">
+                <div class="card">
+                    <h3>Rating (OVR)</h3>
+                    <div class="value" id="dashOvr">70</div>
+                    <div class="ovr-container"><div class="ovr-bar" id="dashOvrBar" style="width: 70%"></div></div>
+                </div>
+                <div class="card"><h3>Market Value</h3><div class="value" id="dashValue">$1.5M</div></div>
+                <div class="card"><h3>Gaji & Kontrak</h3><div class="value" id="dashWage" style="font-size:1.1rem;">$5K/mg</div><p style="font-size:0.75rem; margin:0;"><span id="dashContract">3</span> Tahun</p></div>
+                <div class="card"><h3>Moral</h3><div class="value" id="dashMorale" style="font-size:1.1rem;">Bahagia</div></div>
+                <div class="card"><h3>Followers IG</h3><div class="value" id="dashFollowers" style="font-size:1.1rem;">0</div></div>
+                <div class="card">
+                    <h3>Sponsor Aktif</h3>
+                    <div class="value" id="dashSponsorsText" style="font-size:1rem; color:var(--accent); line-height: 1.2; margin-top:5px;">-</div>
+                </div>
+            </div>
+
+            <div class="card" style="margin-bottom: 20px; text-align: left; grid-column: 1 / -1;">
+                <h3 style="margin-bottom: 10px; font-size: 1rem;">Statistik Karir Total</h3>
+                <div class="stats-grid" style="margin-bottom: 10px;">
+                    <div class="stat-box">Main<br><strong id="statApps" style="font-size:1.2rem; color:var(--accent)">0</strong></div>
+                    <div class="stat-box">Gol<br><strong id="statGoals" style="font-size:1.2rem; color:var(--accent)">0</strong></div>
+                    <div class="stat-box"><span id="dashAstCsLabel">Ast/CS</span><br><strong id="statAstCs" style="font-size:1.2rem; color:var(--accent)">0</strong></div>
+                    <div class="stat-box">Uang Bank<br><strong id="dashMoney" style="font-size:1.1rem; color:var(--accent)">$0</strong></div>
+                </div>
+                
+                <div class="stats-grid" style="grid-template-columns: repeat(2, 1fr);">
+                    <div class="stat-box" style="background: rgba(255,204,0,0.1);">Kartu Kuning 🟨 <strong id="statYc">0</strong></div>
+                    <div class="stat-box" style="background: rgba(255,77,77,0.1);">Kartu Merah 🟥 <strong id="statRc">0</strong></div>
+                </div>
+
+                <h3 style="margin-top: 15px; font-size: 0.9rem; color: gold;">Koleksi Trofi & Penghargaan 🏆</h3>
+                <div class="stats-grid">
+                    <div class="stat-box">Liga: <strong id="statTL">0</strong></div>
+                    <div class="stat-box">Cup: <strong id="statTC">0</strong></div>
+                    <div class="stat-box">Benua: <strong id="statTCont">0</strong></div>
+                    <div class="stat-box" id="statAwardBox">Top Skor: <strong id="statAwardVal">0</strong></div>
+                </div>
+            </div>
+
+            <button class="btn" onclick="simFirstHalf()">Mulai Paruh Pertama Musim</button>
+            <div style="display: flex; gap: 10px; margin-top: 10px;">
+                <button class="btn btn-secondary" onclick="showHistory()" style="margin:0;">Riwayat</button>
+                <button class="btn btn-danger" onclick="retireConfirm()" style="margin:0;">Pensiun</button>
+            </div>
+        </div>
+
+        <!-- MID SEASON TRANSFER WINDOW -->
+        <div id="screen-midseason" class="screen">
+            <h1>Bursa Transfer Musim Dingin</h1>
+            <p style="text-align: center; color:var(--accent);">Paruh Musim Pertama Berakhir</p>
+            
+            <div class="card" style="margin-bottom: 20px; text-align: left;">
+                <h3 style="color:var(--accent); text-align: center; margin-bottom: 10px;">Statistik Paruh Pertama</h3>
+                
+                <p id="midInjuryText" style="color:var(--danger); font-size:0.85rem; font-weight:600; text-align: center; margin-bottom:5px;"></p>
+                <p id="midPlayTimeText" style="color:var(--warning); font-size:0.85rem; font-weight:600; text-align: center; margin-bottom:15px;"></p>
+                
+                <div class="stats-grid">
+                    <div class="stat-box">Main<br><span id="midApps" style="font-size:1.1rem;"></span></div>
+                    <div class="stat-box">Gol<br><span id="midGoals" style="font-size:1.1rem;"></span></div>
+                    <div class="stat-box"><span id="midAstCsLabel">Ast/CS</span><br><span id="midAst" style="font-size:1.1rem;"></span></div>
+                    <div class="stat-box">Rating<br><span id="midAvg" style="font-size:1.1rem;"></span></div>
+                </div>
+            </div>
+
+            <div class="card" style="margin-bottom: 20px; text-align: left; background: rgba(0,255,204,0.05); border-color: var(--accent);">
+                <h3 style="color:var(--accent); font-size: 1rem; margin-bottom: 5px;">Pesan Pelatih <span id="midCoachEmoji"></span></h3>
+                <p id="midCoachMsg" style="font-size: 0.9rem; font-style: italic; margin: 0; color:#fff;">-</p>
+            </div>
+
+            <h2 style="font-size: 1.3rem;">Tawaran Transfer / Pinjaman</h2>
+            <div id="midOffersContainer"></div>
+
+            <button class="btn btn-secondary" onclick="simSecondHalf()">Abaikan & Lanjut Paruh Kedua</button>
+        </div>
+
+        <!-- END OF SEASON SUMMARY -->
+        <div id="screen-summary" class="screen">
+            <h1>Akhir Musim <span id="sumSeason"></span></h1>
+            
+            <div class="card" style="margin-bottom: 20px; text-align: left;">
+                <h3 style="color:var(--accent); text-align: center; margin-bottom: 15px;">Performa Semusim Penuh</h3>
+                
+                <p style="text-align: center; font-size: 1rem; margin-bottom: 5px;">Posisi Akhir Tim: <strong id="sumRank" style="color:var(--accent); font-size: 1.2rem;"></strong></p>
+                <p id="sumPromRelText" style="text-align: center; font-weight: 800; margin-bottom: 10px;"></p>
+                
+                <p id="sumInjuryText" style="color:var(--danger); font-size:0.85rem; font-weight:600; text-align: center; margin-bottom:5px;"></p>
+                <p id="sumPlayTimeText" style="color:var(--warning); font-size:0.85rem; font-weight:600; text-align: center; margin-bottom:5px;"></p>
+                
+                <p id="sumTrophyText" style="color:gold; font-size:0.85rem; font-weight:600; text-align: center; margin-bottom:5px;"></p>
+                <p id="sumAwardText" style="color:var(--elite); font-size:0.85rem; font-weight:600; text-align: center; margin-bottom:5px;"></p>
+                <p id="sumNatText" style="color:var(--success); font-size:0.85rem; font-weight:600; text-align: center; margin-bottom: 5px;"></p>
+                <p id="sumWageInfoText" style="color:var(--warning); font-size:0.85rem; font-weight:600; text-align: center; margin-bottom: 15px;"></p>
+                
+                <div class="stats-grid" style="margin-top:15px; margin-bottom: 15px;">
+                    <div class="stat-box">Main<br><span id="sumApps" style="font-size:1.1rem;"></span></div>
+                    <div class="stat-box">Gol<br><span id="sumGoals" style="font-size:1.1rem;"></span></div>
+                    <div class="stat-box"><span id="sumAstCsLabel">Ast/CS</span><br><span id="sumAst" style="font-size:1.1rem;"></span></div>
+                    <div class="stat-box">Rating<br><span id="sumAvg" style="font-size:1.1rem;"></span></div>
+                </div>
+                
+                <div style="display:flex; justify-content:space-around; font-size:0.85rem; font-weight:600; margin-bottom:15px;">
+                    <span style="color:var(--warning);">🟨 Kuning: <span id="sumYc">0</span></span>
+                    <span style="color:var(--danger);">🟥 Merah: <span id="sumRc">0</span></span>
+                </div>
+
+                <hr style="border-color: var(--glass-border); margin: 15px 0;">
+                <p style="text-align: center;">Status Kontrak: <strong id="sumContractInfo"></strong></p>
+                <p style="text-align: center; margin-bottom:0;">Perkembangan OVR: <strong id="sumOvrGrowth"></strong> (Sekarang: <span id="sumNewOvr" style="color:var(--accent); font-weight:bold;"></span>)</p>
+            </div>
+
+            <!-- Pesan Pelatih & Fans -->
+            <div class="card" style="margin-bottom: 10px; text-align: left; background: rgba(0,255,204,0.05); border-color: var(--accent);">
+                <h3 style="color:var(--accent); font-size: 1rem; margin-bottom: 5px;">Pesan Pelatih <span id="sumCoachEmoji"></span></h3>
+                <p id="sumCoachMsg" style="font-size: 0.9rem; font-style: italic; margin: 0; color:#fff;">-</p>
+            </div>
+            
+            <div class="card" style="margin-bottom: 20px; text-align: left; background: rgba(255,0,127,0.05); border-color: var(--pink);">
+                <h3 style="color:var(--pink); font-size: 1rem; margin-bottom: 5px;">Komentar Suporter 🗣️</h3>
+                <p id="sumFanMsg" style="font-size: 0.9rem; font-style: italic; margin: 0; color:#fff;">-</p>
+            </div>
+
+            <h2 style="font-size: 1.3rem;">Bursa Transfer Akhir Musim</h2>
+            <div id="transferOffersContainer"></div>
+
+            <button class="btn btn-secondary" id="btnStayClub" onclick="nextSeason()">Lanjut Musim Depan</button>
+        </div>
+
+        <!-- RETIREMENT / HISTORY SCREEN -->
+        <div id="screen-retire" class="screen">
+            <h1 id="retireTitle">Karir Selesai</h1>
+            
+            <div class="dashboard-grid" id="retireStatsTop">
+                <div class="card" style="grid-column: span 2;"><h3>Usia</h3><div class="value" id="retAge"></div></div>
+                <div class="card"><h3>Rating</h3><div class="value" id="retOvr"></div></div>
+            </div>
+
+            <div class="card" style="text-align: left; margin-bottom:20px; display:none;" id="retireSummaryDetails">
+                <h3 style="color:var(--accent); text-align: center; margin-bottom:15px;">Karir Overview</h3>
+                <p style="font-size: 0.85rem; margin-bottom: 8px;"><strong>Klub:</strong> <span id="retClubsList" style="color: #fff;"></span></p>
+                <p style="font-size: 0.85rem; margin-bottom: 8px;"><strong>Liga:</strong> <span id="retLeaguesList" style="color: #fff;"></span></p>
+                <hr style="border-color: var(--glass-border); margin: 10px 0;">
+                <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom: 5px;">
+                    <span>Main: <strong id="retAppsVal" style="color:var(--accent)">0</strong></span>
+                    <span>Gol: <strong id="retGoalsVal" style="color:var(--accent)">0</strong></span>
+                    <span>Ast/CS: <strong id="retAstVal" style="color:var(--accent)">0</strong></span>
+                </div>
+                <div style="display:flex; justify-content:space-between; font-size:0.85rem;">
+                    <span>Trofi: <strong id="retTrofiVal" style="color:gold">0</strong></span>
+                    <span>Penghargaan: <strong id="retAwardsVal" style="color:var(--elite)">0</strong></span>
+                    <span>🟨/🟥: <strong id="retCardsVal" style="color:#fff">0/0</strong></span>
+                </div>
+            </div>
+
+            <div class="card" style="text-align: left; margin-bottom:20px; overflow:hidden;">
+                <h3 style="text-align:center; color:var(--accent); margin-bottom: 10px;">Statistik Tiap Musim</h3>
+                <div class="table-responsive">
+                    <table id="historyTable">
+                        <thead>
+                            <tr><th>Musim</th><th>Usia</th><th class="text-left">Klub</th><th>Main</th><th>Gol</th><th id="histAstCsHead">Ast</th><th>Rating</th><th>Trofi</th></tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="managerBtnContainer" style="display:none; text-align:center; margin-bottom:15px;">
+                <button class="btn" style="background:var(--elite); color:#000;" onclick="startManagerCareer()">Lanjut Jadi Pelatih</button>
+            </div>
+
+            <button class="btn" id="btnBackToDash" onclick="switchScreen('screen-dashboard')" style="display:none; margin-bottom:10px;">Kembali</button>
+            <button class="btn btn-danger" id="btnRestart" onclick="location.reload()">Mulai Karir Baru</button>
+        </div>
+    </div>
+
+    <!-- NEGOTIATION MODAL -->
+    <div class="modal-overlay" id="negoModal">
+        <div class="modal-content nego-content">
+            <h2 id="negoTitle" style="font-size:1.4rem; color:var(--accent); margin-bottom:10px;">Negosiasi</h2>
+            <p id="negoDesc" style="font-size:0.85rem; margin-bottom:15px; color:#ccc;"></p>
+            
+            <div class="form-group" id="negoRoleGroup">
+                <label>Peran Skuad (Waktu Bermain)</label>
+                <select id="negoRole">
+                    <option value="star">Pemain Bintang (Starter Utama)</option>
+                    <option value="regular">Pemain Inti (Reguler)</option>
+                    <option value="rotation">Rotasi</option>
+                    <option value="backup">Pemain Cadangan / Pelapis</option>
+                </select>
+            </div>
+
+            <div class="form-group" id="negoWageGroup">
+                <label>Permintaan Gaji (/pekan)</label>
+                <input type="number" id="negoWage" min="500">
+            </div>
+            <div class="form-group" id="negoYearsGroup">
+                <label>Durasi Kontrak</label>
+                <select id="negoYears">
+                    <option value="1">1 Tahun</option>
+                    <option value="2">2 Tahun</option>
+                    <option value="3">3 Tahun</option>
+                    <option value="4">4 Tahun</option>
+                    <option value="5">5 Tahun</option>
+                </select>
+            </div>
+            
+            <button class="btn" onclick="submitNegotiation()">Ajukan Tawaran</button>
+            <button class="btn btn-secondary" style="margin-top: 10px;" onclick="closeModal('negoModal')">Batal</button>
+        </div>
+    </div>
+
+    <!-- CUSTOM INFO/ALERT MODAL -->
+    <div class="modal-overlay" id="customAlertModal">
+        <div class="modal-content info-content">
+            <h2 style="margin-bottom:15px;">Informasi</h2>
+            <p id="customAlertMsg" style="margin-bottom:25px; font-size: 0.95rem;"></p>
+            <button class="btn" onclick="closeCustomAlert()">Tutup</button>
+        </div>
+    </div>
+
+    <!-- CUSTOM CONFIRM MODAL -->
+    <div class="modal-overlay" id="customConfirmModal">
+        <div class="modal-content confirm-content">
+            <h2 style="margin-bottom:15px;">Konfirmasi</h2>
+            <p id="customConfirmMsg" style="margin-bottom:25px; font-size: 0.95rem;"></p>
+            <div style="display:flex; gap:10px;">
+                <button class="btn btn-secondary" onclick="closeCustomConfirm(false)">Batal</button>
+                <button class="btn btn-danger" onclick="closeCustomConfirm(true)">Yakin</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const db = {
+            leagues: [
+                { id: 'eng1', name: 'Premier League', country: 'Inggris', tier: 1, rep: 90, wealth: 95, clubs: ['Man City', 'Arsenal', 'Liverpool', 'Man United', 'Chelsea', 'Tottenham', 'Newcastle'] },
+                { id: 'eng2', name: 'Championship', country: 'Inggris', tier: 2, rep: 70, wealth: 60, clubs: ['Leeds', 'Sunderland', 'West Brom', 'Burnley', 'Sheffield Utd', 'Middlesbrough'] },
+                { id: 'eng3', name: 'League One', country: 'Inggris', tier: 3, rep: 55, wealth: 40, clubs: ['Bolton', 'Derby County', 'Portsmouth', 'Charlton', 'Barnsley'] },
+                
+                { id: 'esp1', name: 'La Liga', country: 'Spanyol', tier: 1, rep: 88, wealth: 85, clubs: ['Real Madrid', 'Barcelona', 'Atletico Madrid', 'Sevilla', 'Real Sociedad'] },
+                { id: 'esp2', name: 'La Liga 2', country: 'Spanyol', tier: 2, rep: 68, wealth: 50, clubs: ['Espanyol', 'Eibar', 'Sporting Gijon', 'Levante'] },
+                
+                { id: 'ita1', name: 'Serie A', country: 'Italia', tier: 1, rep: 85, wealth: 75, clubs: ['Inter Milan', 'AC Milan', 'Juventus', 'Napoli', 'AS Roma'] },
+                { id: 'ita2', name: 'Serie B', country: 'Italia', tier: 2, rep: 65, wealth: 45, clubs: ['Palermo', 'Sampdoria', 'Parma', 'Cremonese'] },
+                
+                { id: 'ger1', name: 'Bundesliga', country: 'Jerman', tier: 1, rep: 84, wealth: 80, clubs: ['Bayern Munich', 'Bayer Leverkusen', 'Dortmund', 'RB Leipzig'] },
+                { id: 'ger2', name: '2. Bundesliga', country: 'Jerman', tier: 2, rep: 68, wealth: 45, clubs: ['Schalke 04', 'Hamburg SV', 'Hertha Berlin'] },
+                
+                { id: 'fra1', name: 'Ligue 1', country: 'Prancis', tier: 1, rep: 80, wealth: 75, clubs: ['PSG', 'Monaco', 'Marseille', 'Lille', 'Lyon'] },
+                
+                { id: 'ned1', name: 'Eredivisie', country: 'Belanda', tier: 1, rep: 75, wealth: 65, clubs: ['PSV', 'Ajax', 'Feyenoord', 'AZ Alkmaar'] },
+                { id: 'por1', name: 'Primeira Liga', country: 'Portugal', tier: 1, rep: 76, wealth: 65, clubs: ['Benfica', 'Sporting CP', 'FC Porto', 'Braga'] },
+                { id: 'tur1', name: 'Süper Lig', country: 'Turki', tier: 1, rep: 73, wealth: 60, clubs: ['Galatasaray', 'Fenerbahçe', 'Beşiktaş', 'Trabzonspor'] },
+                { id: 'bel1', name: 'Pro League', country: 'Belgia', tier: 1, rep: 71, wealth: 55, clubs: ['Club Brugge', 'Anderlecht', 'Genk', 'Antwerp'] },
+                { id: 'sco1', name: 'Premiership', country: 'Skotlandia', tier: 1, rep: 69, wealth: 50, clubs: ['Celtic', 'Rangers', 'Aberdeen'] },
+                
+                { id: 'ksa1', name: 'Pro League', country: 'Arab Saudi', tier: 1, rep: 72, wealth: 98, clubs: ['Al Hilal', 'Al Nassr', 'Al Ahli', 'Al Ittihad'] },
+                { id: 'usa1', name: 'MLS', country: 'Amerika', tier: 1, rep: 68, wealth: 75, clubs: ['Inter Miami', 'LA Galaxy', 'LAFC', 'Seattle'] },
+                { id: 'bra1', name: 'Brasileirão', country: 'Brazil', tier: 1, rep: 75, wealth: 60, clubs: ['Flamengo', 'Palmeiras', 'Sao Paulo', 'Fluminense'] },
+                { id: 'arg1', name: 'Primera División', country: 'Argentina', tier: 1, rep: 74, wealth: 60, clubs: ['River Plate', 'Boca Juniors', 'Racing Club', 'San Lorenzo'] },
+                { id: 'mex1', name: 'Liga MX', country: 'Meksiko', tier: 1, rep: 71, wealth: 65, clubs: ['Club America', 'Monterrey', 'Tigres UANL', 'Cruz Azul'] },
+                { id: 'jpn1', name: 'J1 League', country: 'Jepang', tier: 1, rep: 65, wealth: 55, clubs: ['Vissel Kobe', 'Yokohama FM', 'Kawasaki F'] },
+                { id: 'kor1', name: 'K League 1', country: 'Korea Selatan', tier: 1, rep: 66, wealth: 55, clubs: ['Ulsan HD', 'Jeonbuk Hyundai', 'FC Seoul', 'Pohang Steelers'] },
+                { id: 'tha1', name: 'Thai League 1', country: 'Thailand', tier: 1, rep: 55, wealth: 45, clubs: ['Buriram Utd', 'BG Pathum Utd', 'Port FC', 'Muangthong Utd'] },
+                { id: 'mas1', name: 'Liga Super', country: 'Malaysia', tier: 1, rep: 52, wealth: 45, clubs: ['Johor Darul Ta\'zim', 'Selangor FC', 'Terengganu FC', 'Kedah Darul Aman'] },
+                { id: 'ind1', name: 'ISL', country: 'India', tier: 1, rep: 50, wealth: 40, clubs: ['Mumbai City', 'Mohun Bagan', 'Kerala Blasters', 'FC Goa'] },
+                { id: 'idn1', name: 'Liga 1', country: 'Indonesia', tier: 1, rep: 50, wealth: 45, clubs: ['Persib', 'Persija', 'Persebaya', 'Bali United'] }
+            ],
+            brandsStd: ['Sony', 'Samsung', 'Toyota', 'Casio', 'Puma', 'New Balance', 'TCL', 'Hisense', 'Spotify', 'Mastercard', 'Visa', 'Chevrolet'],
+            brandsElite: ['Nike', 'Adidas', 'Rolex', 'Apple', 'EA Sports', 'Fly Emirates', 'Red Bull', 'Qatar Airways', 'BMW', 'Gucci', 'Louis Vuitton', 'Coca-Cola'],
+            agents: [
+                { lvl: 1, name: 'Agen Amatir', multiplier: 0.8 },
+                { lvl: 2, name: 'Agen Profesional', multiplier: 1.1 },
+                { lvl: 3, name: 'Super Agent (Elite)', multiplier: 1.5 }
+            ],
+            injuryTraits: ['Anti Cedera', 'Jarang Cedera', 'Normal', 'Normal', 'Normal', 'Rentan Cedera']
+        };
+
+        let p = {
+            name: '', nat: '', pos: '', age: 15, ovr: 0, potential: 0, injuryTrait: 'Normal',
+            club: null, league: null, isLoaned: false, parentClub: null, parentLeague: null,
+            val: 0, wage: 0, contract: 0, seasonYear: 2026, statusRole: 'Cadangan',
+            morale: 'Bahagia', followers: 0, money: 0,
+            stats: { apps: 0, goals: 0, astCs: 0, caps: 0, bd: 0, indAwards: 0, yc: 0, rc: 0 },
+            trophies: { league: 0, cup: 0, cont: 0, wc: 0 },
+            careerHistory: [], sponsor: null, agent: db.agents[0], isPro: false, retired: false
+        };
+
+        let curSeason = { apps:0, goals:0, astCs:0, yc:0, rc:0, ratingSum:0, ratingCount:0 };
+        let temp = {};
+        let currentOffers = [];
+        let activeIndex = null;
+        let forceRetire = false;
+
+        const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+        const formatMoney = (num) => {
+            if(num >= 1000000) return '$' + (num/1000000).toFixed(1) + 'M';
+            if(num >= 1000) return '$' + (num/1000).toFixed(0) + 'K';
+            return '$' + num;
+        };
+        const formatNum = (num) => {
+            if(num >= 1000000) return (num/1000000).toFixed(1) + 'M';
+            if(num >= 1000) return (num/1000).toFixed(1) + 'K';
+            return num;
+        };
+        const getDom = id => document.getElementById(id);
+        const switchScreen = id => {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            getDom(id).classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+        const isDefensivePos = () => ['CB', 'FB', 'GK'].includes(p.pos);
+
+        // --- CUSTOM MODALS UI ---
+        let alertCallback = null;
+        function showCustomAlert(msg, callback = null) {
+            getDom('customAlertMsg').innerText = msg;
+            getDom('customAlertModal').style.display = 'flex';
+            alertCallback = callback;
+        }
+        function closeCustomAlert() {
+            getDom('customAlertModal').style.display = 'none';
+            if(alertCallback) alertCallback();
+        }
+
+        let confirmCallback = null;
+        function showCustomConfirm(msg, callback) {
+            getDom('customConfirmMsg').innerText = msg;
+            getDom('customConfirmModal').style.display = 'flex';
+            confirmCallback = callback;
+        }
+        function closeCustomConfirm(result) {
+            getDom('customConfirmModal').style.display = 'none';
+            if(confirmCallback) confirmCallback(result);
+        }
+        function closeModal(id) { getDom(id).style.display = 'none'; activeOffer = null; activeIndex = null; }
+        // ------------------------
+
+        function startGame() {
+            p.name = getDom('playerName').value || 'Player One';
+            p.nat = getDom('playerNat').value;
+            p.pos = getDom('playerPos').value;
+            p.age = 15;
+            p.ovr = rand(40, 50); // Start lower at 15
+            p.potential = rand(75, 95); 
+            p.injuryTrait = db.injuryTraits[rand(0, db.injuryTraits.length - 1)];
+
+            let possibleLeagues = db.leagues.filter(l => l.country === p.nat);
+            if(possibleLeagues.length === 0) possibleLeagues = db.leagues.filter(l => l.tier > 1 || l.rep < 65);
+            
+            p.league = possibleLeagues[rand(0, possibleLeagues.length - 1)];
+            p.club = p.league.clubs[rand(0, p.league.clubs.length - 1)];
+            p.contract = 2;
+
+            getDom('academyClub').innerText = p.club;
+            
+            let astLabelText = isDefensivePos() ? 'Clean Sheets' : 'Assist';
+            getDom('dashAstCsLabel').innerText = astLabelText;
+            getDom('sumAstCsLabel').innerText = astLabelText;
+            getDom('midAstCsLabel').innerText = astLabelText;
+            getDom('histAstCsHead').innerText = isDefensivePos() ? 'CS' : 'Ast';
+            getDom('statAwardBox').innerHTML = isDefensivePos() ? `Top CS: <strong id="statAwardVal">0</strong>` : `Top Skor: <strong id="statAwardVal">0</strong>`;
+
+            updateAcadUI();
+            switchScreen('screen-academy');
+        }
+
+        function updateAcadUI() {
+            getDom('acadAge').innerText = p.age;
+            getDom('acadOvr').innerText = p.ovr;
+            getDom('acadOvrBar').style.width = p.ovr + '%';
+        }
+
+        function simAcademyYear() {
+            // Generate Academy Stats
+            let acApps = rand(15, 30);
+            let acGoals = isDefensivePos() ? rand(0, 3) : rand(5, 20);
+            let acRating = (rand(60, 85) / 10).toFixed(1);
+            getDom('acadStatsInfo').innerText = `Statistik Musim Lalu: Main ${acApps} | Gol ${acGoals} | Rating ${acRating}`;
+
+            p.age++; p.contract--;
+            let growth = rand(2, 5) + (p.potential > 85 ? 2 : 0);
+            p.ovr += growth;
+            if(p.ovr > 99) p.ovr = 99;
+            updateAcadUI();
+
+            if(p.age >= 18 || (p.age >= 16 && acRating >= 7.5 && p.ovr >= 55)) {
+                p.isPro = true; p.contract = rand(2, 4);
+                calculateDynamicValueWage();
+
+                let diff = p.ovr - p.league.rep;
+                let status = 'Cadangan Pelapis';
+                if(diff >= -2) status = 'Pemain Inti (Wonderkid)';
+                else if (diff >= -8) status = 'Rotasi';
+                p.statusRole = status;
+
+                getDom('dashStatus').innerText = p.statusRole;
+                updateDashUI(); 
+                
+                showCustomAlert(`Luar Biasa! Statistik akademimu (${acRating}) meyakinkan pelatih. Kamu dipromosikan ke tim utama ${p.club}!`, () => {
+                    switchScreen('screen-dashboard');
+                    if(diff < -10 && Math.random() > 0.4) {
+                        setTimeout(() => showCustomAlert("Pelatih menyarankanmu untuk mencari jam terbang melalui peminjaman (Loan) di bursa transfer berikutnya karena kamu masih terlalu muda untuk kasta ini."), 400);
+                    }
+                });
+            } else {
+                showCustomAlert(`Selesai 1 tahun di akademi. Terus tingkatkan kemampuanmu!`);
+            }
+        }
+
+        function calculateDynamicValueWage() {
+            if(p.club === 'Free Agent') { p.val = 0; p.wage = 0; return; }
+            let baseV = Math.pow(p.ovr, 3) * 1.5; 
+            if(p.age <= 22) baseV *= (1 + (p.potential/100)); 
+            if(p.age > 30) baseV *= (1 - ((p.age-30)*0.1)); 
+            if(baseV < 10000) baseV = 10000;
+            p.val = Math.floor(baseV);
+            
+            let idealWage = Math.floor((p.val * 0.003) * p.agent.multiplier);
+            if(p.wage === 0) p.wage = idealWage;
+            else p.wage = Math.floor((p.wage * 0.8) + (idealWage * 0.2)); 
+            if(p.wage < 500) p.wage = 500;
+        }
+
+        function updateDashUI() {
+            getDom('dashName').innerText = p.name;
+            getDom('dashInfo').innerText = `${p.pos} | ${p.nat} | Usia: ${p.age}`;
+            getDom('dashClub').innerText = p.club === 'Free Agent' ? 'Tanpa Klub (Free Agent)' : `${p.club} (${p.league.name})`;
+            getDom('dashSeason').innerText = `${p.seasonYear}/${p.seasonYear+1}`;
+            getDom('dashAgent').innerText = p.agent.name;
+            getDom('dashStatus').innerText = p.statusRole;
+            getDom('dashInjuryTrait').innerText = p.injuryTrait;
+            
+            getDom('dashOvr').innerText = p.ovr;
+            getDom('dashOvrBar').style.width = p.ovr + '%';
+            getDom('dashValue').innerText = formatMoney(p.val);
+            getDom('dashWage').innerText = formatMoney(p.wage) + (p.club !== 'Free Agent' ? "/mg" : "");
+            getDom('dashContract').innerText = p.contract;
+            getDom('dashFollowers').innerText = formatNum(p.followers);
+            getDom('dashMoney').innerText = formatMoney(p.money);
+
+            if(p.sponsor) {
+                getDom('dashSponsorsText').innerText = `${p.sponsor.brand} (Sisa ${p.sponsor.duration} Thn)`;
+                getDom('dashSponsorsText').style.color = 'var(--accent)';
+            } else {
+                getDom('dashSponsorsText').innerText = 'Belum ada kontrak eksklusif';
+                getDom('dashSponsorsText').style.color = '#ccc';
+            }
+
+            let moraleColor = '#fff';
+            if(p.morale === 'Sangat Bahagia' || p.morale === 'Bahagia') moraleColor = 'var(--success)';
+            else if(p.morale === 'Kecewa' || p.morale === 'Marah') moraleColor = 'var(--danger)';
+            getDom('dashMorale').innerText = p.morale;
+            getDom('dashMorale').style.color = moraleColor;
+
+            getDom('statApps').innerText = p.stats.apps;
+            getDom('statGoals').innerText = p.stats.goals;
+            getDom('statAstCs').innerText = p.stats.astCs;
+            getDom('statYc').innerText = p.stats.yc;
+            getDom('statRc').innerText = p.stats.rc;
+            
+            getDom('statTL').innerText = p.trophies.league;
+            getDom('statTC').innerText = p.trophies.cup;
+            getDom('statTCont').innerText = p.trophies.cont;
+            getDom('statAwardVal').innerText = p.stats.indAwards;
+        }
+
+        function generateMatchStats(fraction) {
+            let s = { apps:0, goals:0, astCs:0, yc:0, rc:0, rating:0, injuryDetails: "", lackOfPlayReason: "" };
+            let diff = p.ovr - p.league.rep;
+            
+            // Injury System Calculation
+            let baseInjProb = 0.15;
+            if(p.injuryTrait === 'Anti Cedera') baseInjProb = 0.03;
+            else if(p.injuryTrait === 'Jarang Cedera') baseInjProb = 0.08;
+            else if(p.injuryTrait === 'Rentan Cedera') baseInjProb = 0.28;
+
+            let isInjured = Math.random() < (baseInjProb * fraction); 
+            let injuryPenalty = isInjured ? rand(1, 4) : 0; // weeks/chunks penalty
+            
+            if(isInjured) {
+                if(injuryPenalty >= 3) {
+                    const severe = [
+                        {t: "Cedera ACL Parah", w: rand(24, 36)}, 
+                        {t: "Patah Tulang Kaki", w: rand(16, 24)}, 
+                        {t: "Robek Otot Paha", w: rand(12, 16)}, 
+                        {t: "Kerusakan Ligamen Lutut", w: rand(20, 28)}
+                    ];
+                    let inj = severe[rand(0, severe.length - 1)];
+                    s.injuryDetails = `🚑 ${inj.t} (Absen ${inj.w} Pekan)`;
+                } else {
+                    const light = [
+                        {t: "Cedera Hamstring Ringan", w: rand(2, 5)}, 
+                        {t: "Keseleo Pergelangan Kaki", w: rand(1, 3)}, 
+                        {t: "Kelelahan Otot (Fatique)", w: rand(1, 2)}, 
+                        {t: "Cedera Bahu saat Latihan", w: rand(2, 4)}
+                    ];
+                    let inj = light[rand(0, light.length - 1)];
+                    s.injuryDetails = `🤕 ${inj.t} (Absen ${inj.w} Pekan)`;
+                }
+            }
+
+            let maxApps = Math.floor(50 * fraction);
+            
+            // Apps Logic based on Status and Loan
+            if (p.isLoaned) {
+                // Loans guarantee lots of playing time unless injured
+                s.apps = rand(maxApps - 6, maxApps);
+            } else {
+                if(diff >= 5 || p.statusRole.includes('Pemain Bintang')) s.apps = rand(maxApps-10, maxApps);
+                else if(diff >= -5 || p.statusRole.includes('Pemain Inti')) s.apps = rand(Math.floor(maxApps/2), maxApps-5);
+                else if(p.statusRole.includes('Rotasi')) s.apps = rand(Math.floor(maxApps/3), Math.floor(maxApps/1.5));
+                else s.apps = rand(0, Math.floor(maxApps/3)); // Cadangan
+            }
+
+            if(isInjured) s.apps -= (injuryPenalty * 5);
+            if(s.apps < 0) s.apps = 0;
+
+            // Generate Lack of Play Reason if apps are suspiciously low
+            if (s.apps < Math.floor(maxApps * 0.4) && !isInjured) {
+                if (p.ovr < p.league.rep - 5) {
+                    const reasons = ["Kalah bersaing secara kualitas dengan tim inti", "Level liga ini masih terlalu tinggi untukmu", "Manajer menganggapmu belum siap untuk skuad utama"];
+                    s.lackOfPlayReason = reasons[rand(0, reasons.length-1)];
+                } else {
+                    const reasons = ["Tidak cocok dengan taktik sistem manajer baru", "Rotasi skuad yang sangat ketat musim ini", "Performa latihanmu dinilai kurang meyakinkan", "Manajer lebih memilih memainkan pemain veteran"];
+                    s.lackOfPlayReason = reasons[rand(0, reasons.length-1)];
+                }
+            }
+
+            if(s.apps > 0) {
+                let fm = s.apps / 50;
+                if(p.pos === 'ST' || p.pos === 'Winger') {
+                    s.goals = Math.floor((p.ovr * fm * rand(30, 60)) / 100);
+                    s.astCs = Math.floor((p.ovr * fm * rand(10, 30)) / 100);
+                } else if(p.pos === 'CAM' || p.pos === 'CM') {
+                    s.goals = Math.floor((p.ovr * fm * rand(10, 30)) / 100);
+                    s.astCs = Math.floor((p.ovr * fm * rand(20, 50)) / 100);
+                } else if(p.pos === 'CB' || p.pos === 'FB') {
+                    s.goals = Math.floor((p.ovr * fm * rand(0, 5)) / 100);
+                    s.astCs = Math.floor((p.ovr * fm * rand(20, 45)) / 100); 
+                } else { 
+                    s.astCs = Math.floor((p.ovr * fm * rand(25, 50)) / 100); 
+                }
+
+                let cardMulti = (p.pos === 'CB' || p.pos === 'FB' || p.pos === 'CM') ? 1.5 : 0.5;
+                s.yc = Math.floor(rand(0, 7) * cardMulti * fm * 2);
+                if(Math.random() < (0.1 * cardMulti * fraction)) s.rc = 1;
+            }
+            
+            let rawRating = s.apps > 0 ? ((rand(60, 75) + (diff/2) + (s.goals*0.2) + (s.astCs*0.1) - (s.rc*2)) / 10) : 0;
+            if(rawRating > 9.9) rawRating = 9.8 + Math.random()*0.1;
+            if(rawRating < 5.0 && s.apps > 0) rawRating = 5.0 + Math.random();
+            s.rating = rawRating;
+
+            return s;
+        }
+
+        // Coach Feedback Generator
+        function getCoachFeedback(rating, isFA) {
+            if (isFA) return { text: "Statusmu tanpa klub. Teruslah berlatih mandiri agar kebugaranmu terjaga dan pantang menyerah.", emoji: "🏃‍♂️" };
+            
+            let msgs = [];
+            if (rating >= 8.0) {
+                msgs = ["Kamu benar-benar pembeda di lapangan! Terus pertahankan performa emasmu.", "Sangat fantastis! Saya tidak bisa membayangkan keseimbangan tim ini tanpamu.", "Pemain kelas dunia sejati! Semua taktik berjalan lancar berkat kerja kerasmu."];
+                return { text: msgs[rand(0, msgs.length-1)], emoji: ["🤩", "🔥", "👑"][rand(0,2)] };
+            } else if (rating >= 7.0) {
+                msgs = ["Kerja bagus, kamu menjadi andalan penting di skuad kami.", "Permainan yang solid, tapi saya yakin batas kemampuanmu masih bisa lebih jauh lagi.", "Peranmu sangat penting dalam kemenangan-kemenangan kita. Tetap fokus!"];
+                return { text: msgs[rand(0, msgs.length-1)], emoji: ["👍", "👏", "💪"][rand(0,2)] };
+            } else if (rating >= 6.0) {
+                msgs = ["Penampilanmu cukup naik turun. Kamu harus lebih konsisten jika ingin jaminan posisi inti.", "Banyak PR untukmu di sesi latihan besok. Segera perbaiki kekurangan teknismu.", "Standar saja. Sebagai pelatih, saya menuntut impak yang lebih besar darimu di lapangan."];
+                return { text: msgs[rand(0, msgs.length-1)], emoji: ["😐", "🧐", "🤔"][rand(0,2)] };
+            } else {
+                msgs = ["Sangat mengecewakan. Kamu sama sekali tidak masuk dalam rencanaku jika terus main seperti ini.", "Performa yang buruk. Bersiaplah untuk akrab dengan bangku cadangan.", "Kamu harus evaluasi total. Jika tidak berubah, pintu keluar dari klub selalu terbuka."];
+                return { text: msgs[rand(0, msgs.length-1)], emoji: ["😡", "👎", "🤬"][rand(0,2)] };
+            }
+        }
+
+        // Fan Feedback Generator
+        function getFanFeedback(rating, promRelText, isFA) {
+            if (isFA) return "Kami rindu melihat aksimu di rumput hijau. Cepat cari pelabuhan baru, legend!";
+            
+            if (promRelText.includes("PROMOSI")) return "KAMU PAHLAWAN KAMI! Sejarah klub tercipta musim ini berkat kalian semua! 🎉";
+            if (promRelText.includes("DEGRADASI")) return "Sangat memalukan! Manajemen dan kalian semua tidak pantas memakai jersey suci klub ini! 💔";
+
+            let msgs = [];
+            if (rating >= 8.0) {
+                msgs = ["Pemain terbaik yang pernah kami miliki! Tolong buatkan dia patung di depan stadion! 🐐", "Gaji dia berapa pun, jangan biarkan klub lain merebutnya! ❤️", "Setiap kali dia memegang bola, rasanya seperti keajaiban pasti terjadi! ✨"];
+            } else if (rating >= 7.0) {
+                msgs = ["Permainan solid, kami akan selalu menyanyikan namamu dari tribun! 🍻", "Terus bermain ngotot seperti ini dan jadilah legenda kami di masa depan! 🏟️", "Bukan musim yang buruk darinya, selalu berkeringat demi lambang di dada. 👏"];
+            } else if (rating >= 6.0) {
+                msgs = ["Terkadang main bagus, terkadang hilang arah di lapangan. Butuh konsistensi bung! 📉", "Harusnya bisa memberikan impak lebih besar. Kami tahu potensimu belum keluar semua! 👀", "Masih perlu waktu pembuktian, tapi jangan sampai kami kehilangan kesabaran. ⏳"];
+            } else {
+                msgs = ["Jual saja pemain ini ke liga antah berantah! Sama sekali tidak ada kontribusi! 🗑️", "Uang tiket musim kami terbuang sia-sia melihat permainan lambat seburuk ini! 😤", "Tolong pelatih jangan mainkan dia lagi, merusak sistem dan tempo tim! 🚫"];
+            }
+            return msgs[rand(0, msgs.length-1)];
+        }
+
+        // --- HALF 1 ---
+        function simFirstHalf() {
+            if(p.club === 'Free Agent') {
+                curSeason = { apps:0, goals:0, astCs:0, yc:0, rc:0, ratingSum:0, ratingCount:0 };
+                simSecondHalf(true); return;
+            }
+            
+            temp.half1InjuryText = "";
+            temp.half1LackPlay = "";
+
+            let s1 = generateMatchStats(0.5);
+            
+            // This is ONLY the first half stats
+            curSeason.apps = s1.apps; curSeason.goals = s1.goals; curSeason.astCs = s1.astCs;
+            curSeason.yc = s1.yc; curSeason.rc = s1.rc; 
+            curSeason.ratingSum = s1.rating; curSeason.ratingCount = s1.apps > 0 ? 1 : 0;
+
+            temp.half1InjuryText = s1.injuryDetails;
+            temp.half1LackPlay = s1.lackOfPlayReason;
+
+            getDom('midApps').innerText = s1.apps;
+            getDom('midGoals').innerText = s1.goals;
+            getDom('midAst').innerText = s1.astCs;
+            getDom('midAvg').innerText = s1.rating.toFixed(2);
+            
+            getDom('midInjuryText').innerText = temp.half1InjuryText || "";
+            getDom('midPlayTimeText').innerText = temp.half1LackPlay ? `⚠️ Info: ${temp.half1LackPlay}` : "";
+
+            let coachFbMid = getCoachFeedback(s1.rating, false);
+            getDom('midCoachMsg').innerText = `"${coachFbMid.text}"`;
+            getDom('midCoachEmoji').innerText = coachFbMid.emoji;
+
+            generateMidOffers(s1.apps);
+            switchScreen('screen-midseason');
+        }
+
+        function generateMidOffers(h1Apps) {
+            currentOffers = [];
+            
+            // BUG FIX: Jika sedang dipinjamkan, jangan berikan penawaran di paruh musim
+            if (p.isLoaned) {
+                renderOffers('midOffersContainer');
+                return;
+            }
+
+            let numOffers = (Math.random() > 0.5) ? rand(0, 1) : 0;
+            if(h1Apps < 5 && p.age < 23) numOffers = rand(1, 2); // Force loan offer
+            
+            let offeredClubs = new Set([p.club]); 
+            for(let i=0; i<numOffers; i++) {
+                let tRepMin = p.ovr - 10;
+                let possible = db.leagues.filter(l => l.rep >= tRepMin && l.rep <= p.ovr + 5);
+                if(possible.length === 0) possible = db.leagues; 
+                let tL = possible[rand(0, possible.length - 1)];
+                let tC = tL.clubs[rand(0, tL.clubs.length - 1)];
+
+                if(!offeredClubs.has(tC)) {
+                    offeredClubs.add(tC);
+                    let isLoan = (h1Apps < 5 && p.age < 23) ? true : (Math.random() > 0.8);
+                    let baseW = (tL.wealth * 500) + (p.ovr * 200);
+                    let offWage = Math.floor(baseW * (1 + (Math.random() * 0.4 - 0.2)) * p.agent.multiplier);
+                    
+                    currentOffers.push({ type: isLoan ? 'loan' : 'transfer', club: tC, league: tL, wage: offWage, isFree: false });
+                }
+            }
+            renderOffers('midOffersContainer');
+        }
+
+        // --- HALF 2 ---
+        function simSecondHalf(isFA = false) {
+            let s2 = {apps:0, goals:0, astCs:0, yc:0, rc:0, rating:0, injuryDetails:"", lackOfPlayReason:""};
+            if(!isFA) s2 = generateMatchStats(0.5);
+
+            temp.half2InjuryText = s2.injuryDetails;
+            temp.half2LackPlay = s2.lackOfPlayReason;
+
+            // Add second half to total
+            curSeason.apps += s2.apps; curSeason.goals += s2.goals; curSeason.astCs += s2.astCs;
+            curSeason.yc += s2.yc; curSeason.rc += s2.rc;
+            if(s2.apps > 0) { curSeason.ratingSum += s2.rating; curSeason.ratingCount++; }
+            
+            let avgRating = curSeason.ratingCount > 0 ? (curSeason.ratingSum / curSeason.ratingCount) : 0;
+            
+            p.contract--;
+            p.money += (p.wage * 52); 
+            if(p.sponsor) { p.money += p.sponsor.pay; p.sponsor.duration--; if(p.sponsor.duration <= 0) p.sponsor = null; }
+
+            let diff = p.ovr - (p.league ? p.league.rep : 50);
+            let teamRank = 18; let promRelText = ""; let trophyText = []; let awardText = [];
+            
+            if(!isFA) {
+                // Realistic Rank calculation
+                let totalTeams = p.league.clubs.length > 5 ? 20 : 18; 
+                let clubIndex = p.league.clubs.indexOf(p.club);
+                if(clubIndex === -1) clubIndex = Math.floor(totalTeams/2);
+
+                let strengthRatio = clubIndex / p.league.clubs.length; 
+                let expectedRank = Math.round(strengthRatio * totalTeams);
+                if (expectedRank < 1) expectedRank = 1;
+                
+                teamRank = expectedRank + rand(-3, 3);
+                
+                // Player impact if highly rated
+                if (curSeason.apps > 25 && diff >= 3) teamRank -= rand(1, 4); 
+
+                if (teamRank < 1) teamRank = 1;
+                if (teamRank > totalTeams) teamRank = totalTeams;
+
+                // Promosi / Degradasi Realistis
+                if(teamRank <= 3 && p.league.tier > 1) { 
+                    let higherLeague = db.leagues.find(l => l.country === p.league.country && l.tier === (p.league.tier - 1));
+                    if(higherLeague) {
+                        p.league.clubs = p.league.clubs.filter(c => c !== p.club); 
+                        let swappedClub = higherLeague.clubs.pop(); // takes weakest
+                        p.league.clubs.push(swappedClub); 
+                        higherLeague.clubs.push(p.club); // Posisi buncit u/ musim depan
+                        promRelText = `🔼 PROMOSI KE ${higherLeague.name}!`;
+                        p.league = higherLeague; 
+                    }
+                } else if (teamRank >= (totalTeams - 2) && p.league.tier < 3) { 
+                    let lowerLeague = db.leagues.find(l => l.country === p.league.country && l.tier === (p.league.tier + 1));
+                    if(lowerLeague) {
+                        p.league.clubs = p.league.clubs.filter(c => c !== p.club);
+                        let swappedClub = lowerLeague.clubs.shift(); // takes strongest
+                        p.league.clubs.push(swappedClub);
+                        lowerLeague.clubs.unshift(p.club); // Posisi atas u/ musim depan
+                        promRelText = `🔽 DEGRADASI KE ${lowerLeague.name}...`;
+                        p.league = lowerLeague;
+                    }
+                }
+
+                if(teamRank === 1) { p.trophies.league++; trophyText.push("🏆 Juara Liga!"); p.followers += 50000; }
+                if(Math.random() < (teamRank <= 3 ? 0.20 : 0.05)) { p.trophies.cup++; trophyText.push("🏆 Juara Cup!"); p.followers += 20000; }
+                
+                if(p.league.tier === 1 && p.league.rep >= 75 && teamRank <= 4 && Math.random() < 0.15) { p.trophies.cont++; trophyText.push("🏆 Juara Benua!"); p.followers += 200000; }
+                
+                if(!isDefensivePos() && curSeason.goals >= 20 && teamRank <= 5) { p.stats.indAwards++; awardText.push("👟 Top Skor Liga!"); p.followers += 150000; } 
+                else if(p.pos === 'GK' && curSeason.astCs >= 15 && teamRank <= 6) { p.stats.indAwards++; awardText.push("🧤 Golden Glove!"); p.followers += 100000; }
+            }
+
+            if(p.seasonYear % 4 === 2 && p.ovr > 82 && p.stats.caps > 5 && Math.random() < 0.04) { p.trophies.wc++; trophyText.push(`🏆 JUARA PIALA DUNIA!`); p.followers += 1500000; }
+
+            if(curSeason.apps > 30) p.morale = 'Bahagia'; else if(curSeason.apps > 15) p.morale = 'Biasa'; else p.morale = 'Kecewa';
+            let newFollowers = Math.floor((curSeason.apps * 50) + (curSeason.goals * 500) + (curSeason.astCs * 200));
+            if(!isFA && p.league.tier === 1 && p.league.rep > 80) newFollowers *= 3;
+            p.followers += newFollowers;
+
+            let growth = 0;
+            if(isFA) growth = rand(-4, -1);
+            else if(p.age < 24) {
+                if(avgRating > 7.5) growth = rand(2, 5); else if(avgRating > 6.5) growth = rand(1, 3); else growth = rand(-1, 1);
+                if(p.potential < 75 && p.ovr > 75) growth = rand(-1, 0); 
+            } else if(p.age < 30) {
+                if(avgRating > 7.8) growth = rand(1, 2); else if(avgRating < 6.2) growth = rand(-2, 0);
+            } else if(p.age < 32) { growth = rand(-1, 0); } 
+            else {
+                let penalty = p.age - 31; growth = rand(-2 - penalty, 0);
+                if(avgRating > 7.5) growth += 1; 
+            }
+            p.ovr += growth; if(p.ovr > 99) p.ovr = 99; if(p.ovr < 40) p.ovr = 40;
+            if(p.age >= rand(43, 45)) forceRetire = true;
+
+            // Youth & Senior National Team Logic
+            let natStatus = "❌ Tidak Dipanggil Timnas"; let newCaps = 0;
+            if (!isFA && curSeason.apps > 5 && avgRating > 6.5) {
+                if (p.age <= 17 && p.ovr > 55 && Math.random() > 0.3) {
+                    natStatus = `✅ Masuk Skuad Timnas ${p.nat} U-17`;
+                } else if (p.age <= 19 && p.ovr > 60 && Math.random() > 0.3) {
+                    natStatus = `✅ Masuk Skuad Timnas ${p.nat} U-19`;
+                } else if (p.age <= 21 && p.ovr > 65 && Math.random() > 0.3) {
+                    natStatus = `✅ Masuk Skuad Timnas ${p.nat} U-21`;
+                } else if (p.ovr > 78 && avgRating > 7.0 && curSeason.apps > 10) {
+                    newCaps = rand(3, 12);
+                    natStatus = `✅ Masuk Skuad Timnas Senior ${p.nat}`;
+                    p.stats.caps += newCaps;
+                }
+            }
+
+            if(!isFA && p.ovr > 88 && curSeason.goals > 25 && p.league.rep >= 84 && teamRank <= 2 && avgRating > 8.0 && Math.random() > 0.4) {
+                p.stats.bd++; awardText.push(`🥇 BALLON D'OR!`); p.followers += 5000000;
+            }
+
+            // Dynamic Wage Adjustment based on performance
+            let wageInfo = "";
+            if (!isFA && p.contract > 0) {
+                let wageBoost = 1.0;
+                if (awardText.length > 0) wageBoost += 0.2; 
+                if (teamRank === 1) wageBoost += 0.1;
+                
+                if (avgRating >= 8.0) wageBoost += 0.15;
+                else if (avgRating < 6.0) wageBoost -= 0.15;
+
+                let oldWage = p.wage;
+                p.wage = Math.floor(p.wage * wageBoost);
+                if(p.wage < 500) p.wage = 500;
+                
+                if (wageBoost > 1.1) wageInfo = "📈 Manajemen menaikkan gajimu (Bonus Performa)!";
+                else if (wageBoost < 0.9) wageInfo = "📉 Manajemen memotong gajimu karena dinilai underperform.";
+            }
+
+            p.careerHistory.push({ season: p.seasonYear, age: p.age, club: p.isLoaned ? p.club + ' (Loan)' : p.club, league: isFA ? '-' : p.league.name, apps: curSeason.apps, goals: curSeason.goals, astCs: curSeason.astCs, rating: avgRating.toFixed(2), trophies: trophyText.length > 0 ? trophyText.join(", ") : '-' });
+            
+            p.stats.apps += curSeason.apps; p.stats.goals += curSeason.goals; p.stats.astCs += curSeason.astCs;
+            p.stats.yc += curSeason.yc; p.stats.rc += curSeason.rc;
+            
+            temp.apps = curSeason.apps; temp.goals = curSeason.goals; temp.astCs = curSeason.astCs;
+            temp.yc = curSeason.yc; temp.rc = curSeason.rc; temp.avgRating = avgRating.toFixed(2);
+            temp.growth = growth; temp.natStatus = natStatus; temp.promRelText = promRelText;
+            temp.trophyText = trophyText.join(" | "); temp.awardText = awardText.join(" | ");
+            temp.rank = isFA ? '-' : teamRank; temp.wasLoaned = p.isLoaned; temp.wageInfo = wageInfo;
+            
+            p.age++; p.seasonYear++;
+            calculateDynamicValueWage();
+
+            if(p.isLoaned) { 
+                p.club = p.parentClub; p.league = p.parentLeague; p.isLoaned = false; 
+                temp.coachMsgAdd = "Masa peminjamanmu sudah habis. Segera kembali lapor ke klub asal.";
+            } else { temp.coachMsgAdd = ""; }
+
+            if(forceRetire) {
+                showCustomAlert(`Tubuhmu sudah tidak sanggup lagi bertanding di level tertinggi (Usia ${p.age-1}). Saatnya gantung sepatu!`, () => {
+                    executeRetire();
+                });
+            } else {
+                showSummaryScreen();
+            }
+        }
+
+        function showSummaryScreen() {
+            getDom('sumSeason').innerText = `${p.seasonYear-1}/${p.seasonYear}`;
+            getDom('sumRank').innerText = temp.rank;
+            
+            let pR = getDom('sumPromRelText');
+            pR.innerText = temp.promRelText || "";
+            pR.style.color = temp.promRelText.includes("PROMOSI") ? 'var(--success)' : 'var(--danger)';
+
+            let finalInj = [];
+            if(temp.half1InjuryText) finalInj.push(temp.half1InjuryText);
+            if(temp.half2InjuryText) finalInj.push(temp.half2InjuryText);
+            getDom('sumInjuryText').innerText = finalInj.join(" | ");
+
+            let finalPlay = [];
+            if(temp.half1LackPlay) finalPlay.push("Paruh 1: " + temp.half1LackPlay);
+            if(temp.half2LackPlay) finalPlay.push("Paruh 2: " + temp.half2LackPlay);
+            getDom('sumPlayTimeText').innerText = finalPlay.length > 0 ? "⚠️ Laporan: " + finalPlay.join(" & ") : "";
+
+            getDom('sumTrophyText').innerText = temp.trophyText || "";
+            getDom('sumAwardText').innerText = temp.awardText || "";
+            getDom('sumNatText').innerText = temp.natStatus || "";
+            getDom('sumWageInfoText').innerText = temp.wageInfo || "";
+
+            getDom('sumApps').innerText = temp.apps;
+            getDom('sumGoals').innerText = temp.goals;
+            getDom('sumAst').innerText = temp.astCs;
+            getDom('sumAvg').innerText = temp.avgRating;
+            getDom('sumYc').innerText = temp.yc;
+            getDom('sumRc').innerText = temp.rc;
+
+            let growthText = temp.growth > 0 ? `+${temp.growth}` : temp.growth;
+            getDom('sumOvrGrowth').innerText = growthText;
+            getDom('sumOvrGrowth').style.color = temp.growth >= 0 ? 'var(--success)' : 'var(--danger)';
+            getDom('sumNewOvr').innerText = p.ovr;
+
+            let offerRenewal = false;
+            let coachFb = getCoachFeedback(temp.avgRating, p.club === 'Free Agent');
+            let coachMsg = coachFb.text;
+            let coachEmoji = coachFb.emoji;
+
+            if(temp.coachMsgAdd) coachMsg += " " + temp.coachMsgAdd;
+
+            let cInfo = getDom('sumContractInfo');
+            if(p.contract > 0) {
+                cInfo.innerText = `Sisa ${p.contract} Tahun`;
+                cInfo.style.color = '#fff';
+            } else if(p.contract === 0 && p.club !== 'Free Agent') {
+                if(temp.avgRating < 6.0 || temp.apps < 5) {
+                    cInfo.innerText = `KONTRAK HABIS & DILEPAS`;
+                    cInfo.style.color = 'var(--danger)';
+                    coachMsg = "Performa buruk secara teknis. Kami terpaksa melepas kontrakmu. Semoga sukses di klub baru.";
+                    coachEmoji = "👋";
+                    p.club = 'Free Agent'; p.wage = 0;
+                } else {
+                    cInfo.innerText = `KONTRAK HABIS (Nego)`;
+                    cInfo.style.color = 'var(--warning)';
+                    coachMsg = "Kontrakmu habis tapi kami sudah menyodorkan draf perpanjangan. Kami sangat ingin kamu bertahan.";
+                    coachEmoji = "📝";
+                    offerRenewal = true;
+                }
+            } else {
+                cInfo.innerText = `FREE AGENT`; cInfo.style.color = 'var(--danger)';
+            }
+            
+            getDom('sumCoachMsg').innerText = `"${coachMsg}"`;
+            getDom('sumCoachEmoji').innerText = coachEmoji;
+            getDom('sumFanMsg').innerText = `"${getFanFeedback(temp.avgRating, temp.promRelText, p.club === 'Free Agent')}"`;
+
+            generateEndOffers(offerRenewal);
+            switchScreen('screen-summary');
+        }
+
+        function generateEndOffers(offerRenewal) {
+            currentOffers = [];
+
+            if(p.ovr > 75 && p.agent.lvl === 1 && Math.random() > 0.5) {
+                currentOffers.push({ type: 'agent', agent: db.agents[1], desc: 'Meningkatkan peluang negosiasi gaji lebih baik.' });
+            } else if(p.ovr > 85 && p.agent.lvl === 2 && Math.random() > 0.6) {
+                currentOffers.push({ type: 'agent', agent: db.agents[2], desc: 'Akses tawaran elit & negosiasi nilai maksimal!' });
+            }
+
+            if(!p.sponsor && p.followers >= 500000 && Math.random() > 0.4) {
+                let brandList = p.followers >= 3000000 ? db.brandsElite : db.brandsStd;
+                let brand = brandList[rand(0, brandList.length-1)];
+                let pay = Math.floor(p.followers * (Math.random() * 0.5 + 0.2) * p.agent.multiplier);
+                let dur = rand(1,3);
+                currentOffers.push({ type: 'sponsor', brand, pay, dur });
+            }
+
+            if(offerRenewal) {
+                let rWage = Math.floor(p.wage * (1 + (Math.random()*0.2)) * p.agent.multiplier);
+                if (temp.awardText) rWage = Math.floor(rWage * 1.2); 
+                currentOffers.push({ type: 'renewal', club: p.club, league: p.league, wage: rWage });
+            }
+
+            let numOffers = 0;
+            if(p.club === 'Free Agent') numOffers = rand(2, 4); 
+            else if(p.ovr > 80 && p.age <= 30) numOffers = rand(1, 3);
+            else if(temp.avgRating > 7.5) numOffers = rand(1, 2);
+            else if(temp.apps < 15 && p.age < 23) numOffers = rand(1, 2); 
+
+            let offeredClubs = new Set([p.club]); 
+            for(let i=0; i<numOffers; i++) {
+                let tRepMin = p.club === 'Free Agent' ? p.ovr - 15 : p.ovr - 10;
+                let possible = db.leagues.filter(l => l.rep >= tRepMin && l.rep <= p.ovr + 8);
+                if(possible.length === 0) possible = db.leagues; 
+                let tL = possible[rand(0, possible.length - 1)];
+                
+                let tC = tL.clubs[rand(0, tL.clubs.length - 1)];
+                let attempts = 0;
+                while(offeredClubs.has(tC) && attempts < 10) { tC = tL.clubs[rand(0, tL.clubs.length - 1)]; attempts++; }
+
+                if(!offeredClubs.has(tC)) {
+                    offeredClubs.add(tC);
+                    let isLoan = (temp.apps < 15 && p.age < 23 && p.club !== 'Free Agent') ? true : false;
+                    let baseW = (tL.wealth * 500) + (p.ovr * 200);
+                    let offWage = Math.floor(baseW * (1 + (Math.random() * 0.4 - 0.2)) * p.agent.multiplier);
+                    currentOffers.push({ type: isLoan ? 'loan' : 'transfer', club: tC, league: tL, wage: offWage, isFree: p.club === 'Free Agent' });
+                }
+            }
+            renderOffers('transferOffersContainer');
+        }
+
+        function renderOffers(containerId) {
+            const container = getDom(containerId);
+            container.innerHTML = '';
+            
+            let btnId = containerId === 'midOffersContainer' ? null : 'btnStayClub';
+            let btnStay = btnId ? getDom(btnId) : null;
+
+            if(currentOffers.length === 0 && p.club === 'Free Agent' && btnStay) {
+                container.innerHTML = '<p style="text-align:center; font-size:0.9rem;">Tidak ada klub yang berminat merekrutmu saat ini.</p>';
+                btnStay.style.display = 'block'; btnStay.innerText = "Lanjut (Tetap Free Agent)";
+                return;
+            }
+            
+            if(currentOffers.length === 0 && containerId === 'midOffersContainer') {
+                 container.innerHTML = '<p style="text-align:center; font-size:0.9rem; color:#aaa;">Tidak ada pergerakan transfer di jeda paruh musim ini.</p>';
+                 return;
+            }
+
+            currentOffers.forEach((off, index) => {
+                let div = document.createElement('div');
+                if(off.type === 'agent') {
+                    div.className = 'offer-card agent';
+                    div.innerHTML = `<div class="offer-details"><h4>Agen: ${off.agent.name} <span class="badge badge-agent">BARU</span></h4><p>${off.desc}</p></div><button class="btn btn-small" style="background:var(--elite);" onclick="acceptAgent(${index}, '${containerId}')">Ganti Agen</button>`;
+                } else if(off.type === 'sponsor') {
+                    div.className = 'offer-card brand';
+                    div.innerHTML = `<div class="offer-details"><h4>Sponsor: ${off.brand}</h4><p>Nilai: ${formatMoney(off.pay)}/thn | Durasi: ${off.dur} Thn</p></div><button class="btn btn-small" onclick="acceptSponsor(${index}, '${containerId}')">Terima</button>`;
+                } else {
+                    let className = 'offer-card'; let badge = '';
+                    if(off.type === 'loan') { className += ' loan'; badge = '<span class="badge badge-loan">LOAN</span>'; }
+                    else if(off.type === 'renewal') { className += ' renewal'; badge = '<span class="badge badge-renewal">PERPANJANG</span>'; }
+                    else if(off.isFree) badge = '<span class="badge badge-free">FREE AGENT</span>';
+
+                    div.className = className;
+                    div.innerHTML = `<div class="offer-details"><h4>${off.club} ${badge}</h4><p>${off.league.name} (${off.league.country})</p><p style="color:var(--accent); font-weight:600;">Tawaran: ${formatMoney(off.wage)}/pekan</p></div><button class="btn btn-small" onclick="openNego(${index}, '${containerId}')">Negosiasi</button>`;
+                }
+                container.appendChild(div);
+            });
+
+            if(btnStay) {
+                let hasClubOffers = currentOffers.some(o => ['transfer','loan','renewal'].includes(o.type));
+                if(p.club === 'Free Agent') {
+                    btnStay.style.display = 'block'; btnStay.innerText = "Abaikan & Lanjut (Tetap Free Agent)";
+                } else {
+                    btnStay.style.display = 'block';
+                    if(p.contract === 0) btnStay.innerText = "Tolak Semua & Berpisah (Jadi Free Agent)";
+                    else btnStay.innerText = hasClubOffers ? "Tolak Semua & Lanjut di Klub Ini" : "Lanjut Musim Depan";
+                }
+            }
+        }
+
+        function acceptAgent(index, containerId) { p.agent = currentOffers[index].agent; showCustomAlert(`Kamu kini diwakili ${p.agent.name}.`); currentOffers.splice(index, 1); renderOffers(containerId); }
+        function acceptSponsor(index, containerId) { let off = currentOffers[index]; p.sponsor = { brand: off.brand, pay: off.pay, duration: off.dur }; showCustomAlert(`Kontrak eksklusif dengan ${off.brand} ditandatangani!`); currentOffers.splice(index, 1); renderOffers(containerId); }
+
+        let activeContainer = '';
+        let activeOffer = null;
+        function openNego(index, containerId) {
+            activeIndex = index; activeOffer = currentOffers[index]; activeContainer = containerId;
+            getDom('negoModal').style.display = 'flex';
+            let titleStr = `Transfer ke ${activeOffer.club}`;
+            if(activeOffer.type === 'loan') titleStr = `Pinjaman ke ${activeOffer.club}`;
+            if(activeOffer.type === 'renewal') titleStr = `Perpanjang di ${activeOffer.club}`;
+            getDom('negoTitle').innerText = titleStr;
+            
+            let extraTxt = "";
+            if (activeOffer.type === 'renewal' && temp.awardText) extraTxt = " (Posisi tawar kuat karena prestasimu!)";
+            getDom('negoDesc').innerText = `Tawaran awal gaji: ${formatMoney(activeOffer.wage)}/pekan.${extraTxt}`;
+            getDom('negoWage').value = activeOffer.wage;
+            
+            getDom('negoRole').value = p.statusRole === 'Cadangan Pelapis' ? 'rotation' : 'regular';
+            
+            if(activeOffer.type === 'loan') getDom('negoYearsGroup').style.display = 'none';
+            else { getDom('negoYearsGroup').style.display = 'block'; getDom('negoYears').value = rand(2,4); }
+        }
+
+        function submitNegotiation() {
+            let reqWage = parseInt(getDom('negoWage').value);
+            let reqYears = parseInt(getDom('negoYears').value);
+            let reqRole = getDom('negoRole').value;
+            
+            let tolerance = activeOffer.wage * (1.1 + (p.agent.multiplier * 0.2)); 
+            if (activeOffer.type === 'renewal' && temp.awardText) tolerance *= 1.1; 
+
+            // Playing Time Demerit logic
+            let roleDemerit = 0;
+            let diffToLeague = p.ovr - activeOffer.league.rep;
+            if (reqRole === 'star' && diffToLeague < 3) roleDemerit = 30 + (Math.abs(diffToLeague) * 10);
+            if (reqRole === 'regular' && diffToLeague < -3) roleDemerit = 20 + (Math.abs(diffToLeague) * 5);
+            if (p.injuryTrait === 'Rentan Cedera' && (reqRole === 'star' || reqRole === 'regular')) roleDemerit += 20;
+
+            let chance = 100 - ((reqWage / activeOffer.wage) * 100 - 100) * (3 / p.agent.multiplier); 
+            chance -= roleDemerit; 
+
+            if (chance < 0) chance = 0;
+            if (reqWage <= activeOffer.wage && roleDemerit === 0) chance = 100; // auto accept logic
+            
+            if(reqWage <= activeOffer.wage && roleDemerit === 0 || (reqWage <= tolerance && Math.random() * 100 < chance)) {
+                
+                showCustomAlert(`Negosiasi Sukses! Klub menyetujui semua tuntutanmu.`, () => {
+                    let roleStr = "Rotasi";
+                    if(reqRole === 'star') roleStr = "Pemain Bintang (Starter)";
+                    else if(reqRole === 'regular') roleStr = "Pemain Inti (Reguler)";
+                    else if(reqRole === 'backup') roleStr = "Cadangan Pelapis";
+                    
+                    p.statusRole = roleStr;
+                    
+                    if(activeOffer.type === 'loan') {
+                        p.parentClub = p.club; p.parentLeague = p.league;
+                        p.isLoaned = true; p.club = activeOffer.club; p.league = activeOffer.league; p.wage = reqWage;
+                    } else {
+                        p.wage = reqWage; p.contract = reqYears; p.isLoaned = false;
+                        if(activeOffer.type !== 'renewal') { p.club = activeOffer.club; p.league = activeOffer.league; }
+                    }
+                    closeModal('negoModal'); currentOffers = [];
+                    if(activeContainer === 'midOffersContainer') simSecondHalf(); else nextSeason();
+                });
+
+            } else {
+                let reason = "permintaan gajimu terlalu tinggi dari anggaran klub.";
+                if (roleDemerit > 20) reason = "mereka tidak berani menjamin waktu bermain seperti yang kamu tuntut.";
+                if (p.injuryTrait === 'Rentan Cedera' && roleDemerit > 20) reason = "mereka ragu memberimu menit bermain reguler karena riwayat cederamu.";
+
+                let msgFa = (activeOffer.type === 'renewal') ? "\nKarena ini perpanjangan kontrak, kamu harus memilih tawaran lain atau berstatus Free Agent!" : "";
+                
+                showCustomAlert(`Negosiasi GAGAL! ${activeOffer.club} membatalkan tawaran karena ${reason}` + msgFa, () => {
+                    currentOffers.splice(activeIndex, 1); closeModal('negoModal'); renderOffers(activeContainer); 
+                });
+            }
+        }
+
+        function nextSeason() {
+            currentOffers = [];
+            if(p.contract === 0 && p.club !== 'Free Agent') { p.club = 'Free Agent'; p.wage = 0; p.statusRole = 'Tidak Jelas'; }
+            
+            if(p.club === 'Free Agent') {
+                showCustomAlert("Kamu berstatus Free Agent. Tunggu tawaran klub lain musim depan.", () => {
+                    updateDashUI(); switchScreen('screen-dashboard');
+                });
+            } else {
+                updateDashUI(); switchScreen('screen-dashboard');
+            }
+        }
+
+        function showHistory() {
+            getDom('retireTitle').innerText = "Riwayat Karir Berjalan";
+            getDom('btnBackToDash').style.display = 'inline-block';
+            getDom('btnRestart').style.display = 'none';
+            getDom('retireStatsTop').style.display = 'none';
+            getDom('retireSummaryDetails').style.display = 'none';
+            getDom('managerBtnContainer').style.display = 'none';
+            renderTable(); switchScreen('screen-retire');
+        }
+
+        function retireConfirm() {
+            showCustomConfirm("Yakin ingin mengakhiri karir sepakbolamu?", (res) => {
+                if (res) executeRetire();
+            });
+        }
+
+        function executeRetire() {
+            p.retired = true;
+            getDom('retireTitle').innerText = "Karir Selesai";
+            getDom('retAge').innerText = p.age;
+            getDom('retOvr').innerText = p.ovr;
+            
+            let uniqueClubs = [...new Set(p.careerHistory.filter(h => !h.club.includes('Free Agent')).map(h => h.club))];
+            let uniqueLeagues = [...new Set(p.careerHistory.filter(h => h.league && h.league !== '-').map(h => h.league))];
+            
+            getDom('retClubsList').innerText = uniqueClubs.length > 0 ? uniqueClubs.join(', ') : 'Tidak ada';
+            getDom('retLeaguesList').innerText = uniqueLeagues.length > 0 ? uniqueLeagues.join(', ') : 'Tidak ada';
+            getDom('retAppsVal').innerText = p.stats.apps; getDom('retGoalsVal').innerText = p.stats.goals; getDom('retAstVal').innerText = p.stats.astCs;
+            getDom('retTrofiVal').innerText = p.trophies.league + p.trophies.cup + p.trophies.cont + p.trophies.wc;
+            getDom('retAwardsVal').innerText = p.stats.indAwards + p.stats.bd;
+            getDom('retCardsVal').innerText = `${p.stats.yc}/${p.stats.rc}`;
+
+            getDom('btnBackToDash').style.display = 'none'; getDom('btnRestart').style.display = 'inline-block';
+            getDom('retireStatsTop').style.display = 'grid'; getDom('retireSummaryDetails').style.display = 'block';
+            getDom('managerBtnContainer').style.display = 'block';
+
+            renderTable(); switchScreen('screen-retire');
+        }
+
+        function startManagerCareer() {
+            let rep = p.ovr + (p.trophies.league * 2) + p.stats.caps + p.stats.bd;
+            let job = "";
+            if(rep > 100) job = `Pelatih Kepala Klub Top / Timnas ${p.nat}`;
+            else if(rep > 80) job = "Pelatih Kepala Kasta Kedua / Asisten Pelatih Tim Utama";
+            else job = "Staf Akademi / Pelatih Tim U-19";
+            
+            showCustomAlert(`Berdasarkan karir dan reputasimu, kamu mendapat tawaran kontrak sebagai:\n\n[ ${job} ]\n\nTerima kasih telah bermain Pro Football Simulator!`);
+        }
+
+        function renderTable() {
+            const tbody = document.querySelector('#historyTable tbody'); tbody.innerHTML = '';
+            p.careerHistory.forEach(h => {
+                let tr = document.createElement('tr');
+                tr.innerHTML = `<td>${h.season}</td><td>${h.age}</td><td class="text-left">${h.club}</td><td>${h.apps}</td><td>${h.goals}</td><td>${h.astCs}</td><td>${h.rating}</td><td style="color:gold; font-size:0.75rem;">${h.trophies}</td>`;
+                tbody.appendChild(tr);
+            });
+        }
+    </script>
+</body>
+</html>
