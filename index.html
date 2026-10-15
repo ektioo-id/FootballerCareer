@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pocket Football Career Simulator v1.1</title>
+    <title>Pocket Football Career Simulator v1.2</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap');
 
@@ -26,6 +27,7 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
 
         body {
+            /* Background awal, akan diubah dinamis lewat JS berdasarkan Klub */
             background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
             background-size: 400% 400%;
             animation: gradientBG 15s ease infinite;
@@ -37,6 +39,7 @@
             overflow-x: hidden;
             padding: 20px;
             -webkit-tap-highlight-color: transparent;
+            transition: background 1.5s ease;
         }
 
         @keyframes gradientBG {
@@ -186,7 +189,8 @@
         
         <!-- START SCREEN -->
         <div id="screen-start" class="screen active">
-            <h1>Pro Football Simulator</h1>
+            <h1>Pro Football Simulator 2027</h1>
+            <center><text>Make A History Become A Pro Footballer<text>
             <p style="text-align: center;">Mulai dari akademi, buktikan bakatmu. Raih masa kejayaan hingga menjadi Legenda!</p>
             
             <div class="form-group">
@@ -198,10 +202,6 @@
                 <label>Kewarganegaraan</label>
                 <select id="playerNat">
                     <option value="Indonesia">Indonesia</option>
-                    <option value="Korea Selatan">Korea Selatan</option>
-                    <option value="Thailand">Thailand</option>
-                    <option value="Malaysia">Malaysia</option>
-                    <option value="India">India</option>
                     <option value="Inggris">Inggris</option>
                     <option value="Spanyol">Spanyol</option>
                     <option value="Jerman">Jerman</option>
@@ -209,12 +209,18 @@
                     <option value="Prancis">Prancis</option>
                     <option value="Belanda">Belanda</option>
                     <option value="Portugal">Portugal</option>
-                    <option value="Turki">Turki</option>
-                    <option value="Belgia">Belgia</option>
                     <option value="Brazil">Brazil</option>
                     <option value="Argentina">Argentina</option>
-                    <option value="Meksiko">Meksiko</option>
+                    <option value="Amerika Serikat">Amerika Serikat</option>
+                    <option value="Arab Saudi">Arab Saudi</option>
+                    <option value="Korea Selatan">Korea Selatan</option>
                     <option value="Jepang">Jepang</option>
+                    <option value="Meksiko">Meksiko</option>
+                    <option value="Turki">Turki</option>
+                    <option value="Belgia">Belgia</option>
+                    <option value="Thailand">Thailand</option>
+                    <option value="Malaysia">Malaysia</option>
+                    <option value="India">India</option>
                 </select>
             </div>
 
@@ -425,11 +431,22 @@
             
             <div class="dashboard-grid" id="retireStatsTop">
                 <div class="card" style="grid-column: span 2;"><h3>Usia</h3><div class="value" id="retAge"></div></div>
-                <div class="card"><h3>Rating</h3><div class="value" id="retOvr"></div></div>
+                <div class="card"><h3>Rating Akhir</h3><div class="value" id="retOvr"></div></div>
+            </div>
+
+            <!-- Post-Career Dashboard (Tampil setelah memilih lanjut karir) -->
+            <div id="postCareerContainer" style="display:none; margin-bottom:20px;">
+                <div class="card" style="background: rgba(212,175,55,0.1); border-color: var(--elite); text-align: center;">
+                    <h3 style="color:var(--elite); margin-bottom:10px; font-size:1.1rem;">Fase Pasca Pensiun</h3>
+                    <p style="font-size: 0.9rem; margin-bottom: 5px; color:#fff;">Pekerjaan: <strong id="postJob"></strong></p>
+                    <p style="font-size: 0.9rem; margin-bottom: 10px; color:#ccc;">Usia Saat Ini: <strong id="postAgeDisplay"></strong> | Gaji: <strong id="postSalaryDisplay" style="color:var(--success)"></strong></p>
+                    
+                    <button class="btn btn-small" id="btnSimPostCareer" style="background:var(--elite); color:#000; width:100%; padding: 12px; margin-bottom: 10px;" onclick="simPostCareerYear()">Lanjut 1 Tahun (Kerja & Bisnis)</button>
+                </div>
             </div>
 
             <div class="card" style="text-align: left; margin-bottom:20px; display:none;" id="retireSummaryDetails">
-                <h3 style="color:var(--accent); text-align: center; margin-bottom:15px;">Karir Overview</h3>
+                <h3 style="color:var(--accent); text-align: center; margin-bottom:15px;">Karir Pemain Overview</h3>
                 <p style="font-size: 0.85rem; margin-bottom: 8px;"><strong>Klub:</strong> <span id="retClubsList" style="color: #fff;"></span></p>
                 <p style="font-size: 0.85rem; margin-bottom: 8px;"><strong>Liga:</strong> <span id="retLeaguesList" style="color: #fff;"></span></p>
                 <hr style="border-color: var(--glass-border); margin: 10px 0;">
@@ -457,18 +474,17 @@
                 </div>
             </div>
             
-            <!-- Tambahan menu market untuk pensiunan -->
             <div id="retireMarketBtns" style="display: none; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; justify-content: center;">
-                <button class="btn btn-secondary" onclick="openShopModal()" style="margin:0; background:rgba(0,170,255,0.2); border-color:var(--blue); flex: 1 1 45%;">🛒 Market</button>
-                <button class="btn btn-secondary" onclick="openPortfolioModal()" style="margin:0; background:rgba(0,204,102,0.2); border-color:var(--success); flex: 1 1 45%;">💼 Portofolio</button>
+                <button class="btn btn-secondary" onclick="openShopModal()" style="margin:0; background:rgba(0,170,255,0.2); border-color:var(--blue); flex: 1 1 45%;">🛒 Market / Bisnis</button>
+                <button class="btn btn-secondary" onclick="openPortfolioModal()" style="margin:0; background:rgba(0,204,102,0.2); border-color:var(--success); flex: 1 1 45%;">💼 Portofolio Saya</button>
             </div>
 
             <div id="managerBtnContainer" style="display:none; text-align:center; margin-bottom:15px;">
-                <button class="btn" style="background:var(--elite); color:#000;" onclick="startManagerCareer()">Lanjut Jadi Pelatih</button>
+                <button class="btn" style="background:var(--elite); color:#000;" onclick="startManagerCareer()">Lanjut Karir (Manager/Pelatih/Pundit)</button>
             </div>
 
             <button class="btn" id="btnBackToDash" onclick="switchScreen('screen-dashboard')" style="display:none; margin-bottom:10px;">Kembali</button>
-            <button class="btn btn-danger" id="btnRestart" onclick="location.reload()">Mulai Karir Baru</button>
+            <button class="btn btn-danger" id="btnRestart" onclick="location.reload()">Mulai Karir Baru / Reset</button>
         </div>
     </div>
 
@@ -479,7 +495,7 @@
             <p style="text-align:center; margin-bottom:15px;">Uang Bank: <strong id="shopMoneyText" style="color:var(--success)">$0</strong></p>
             
             <div style="display:flex; gap:8px; margin-bottom:15px; overflow-x:auto; padding-bottom:5px;" class="hide-scrollbar">
-                <button class="btn btn-small btn-secondary" style="flex-shrink:0; margin:0;" onclick="renderShop('agent')">Agen</button>
+                <button class="btn btn-small btn-secondary" id="btnShopAgent" style="flex-shrink:0; margin:0;" onclick="renderShop('agent')">Agen</button>
                 <button class="btn btn-small btn-secondary" style="flex-shrink:0; margin:0;" onclick="renderShop('property')">Properti</button>
                 <button class="btn btn-small btn-secondary" style="flex-shrink:0; margin:0;" onclick="renderShop('vehicle')">Kendaraan</button>
                 <button class="btn btn-small btn-secondary" style="flex-shrink:0; margin:0;" onclick="renderShop('electronic')">Elektronik</button>
@@ -500,7 +516,7 @@
         </div>
     </div>
 
-    <!-- PORTFOLIO MODAL (NEW) -->
+    <!-- PORTFOLIO MODAL -->
     <div class="modal-overlay" id="portfolioModal">
         <div class="modal-content" style="text-align: left;">
             <h2 style="color:var(--success); margin-bottom:5px; text-align:center;">Manajemen Portofolio</h2>
@@ -608,7 +624,7 @@
                 { id: 'por1', name: 'Primeira Liga', country: 'Portugal', tier: 1, rep: 76, wealth: 65, clubs: ['Benfica', 'Sporting CP', 'FC Porto', 'Braga', 'Vitoria Guimaraes', 'Boavista'] },
                 
                 { id: 'ksa1', name: 'Pro League', country: 'Arab Saudi', tier: 1, rep: 72, wealth: 98, clubs: ['Al Hilal', 'Al Nassr', 'Al Ahli', 'Al Ittihad', 'Al Taawoun', 'Al Ettifaq'] },
-                { id: 'usa1', name: 'MLS', country: 'Amerika', tier: 1, rep: 68, wealth: 75, clubs: ['Inter Miami', 'LA Galaxy', 'LAFC', 'Seattle Sounders', 'Atlanta United', 'New York City FC', 'Columbus Crew'] },
+                { id: 'usa1', name: 'MLS', country: 'Amerika Serikat', tier: 1, rep: 68, wealth: 75, clubs: ['Inter Miami', 'LA Galaxy', 'LAFC', 'Seattle Sounders', 'Atlanta United', 'New York City FC', 'Columbus Crew'] },
                 { id: 'bra1', name: 'Brasileirão', country: 'Brazil', tier: 1, rep: 75, wealth: 60, clubs: ['Flamengo', 'Palmeiras', 'Sao Paulo', 'Fluminense', 'Botafogo', 'Gremio', 'Atletico Mineiro'] },
                 { id: 'jpn1', name: 'J1 League', country: 'Jepang', tier: 1, rep: 65, wealth: 55, clubs: ['Vissel Kobe', 'Yokohama FM', 'Kawasaki F', 'Urawa Reds', 'Kashima Antlers', 'Sanfrecce Hiroshima'] },
                 { id: 'kor1', name: 'K League 1', country: 'Korea Selatan', tier: 1, rep: 66, wealth: 55, clubs: ['Ulsan HD', 'Jeonbuk Hyundai', 'FC Seoul', 'Pohang Steelers', 'Suwon Samsung', 'Incheon United'] },
@@ -623,7 +639,8 @@
                 'Prancis': ['Orange', 'Renault', 'Dior', 'Michelin', 'Louis Vuitton'],
                 'Korea Selatan': ['Hyundai', 'LG', 'Kia', 'Samsung'],
                 'Jepang': ['Sony', 'Toyota', 'Nintendo', 'Honda', 'Uniqlo'],
-                'Amerika': ['Nike', 'Apple', 'Ford', 'Coca-Cola', 'Visa']
+                'Amerika Serikat': ['Nike', 'Apple', 'Ford', 'Coca-Cola', 'Visa'],
+                'Arab Saudi': ['Aramco', 'Saudia', 'STC', 'SABIC']
             },
             brandsStd: ['Casio', 'New Balance', 'TCL', 'Hisense', 'Spotify', 'Mastercard', 'Chevrolet', 'Red Bull', 'Pepsico'],
             brandsElite: ['Rolex', 'EA Sports', 'Fly Emirates', 'Qatar Airways', 'BMW', 'Balenciaga'],
@@ -684,7 +701,8 @@
             trophies: { league: 0, cup: 0, cont: 0, wc: 0 },
             careerHistory: [], sponsor: null, isPro: false, retired: false,
             assets: [], agent: { name: 'Agen Bawaan Akademi', lvl: 0, multiplier: 0.7, cut: 0.02 },
-            debt: 0, debtLimit: 10000
+            debt: 0, debtLimit: 0, initialDebtLimit: 0, debtYears: 0, // bankruptcy system
+            isPostCareer: false, postCareerJob: '', postCareerSalary: 0 // post-retirement system
         };
 
         let curSeason = { apps:0, goals:0, astCs:0, yc:0, rc:0, ratingSum:0, ratingCount:0 };
@@ -696,12 +714,10 @@
         let activeContainer = '';
         let activeOffer = null;
         
-        let globalPrices = { btc: 65000, gold: 80 }; // Harga global market BTC dan Gold
+        let globalPrices = { btc: 65000, gold: 80 };
 
         const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
-        const formatMoney = (num) => {
-            return '$' + Math.floor(num).toLocaleString('en-US');
-        };
+        const formatMoney = (num) => { return '$' + Math.floor(num).toLocaleString('en-US'); };
         const formatNum = (num) => {
             if(num >= 1000000) return (num/1000000).toFixed(1) + 'M';
             if(num >= 1000) return (num/1000).toFixed(1) + 'K';
@@ -712,8 +728,32 @@
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             getDom(id).classList.add('active');
             window.scrollTo({ top: 0, behavior: 'smooth' });
+            updateThemeColor();
         };
         const isDefensivePos = () => ['CB', 'FB', 'GK'].includes(p.pos);
+
+        function updateThemeColor() {
+            if (!p.club || p.club === 'Free Agent' || p.isPostCareer) {
+                document.body.style.background = 'linear-gradient(135deg, #0f2027, #203a43, #2c5364)';
+                document.body.style.backgroundSize = '400% 400%';
+                return;
+            }
+            
+            // Generate soft colors based on club string hash
+            let hash = 0;
+            for (let i = 0; i < p.club.length; i++) {
+                hash = p.club.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            let hue = Math.abs(hash % 360);
+            
+            // Keep saturation moderate and lightness dark so text remains readable
+            let bg1 = `hsl(${hue}, 40%, 15%)`;
+            let bg2 = `hsl(${(hue + 40) % 360}, 30%, 18%)`;
+            let bg3 = `hsl(${(hue + 80) % 360}, 45%, 12%)`;
+            
+            document.body.style.background = `linear-gradient(135deg, ${bg1}, ${bg2}, ${bg3})`;
+            document.body.style.backgroundSize = '400% 400%';
+        }
 
         let alertCallback = null;
         function showCustomAlert(msg, callback = null) {
@@ -753,6 +793,10 @@
             p.league = possibleLeagues[rand(0, possibleLeagues.length - 1)];
             p.club = p.league.clubs[rand(0, p.league.clubs.length - 1)];
             p.contract = 2;
+            
+            p.initialDebtLimit = rand(10000, 50000); // Batas limit awal diacak (Req 5)
+            p.debtLimit = p.initialDebtLimit;
+
             updateResidence();
             generateMarketInvestments();
 
@@ -836,6 +880,7 @@
         }
 
         function updateDashUI() {
+            updateThemeColor(); // Update theme color whenever dashboard is refreshed
             getDom('dashName').innerText = p.name;
             getDom('dashInfo').innerText = `${p.pos} | ${p.nat} | Usia: ${p.age}`;
             getDom('dashClub').innerText = p.club === 'Free Agent' ? 'Tanpa Klub (Free Agent)' : `${p.club} (${p.league.name})`;
@@ -884,27 +929,27 @@
 
         function generateMarketInvestments() {
             currentMarketInvestments = [];
-            // Generate Clubs selling shares
             let numClubs = rand(1, 3);
             for(let i=0; i<numClubs; i++) {
                 let l = db.leagues[rand(0, db.leagues.length-1)];
                 let c = l.clubs[rand(0, l.clubs.length-1)];
                 let share = rand(10, 100); 
                 let baseVal = l.wealth * 80000 + rand(100000, 5000000);
-                if (l.rep > 80) baseVal *= rand(2, 5); // top clubs expensive
+                if (l.rep > 80) baseVal *= rand(2, 5); 
                 let price = Math.floor(baseVal * (share/100));
-                currentMarketInvestments.push({ id: 'inv_fc_'+Date.now()+'_'+i, name: `Klub ${c} - ${share}%`, price: price, type: 'investment_fc', baseVal: baseVal, share: share, club: c });
+                // Nama saham disesuaikan agar tidak mengandung tulisan persentase (Req 6)
+                currentMarketInvestments.push({ id: 'inv_fc_'+Date.now()+'_'+i, name: `Saham Klub ${c}`, price: price, type: 'investment_fc', baseVal: baseVal, share: share, club: c });
             }
-            // Generate Esports
+            
             let numEsports = rand(1, 2);
             for(let i=0; i<numEsports; i++) {
                 let t = db.esportsTeams[rand(0, db.esportsTeams.length-1)];
                 let share = rand(10, 100);
                 let baseVal = rand(300000, 2000000);
                 let price = Math.floor(baseVal * (share/100));
-                currentMarketInvestments.push({ id: 'inv_es_'+Date.now()+'_'+i, name: `Esports ${t} - ${share}%`, price: price, type: 'investment_es', baseVal: baseVal, share: share, team: t });
+                currentMarketInvestments.push({ id: 'inv_es_'+Date.now()+'_'+i, name: `Saham Esports ${t}`, price: price, type: 'investment_es', baseVal: baseVal, share: share, team: t });
             }
-            // Generate General Business / Brands
+            
             let numBrands = rand(1, 3);
             let brandTypes = ['Startup Teknologi AI', 'Brand Fashion Lokal', 'Franchise Restoran Ayam', 'Perusahaan Properti', 'Agensi Media', 'Startup Kripto'];
             for(let i=0; i<numBrands; i++) {
@@ -912,16 +957,19 @@
                 let share = rand(5, 50);
                 let baseVal = rand(500000, 10000000);
                 let price = Math.floor(baseVal * (share/100));
-                currentMarketInvestments.push({ id: 'inv_br_'+Date.now()+'_'+i, name: `${t} - ${share}%`, price: price, type: 'investment_biz', baseVal: baseVal, share: share });
+                currentMarketInvestments.push({ id: 'inv_br_'+Date.now()+'_'+i, name: `Saham ${t}`, price: price, type: 'investment_biz', baseVal: baseVal, share: share });
             }
 
-            // Always add Gold and Crypto at the top with current global prices
             currentMarketInvestments.unshift({ id: 'inv_gold', name: 'Emas (Logam Mulia)', unitPrice: globalPrices.gold, type: 'investment_gold', unit: 'g' });
             currentMarketInvestments.unshift({ id: 'inv_btc', name: 'Bitcoin (Kripto)', unitPrice: globalPrices.btc, type: 'investment_crypto', unit: 'BTC' });
         }
 
         function openShopModal() {
-            renderShop('property'); // Default view
+            // Sembunyikan tombol agen jika sudah post-career (karena tidak relevan)
+            if (p.isPostCareer) getDom('btnShopAgent').style.display = 'none';
+            else getDom('btnShopAgent').style.display = 'inline-block';
+
+            renderShop('property'); 
             let nonInv = p.assets.filter(a => !a.type.startsWith('investment'));
             let invCount = p.assets.length - nonInv.length;
             let txt = nonInv.length > 0 ? nonInv.map(a => a.name).join(', ') : 'Belum ada aset fisik.';
@@ -953,7 +1001,7 @@
                             <input type="number" id="repayAmount" placeholder="Jumlah bayar..." style="width:60%; display:inline-block; padding:10px; font-size:0.9rem;">
                             <button class="btn btn-small btn-secondary" onclick="repayMoney()" style="width:35%; display:inline-block; margin-left:2%;">Bayar</button>
                         </div>
-                        <p style="font-size:0.75rem; color:#aaa; margin-top:10px;">Peringatan: Jika uangmu tidak cukup di akhir musim, saldo bank akan terkuras habis otomatis untuk bayar hutang beserta bunganya, sisa hutang akan terakumulasi!</p>
+                        <p style="font-size:0.75rem; color:#aaa; margin-top:10px;">Peringatan: Jika uangmu tidak cukup di akhir musim, saldo bank akan terkuras otomatis untuk bayar cicilan. Jika dibiarkan gagal bayar 3 musim berturut-turut, kamu akan dinyatakan BANGKRUT dan game selesai!</p>
                     </div>
                 `;
                 return;
@@ -1011,10 +1059,11 @@
                             </div>
                         `;
                     } else {
+                        // Tidak lagi menampilkan - X% di nama saat membeli (Req 6)
                         div.innerHTML = `
                             <div>
                                 <h4>${item.name} <span class="shop-badge">${badgeName}</span></h4>
-                                <p>${formatMoney(item.price)}<br><span style="font-size:0.75rem; color:var(--success);">Bisa diperjualbelikan (Fluktuatif).</span></p>
+                                <p>${formatMoney(item.price)}<br><span style="font-size:0.75rem; color:var(--success);">Tawaran Porsi Blok: ${item.share}%</span></p>
                             </div>
                             <button class="btn btn-small" style="margin:0;" onclick="buyItem('${item.id}')">Beli</button>
                         `;
@@ -1055,7 +1104,7 @@
                 let color = profitLoss >= 0 ? 'var(--success)' : 'var(--danger)';
                 let sign = profitLoss > 0 ? '+' : '';
 
-                let amountStr = a.unitPrice ? `${a.ownedAmount} ${a.unit}` : `${a.ownedAmount}% (Blok)`;
+                let amountStr = a.unitPrice ? `${a.ownedAmount} ${a.unit}` : `${a.ownedAmount}% (Porsi)`;
                 let unitName = a.unitPrice ? a.unit : '%';
 
                 div.innerHTML = `
@@ -1095,7 +1144,7 @@
 
             if (sellAmount >= a.ownedAmount) {
                 p.assets.splice(assetIndex, 1);
-                showCustomAlert(`Pencairan Sukses!\n\nBerhasil menjual SELURUH aset [${a.name}] senilai ${formatMoney(currentVal)}.`);
+                showCustomAlert(`Pencairan Sukses!\n\nBerhasil menjual SELURUH porsi [${a.name}] senilai ${formatMoney(currentVal)}.`);
             } else {
                 a.ownedAmount -= sellAmount;
                 a.totalInvested -= originalCostProportion;
@@ -1105,9 +1154,10 @@
                 showCustomAlert(`Pencairan Sukses!\n\nBerhasil menjual ${sellAmount}${a.unitPrice ? ' '+a.unit : '%'} dari [${a.name}] senilai ${formatMoney(currentVal)}.`);
             }
 
-            updateDashUI();
+            if (!p.isPostCareer) updateDashUI();
+            else updatePostCareerUI();
+            
             renderPortfolio();
-            // Also update shop UI if open
             if(getDom('shopModal').style.display === 'flex') {
                 getDom('shopMoneyText').innerText = formatMoney(p.money);
             }
@@ -1121,7 +1171,8 @@
             p.debt += amount;
             p.money += amount;
             showCustomAlert(`Peminjaman Berhasil!\n\nDana sebesar ${formatMoney(amount)} telah ditambahkan ke rekeningmu.`);
-            updateDashUI(); renderShop('bank');
+            if(!p.isPostCareer) updateDashUI(); else updatePostCareerUI();
+            renderShop('bank');
         }
 
         function repayMoney() {
@@ -1132,8 +1183,12 @@
             
             p.money -= amount;
             p.debt -= amount;
+            
+            if (p.debt === 0) p.debtYears = 0; // Reset hutang strike
+            
             showCustomAlert(`Pembayaran Berhasil!\n\nKamu telah mencicil hutang sebesar ${formatMoney(amount)}.`);
-            updateDashUI(); renderShop('bank');
+            if(!p.isPostCareer) updateDashUI(); else updatePostCareerUI();
+            renderShop('bank');
         }
 
         function playCasino() {
@@ -1143,16 +1198,16 @@
             
             p.money -= bet;
             
-            if (Math.random() < 0.48) { // 48% win chance
+            if (Math.random() < 0.48) { 
                 let win = bet * 2;
                 p.money += win;
                 p.morale = 'Sangat Bahagia';
-                showCustomAlert(`🎉 JACKPOT JACKPOT!\n\nTaruhanmu berhasil! Kamu memenangkan ${formatMoney(win)}! Moralmu naik drastis karena keberuntungan ini.`);
+                showCustomAlert(`🎉 JACKPOT JACKPOT!\n\nTaruhanmu berhasil! Kamu memenangkan ${formatMoney(win)}! Moralmu naik drastis.`);
             } else {
                 p.morale = 'Kecewa';
                 showCustomAlert(`💀 ZONK!\n\nSayang sekali taruhanmu meleset. Uangmu hangus dimakan bandar. Moralmu menurun.`);
             }
-            updateDashUI();
+            if(!p.isPostCareer) updateDashUI(); else updatePostCareerUI();
             renderShop('casino');
         }
 
@@ -1197,17 +1252,27 @@
                 } else {
                     let newAsset = JSON.parse(JSON.stringify(item));
                     if (item.type.startsWith('investment')) {
-                        newAsset.ownedAmount = item.share; 
-                        newAsset.totalInvested = price;
-                        newAsset.currentTotalValue = price; 
+                        // Menjumlahkan share jika membeli lebih dari 1 blok perusahaan yang sama (jarang terjadi tp untuk savety)
+                        let existing = p.assets.find(a => a.id === item.id);
+                        if(existing) {
+                            existing.ownedAmount += item.share;
+                            existing.totalInvested += price;
+                            existing.currentTotalValue += price;
+                        } else {
+                            newAsset.ownedAmount = item.share; 
+                            newAsset.totalInvested = price;
+                            newAsset.currentTotalValue = price; 
+                            p.assets.push(newAsset);
+                        }
                         currentMarketInvestments = currentMarketInvestments.filter(i => i.id !== id);
+                    } else {
+                        p.assets.push(newAsset);
                     }
-                    p.assets.push(newAsset);
                     if (item.type === 'property') updateResidence();
-                    showCustomAlert(`Berhasil membeli ${item.name}!`);
+                    showCustomAlert(`Berhasil transaksi aset: ${item.name}!`);
                 }
                 
-                updateDashUI();
+                if(!p.isPostCareer) updateDashUI(); else updatePostCareerUI();
                 renderShop(item.type.startsWith('investment') ? 'investment' : item.type);
                 
                 let nonInv = p.assets.filter(a => !a.type.startsWith('investment'));
@@ -1447,25 +1512,9 @@
             renderOffers('midOffersContainer');
         }
 
-        function simSecondHalf(isFA = false) {
-            let s2 = {apps:0, goals:0, astCs:0, yc:0, rc:0, rating:0, injuryDetails:"", lackOfPlayReason:""};
-            if(!isFA) s2 = generateMatchStats(0.5);
+        function processEconomyHelper(yearlyIncome) {
+            p.money += yearlyIncome;
 
-            temp.half2InjuryText = s2.injuryDetails; temp.half2LackPlay = s2.lackOfPlayReason;
-
-            curSeason.apps += s2.apps; curSeason.goals += s2.goals; curSeason.astCs += s2.astCs;
-            curSeason.yc += s2.yc; curSeason.rc += s2.rc;
-            if(s2.apps > 0) { curSeason.ratingSum += s2.rating; curSeason.ratingCount++; }
-            
-            let avgRating = curSeason.ratingCount > 0 ? (curSeason.ratingSum / curSeason.ratingCount) : 0;
-            
-            p.contract--;
-            
-            // Financials
-            let yearlySalary = p.wage * 52;
-            p.money += yearlySalary; 
-            if(p.sponsor) { p.money += p.sponsor.pay; p.sponsor.duration--; if(p.sponsor.duration <= 0) p.sponsor = null; }
-            
             // Advance Global Prices (Crypto & Gold)
             globalPrices.btc = Math.max(1000, Math.floor(globalPrices.btc * (1 + ((Math.random() * 1.2) - 0.4)))); // -40% to +80%
             globalPrices.gold = Math.max(10, Math.floor(globalPrices.gold * (1 + ((Math.random() * 0.15) - 0.05)))); // -5% to +10%
@@ -1504,37 +1553,97 @@
             p.money += divTotal;
             if (divTotal > 0) invMsg.push(`💰 Dividen tahunan dari aset perusahaan cair: ${formatMoney(divTotal)}`);
 
-            // Remove Bankrupt
+            // Remove Bankrupt assets
             p.assets = p.assets.filter(a => !(a.type.startsWith('investment') && a.currentTotalValue === 0 && !a.unitPrice));
             temp.invDetails = invMsg.length > 0 ? "Kabar Pasar & Portofolio:\n" + invMsg.join('\n') : "";
             
-            // Debt processing
+            // Debt & Bankruptcy Processing (Req 4)
             let debtMsgStr = "";
+            let isBankrupt = false;
+            
             if (p.debt > 0) {
-                let interest = Math.floor(p.debt * 0.10); 
+                p.debtYears++;
+                // Bunga naik semakin lama ditunggak
+                let interestRate = 0.10 + (p.debtYears * 0.05);
+                let interest = Math.floor(p.debt * interestRate); 
                 p.debt += interest;
                 
                 if (p.money >= p.debt) {
                     p.money -= p.debt;
                     debtMsgStr = `Hutang beserta bunga senilai ${formatMoney(p.debt)} telah dilunasi otomatis.`;
                     p.debt = 0;
+                    p.debtYears = 0; // Reset strike
                 } else {
                     let paid = p.money;
                     p.debt -= paid;
                     p.money = 0;
                     debtMsgStr = `⚠️ Uang bank terkuras habis (${formatMoney(paid)}) untuk cicilan hutang. Sisa Hutang: ${formatMoney(p.debt)}!`;
-                    if (p.morale === 'Bahagia' || p.morale === 'Sangat Bahagia') p.morale = 'Biasa'; 
+                    if (p.morale === 'Bahagia' || p.morale === 'Sangat Bahagia') p.morale = 'Biasa';
+                    
+                    if (p.debtYears >= 3) {
+                        isBankrupt = true;
+                    }
                 }
+            } else {
+                p.debtYears = 0;
             }
             temp.debtMsg = debtMsgStr;
 
+            generateMarketInvestments();
+            
+            // Recalculate Limit
+            p.debtLimit = p.initialDebtLimit + Math.floor(p.val * 0.15) + (p.wage * 50);
+
+            return isBankrupt;
+        }
+
+        function triggerBankruptcy() {
+            getDom('customAlertModal').style.zIndex = "9999"; // Bawa ke paling depan
+            showCustomAlert("💥 KEBANGKRUTAN FINANSIAL! 💥\n\nKamu gagal melunasi hutang selama 3 tahun berturut-turut. Pihak bank dan pengadilan menyita seluruh asetmu. Karirmu hancur seketika akibat masalah hukum dan finansial.\n\nGAME OVER.", () => {
+                location.reload();
+            });
+        }
+
+        function simSecondHalf(isFA = false) {
+            let s2 = {apps:0, goals:0, astCs:0, yc:0, rc:0, rating:0, injuryDetails:"", lackOfPlayReason:""};
+            if(!isFA) s2 = generateMatchStats(0.5);
+
+            temp.half2InjuryText = s2.injuryDetails; temp.half2LackPlay = s2.lackOfPlayReason;
+
+            curSeason.apps += s2.apps; curSeason.goals += s2.goals; curSeason.astCs += s2.astCs;
+            curSeason.yc += s2.yc; curSeason.rc += s2.rc;
+            if(s2.apps > 0) { curSeason.ratingSum += s2.rating; curSeason.ratingCount++; }
+            
+            let avgRating = curSeason.ratingCount > 0 ? (curSeason.ratingSum / curSeason.ratingCount) : 0;
+            
+            p.contract--;
+            
+            // Income
+            let yearlySalary = p.wage * 52;
+            let sponsorPay = 0;
+            if(p.sponsor) { 
+                sponsorPay = p.sponsor.pay; 
+                p.sponsor.duration--; 
+                if(p.sponsor.duration <= 0) p.sponsor = null; 
+            }
+            
             // Agent Cut
             let agentFee = 0;
             if (p.wage > 0) {
                 agentFee = Math.floor(yearlySalary * p.agent.cut);
-                p.money -= agentFee;
-                if (p.money < 0) p.money = 0;
             }
+
+            let totalIncomeThisYear = yearlySalary + sponsorPay - agentFee;
+            if (totalIncomeThisYear < 0) totalIncomeThisYear = 0;
+            
+            // Process Economy & Check Bankruptcy
+            let bankrupt = processEconomyHelper(totalIncomeThisYear);
+            if (bankrupt) {
+                triggerBankruptcy();
+                return;
+            }
+
+            temp.agentFee = agentFee; 
 
             let diff = p.ovr - (p.league ? p.league.rep : 50);
             let teamRank = 18; let promRelText = ""; let trophyText = []; let awardText = [];
@@ -1655,11 +1764,6 @@
             temp.growth = growth; temp.natStatus = natStatus; temp.promRelText = promRelText;
             temp.trophyText = trophyText.join(" | "); temp.awardText = awardText.join(" | ");
             temp.rank = isFA ? '-' : teamRank; temp.wasLoaned = p.isLoaned; temp.wageInfo = wageInfo;
-            temp.agentFee = agentFee; 
-            
-            generateMarketInvestments();
-            
-            p.debtLimit = 10000 + Math.floor(p.val * 0.15) + (p.wage * 50);
 
             p.age++; p.seasonYear++;
             calculateDynamicValueWage();
@@ -2067,6 +2171,7 @@
             getDom('retireSummaryDetails').style.display = 'none';
             getDom('managerBtnContainer').style.display = 'none';
             getDom('retireMarketBtns').style.display = 'none';
+            getDom('postCareerContainer').style.display = 'none';
             renderTable(); switchScreen('screen-retire');
         }
 
@@ -2094,20 +2199,70 @@
 
             getDom('btnBackToDash').style.display = 'none'; getDom('btnRestart').style.display = 'inline-block';
             getDom('retireStatsTop').style.display = 'grid'; getDom('retireSummaryDetails').style.display = 'block';
-            getDom('managerBtnContainer').style.display = 'block';
+            
+            // Tampilkan tombol lanjut karir post-retirement
+            if (!p.isPostCareer) {
+                getDom('managerBtnContainer').style.display = 'block';
+            }
             getDom('retireMarketBtns').style.display = 'flex';
 
             renderTable(); switchScreen('screen-retire');
         }
 
+        // Fitur Pasca Pensiun (Req 3)
         function startManagerCareer() {
             let rep = p.ovr + (p.trophies.league * 2) + p.stats.caps + p.stats.bd;
             let job = "";
-            if(rep > 100) job = `Pelatih Kepala Klub Top / Timnas ${p.nat}`;
-            else if(rep > 80) job = "Pelatih Kepala Kasta Kedua / Asisten Pelatih Tim Utama";
-            else job = "Staf Akademi / Pelatih Tim U-19";
+            let salary = 0;
+            if(rep > 100) { job = `Pelatih Kepala Klub Top / Timnas ${p.nat}`; salary = rand(20000, 50000); }
+            else if(rep > 80) { job = "Asisten Manajer / Pelatih Kasta Kedua"; salary = rand(8000, 15000); }
+            else if(rep > 60) { job = "Pundit Olahraga TV"; salary = rand(5000, 10000); }
+            else { job = "Staf Akademi Amatir Lokal"; salary = rand(2000, 5000); }
             
-            showCustomAlert(`Berdasarkan karir dan reputasimu, kamu mendapat tawaran kontrak sebagai:\n\n[ ${job} ]\n\nTerima kasih telah bermain Pro Football Simulator!`);
+            p.postCareerJob = job;
+            p.postCareerSalary = salary;
+            p.isPostCareer = true;
+            
+            showCustomAlert(`Berdasarkan karir dan reputasimu di dunia sepak bola, kamu direkrut sebagai:\n\n[ ${job} ]\n\nGaji: ${formatMoney(salary)} per pekan.\n\nKamu masih bisa mengurus bisnis dan kehidupan mewahmu hingga masa tuamu (Max Usia 65).`, () => {
+                getDom('managerBtnContainer').style.display = 'none';
+                getDom('postCareerContainer').style.display = 'block';
+                updatePostCareerUI();
+            });
+        }
+
+        function updatePostCareerUI() {
+            updateThemeColor(); // Akan kembalikan ke warna default netral
+            getDom('postJob').innerText = p.postCareerJob;
+            getDom('postAgeDisplay').innerText = p.age;
+            getDom('postSalaryDisplay').innerText = formatMoney(p.postCareerSalary);
+        }
+
+        function simPostCareerYear() {
+            if (p.age >= 65) {
+                showCustomAlert("Kamu telah mencapai usia pensiun dari segala aktivitas olahraga profesional (Usia 65). Sekarang saatnya bersantai menikmati hasil jerih payahmu di masa lalu!\n\nTerima kasih telah bermain Pro Football Simulator!");
+                getDom('btnSimPostCareer').style.display = 'none';
+                return;
+            }
+
+            p.age++;
+            p.seasonYear++;
+
+            let yearlySalary = p.postCareerSalary * 52;
+            
+            // Proses Ekonomi (Gaji, Hutang, Dividen, Bangkrut)
+            let bankrupt = processEconomyHelper(yearlySalary);
+            if (bankrupt) {
+                triggerBankruptcy();
+                return;
+            }
+
+            let msg = `1 Tahun berlalu. Kamu kini berusia ${p.age} tahun.\n\nGaji sebagai ${p.postCareerJob} selama setahun sebesar ${formatMoney(yearlySalary)} telah masuk ke rekeningmu.`;
+            if (temp.debtMsg) msg += `\n\n🏦 ${temp.debtMsg}`;
+            if (temp.invDetails) msg += `\n\n📊 ${temp.invDetails}`;
+            
+            showCustomAlert(msg, () => {
+                updatePostCareerUI();
+            });
         }
 
         function renderTable() {
