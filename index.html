@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pocket Football Career Simulator v1.2</title>
+    <title>Pocket Football Career Simulator v1.3</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap');
 
@@ -27,7 +26,6 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
 
         body {
-            /* Background awal, akan diubah dinamis lewat JS berdasarkan Klub */
             background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
             background-size: 400% 400%;
             animation: gradientBG 15s ease infinite;
@@ -190,7 +188,7 @@
         <!-- START SCREEN -->
         <div id="screen-start" class="screen active">
             <h1>Pro Football Simulator 2027</h1>
-            <center><text>Make A History Become A Pro Footballer<text>
+            <center><text>Make A History Become A Pro Footballer</text></center>
             <p style="text-align: center;">Mulai dari akademi, buktikan bakatmu. Raih masa kejayaan hingga menjadi Legenda!</p>
             
             <div class="form-group">
@@ -438,10 +436,19 @@
             <div id="postCareerContainer" style="display:none; margin-bottom:20px;">
                 <div class="card" style="background: rgba(212,175,55,0.1); border-color: var(--elite); text-align: center;">
                     <h3 style="color:var(--elite); margin-bottom:10px; font-size:1.1rem;">Fase Pasca Pensiun</h3>
-                    <p style="font-size: 0.9rem; margin-bottom: 5px; color:#fff;">Pekerjaan: <strong id="postJob"></strong></p>
+                    <p style="font-size: 0.9rem; margin-bottom: 5px; color:#fff;">Pekerjaan: <strong id="postJob"></strong> (<span id="postContract"></span> Thn)</p>
                     <p style="font-size: 0.9rem; margin-bottom: 10px; color:#ccc;">Usia Saat Ini: <strong id="postAgeDisplay"></strong> | Gaji: <strong id="postSalaryDisplay" style="color:var(--success)"></strong></p>
                     
                     <button class="btn btn-small" id="btnSimPostCareer" style="background:var(--elite); color:#000; width:100%; padding: 12px; margin-bottom: 10px;" onclick="simPostCareerYear()">Lanjut 1 Tahun (Kerja & Bisnis)</button>
+                    <button class="btn btn-small" id="btnSearchJob" style="background:var(--accent); color:#000; width:100%; padding: 12px; margin-bottom: 10px; display:none;" onclick="generatePostCareerOffers()">Cari Lowongan Pekerjaan Baru</button>
+
+                    <div class="form-group" style="margin-top: 15px; text-align:left;">
+                        <label style="color:#fff; font-size:0.85rem;">Cek Klasemen Liga Global Musim Ini</label>
+                        <select id="globalLeagueSelect" style="padding: 10px; font-size: 0.85rem;">
+                            <!-- populated via js -->
+                        </select>
+                        <button class="btn btn-small btn-secondary" style="width:100%; margin-top:5px; margin-bottom:0;" onclick="viewGlobalLeague()">🌍 Lihat Klasemen</button>
+                    </div>
                 </div>
             </div>
 
@@ -583,6 +590,16 @@
         </div>
     </div>
 
+    <!-- POST CAREER JOB OFFERS MODAL -->
+    <div class="modal-overlay" id="postJobOffersModal">
+        <div class="modal-content" style="text-align: left; max-height: 90vh; overflow-y: auto;">
+            <h2 style="color:var(--accent); margin-bottom:10px; text-align:center;">Lowongan Kerja Baru</h2>
+            <p style="font-size:0.9rem; margin-bottom:15px; text-align:center; color:#ccc;">Pilih jalur karirmu selanjutnya di dunia sepak bola.</p>
+            <div id="postJobOffersContainer"></div>
+            <button class="btn btn-secondary" style="margin-top: 15px;" onclick="closeModal('postJobOffersModal')">Tutup (Tetap Menganggur)</button>
+        </div>
+    </div>
+
     <!-- CUSTOM INFO/ALERT MODAL -->
     <div class="modal-overlay" id="customAlertModal">
         <div class="modal-content info-content">
@@ -701,8 +718,8 @@
             trophies: { league: 0, cup: 0, cont: 0, wc: 0 },
             careerHistory: [], sponsor: null, isPro: false, retired: false,
             assets: [], agent: { name: 'Agen Bawaan Akademi', lvl: 0, multiplier: 0.7, cut: 0.02 },
-            debt: 0, debtLimit: 0, initialDebtLimit: 0, debtYears: 0, // bankruptcy system
-            isPostCareer: false, postCareerJob: '', postCareerSalary: 0 // post-retirement system
+            debt: 0, debtLimit: 0, initialDebtLimit: 0, debtYears: 0,
+            isPostCareer: false, postCareerJob: '', postCareerSalary: 0, postCareerContract: 0
         };
 
         let curSeason = { apps:0, goals:0, astCs:0, yc:0, rc:0, ratingSum:0, ratingCount:0 };
@@ -739,14 +756,12 @@
                 return;
             }
             
-            // Generate soft colors based on club string hash
             let hash = 0;
             for (let i = 0; i < p.club.length; i++) {
                 hash = p.club.charCodeAt(i) + ((hash << 5) - hash);
             }
             let hue = Math.abs(hash % 360);
             
-            // Keep saturation moderate and lightness dark so text remains readable
             let bg1 = `hsl(${hue}, 40%, 15%)`;
             let bg2 = `hsl(${(hue + 40) % 360}, 30%, 18%)`;
             let bg3 = `hsl(${(hue + 80) % 360}, 45%, 12%)`;
@@ -794,7 +809,7 @@
             p.club = p.league.clubs[rand(0, p.league.clubs.length - 1)];
             p.contract = 2;
             
-            p.initialDebtLimit = rand(10000, 50000); // Batas limit awal diacak (Req 5)
+            p.initialDebtLimit = rand(10000, 50000); 
             p.debtLimit = p.initialDebtLimit;
 
             updateResidence();
@@ -880,7 +895,7 @@
         }
 
         function updateDashUI() {
-            updateThemeColor(); // Update theme color whenever dashboard is refreshed
+            updateThemeColor(); 
             getDom('dashName').innerText = p.name;
             getDom('dashInfo').innerText = `${p.pos} | ${p.nat} | Usia: ${p.age}`;
             getDom('dashClub').innerText = p.club === 'Free Agent' ? 'Tanpa Klub (Free Agent)' : `${p.club} (${p.league.name})`;
@@ -929,16 +944,20 @@
 
         function generateMarketInvestments() {
             currentMarketInvestments = [];
+            
             let numClubs = rand(1, 3);
             for(let i=0; i<numClubs; i++) {
                 let l = db.leagues[rand(0, db.leagues.length-1)];
                 let c = l.clubs[rand(0, l.clubs.length-1)];
                 let share = rand(10, 100); 
-                let baseVal = l.wealth * 80000 + rand(100000, 5000000);
-                if (l.rep > 80) baseVal *= rand(2, 5); 
+                
+                // Peningkatan biaya investasi klub bola secara drastis
+                let baseVal = l.wealth * 500000 + rand(10000000, 50000000);
+                if (l.rep > 80) baseVal *= rand(3, 8); 
+                if (l.rep > 88) baseVal *= rand(2, 4);
+                
                 let price = Math.floor(baseVal * (share/100));
-                // Nama saham disesuaikan agar tidak mengandung tulisan persentase (Req 6)
-                currentMarketInvestments.push({ id: 'inv_fc_'+Date.now()+'_'+i, name: `Saham Klub ${c}`, price: price, type: 'investment_fc', baseVal: baseVal, share: share, club: c });
+                currentMarketInvestments.push({ id: 'inv_fc_'+Date.now()+'_'+i, name: `Saham Klub ${c}`, price: price, type: 'investment_fc', baseVal: baseVal, share: share, club: c, leagueId: l.id });
             }
             
             let numEsports = rand(1, 2);
@@ -950,12 +969,12 @@
                 currentMarketInvestments.push({ id: 'inv_es_'+Date.now()+'_'+i, name: `Saham Esports ${t}`, price: price, type: 'investment_es', baseVal: baseVal, share: share, team: t });
             }
             
-            let numBrands = rand(1, 3);
-            let brandTypes = ['Startup Teknologi AI', 'Brand Fashion Lokal', 'Franchise Restoran Ayam', 'Perusahaan Properti', 'Agensi Media', 'Startup Kripto'];
+            let numBrands = rand(1, 4);
+            let brandTypes = ['Startup Teknologi AI', 'Brand Fashion Lokal', 'Franchise Restoran Ayam', 'Perusahaan Properti', 'Agensi Media', 'Startup Kripto', 'Perusahaan Otomotif', 'Platform Media Online', 'Perusahaan Energi Terbarukan', 'Startup E-Commerce', 'Pabrik Semikonduktor', 'Perusahaan Farmasi', 'Maskapai Penerbangan', 'Jaringan Hotel Mewah', 'Perusahaan Telekomunikasi'];
             for(let i=0; i<numBrands; i++) {
                 let t = brandTypes[rand(0, brandTypes.length-1)];
                 let share = rand(5, 50);
-                let baseVal = rand(500000, 10000000);
+                let baseVal = rand(500000, 20000000);
                 let price = Math.floor(baseVal * (share/100));
                 currentMarketInvestments.push({ id: 'inv_br_'+Date.now()+'_'+i, name: `Saham ${t}`, price: price, type: 'investment_biz', baseVal: baseVal, share: share });
             }
@@ -965,7 +984,6 @@
         }
 
         function openShopModal() {
-            // Sembunyikan tombol agen jika sudah post-career (karena tidak relevan)
             if (p.isPostCareer) getDom('btnShopAgent').style.display = 'none';
             else getDom('btnShopAgent').style.display = 'inline-block';
 
@@ -1059,7 +1077,6 @@
                             </div>
                         `;
                     } else {
-                        // Tidak lagi menampilkan - X% di nama saat membeli (Req 6)
                         div.innerHTML = `
                             <div>
                                 <h4>${item.name} <span class="shop-badge">${badgeName}</span></h4>
@@ -1106,6 +1123,11 @@
 
                 let amountStr = a.unitPrice ? `${a.ownedAmount} ${a.unit}` : `${a.ownedAmount}% (Porsi)`;
                 let unitName = a.unitPrice ? a.unit : '%';
+                
+                let extraButtons = '';
+                if (a.type === 'investment_fc') {
+                    extraButtons = `<button class="btn btn-small" style="width:100%; margin-top:5px; background:rgba(255,255,255,0.1); color:#fff; font-size: 0.8rem; padding: 8px;" onclick="showLeagueTableModal('end', '${a.leagueId}', '${a.club}')">📊 Klasemen Klub ${a.club}</button>`;
+                }
 
                 div.innerHTML = `
                     <div style="display:flex; justify-content:space-between; align-items:flex-start;">
@@ -1123,6 +1145,7 @@
                         <span id="sell_val_${a.id}" style="font-size:0.9rem; font-weight:bold; min-width:55px; text-align:right;">${a.ownedAmount} ${unitName}</span>
                     </div>
                     <button class="btn btn-small" style="width:100%; background:var(--warning); color:#000;" onclick="sellInvestment('${a.id}')">Cairkan / Jual</button>
+                    ${extraButtons}
                 `;
                 container.appendChild(div);
             });
@@ -1166,7 +1189,7 @@
         function borrowMoney() {
             let amount = parseInt(getDom('borrowAmount').value);
             if (isNaN(amount) || amount <= 0) return;
-            if (p.debt + amount > p.debtLimit) { showCustomAlert("Peminjaman Ditolak! Jumlah tersebut melebihi limit kredit yang diberikan bank kepadamu berdasarkan kekayaan dan gajimu."); return; }
+            if (p.debt + amount > p.debtLimit) { showCustomAlert("Peminjaman Ditolak! Jumlah tersebut melebihi limit kredit yang diberikan bank kepadamu."); return; }
             
             p.debt += amount;
             p.money += amount;
@@ -1184,7 +1207,7 @@
             p.money -= amount;
             p.debt -= amount;
             
-            if (p.debt === 0) p.debtYears = 0; // Reset hutang strike
+            if (p.debt === 0) p.debtYears = 0; 
             
             showCustomAlert(`Pembayaran Berhasil!\n\nKamu telah mencicil hutang sebesar ${formatMoney(amount)}.`);
             if(!p.isPostCareer) updateDashUI(); else updatePostCareerUI();
@@ -1252,7 +1275,6 @@
                 } else {
                     let newAsset = JSON.parse(JSON.stringify(item));
                     if (item.type.startsWith('investment')) {
-                        // Menjumlahkan share jika membeli lebih dari 1 blok perusahaan yang sama (jarang terjadi tp untuk savety)
                         let existing = p.assets.find(a => a.id === item.id);
                         if(existing) {
                             existing.ownedAmount += item.share;
@@ -1336,7 +1358,7 @@
                 if(diff >= 5 || p.statusRole.includes('Pemain Bintang')) s.apps = rand(maxApps-8, maxApps);
                 else if(diff >= -5 || p.statusRole.includes('Pemain Inti')) s.apps = rand(Math.floor(maxApps/2), maxApps-3);
                 else if(p.statusRole.includes('Rotasi')) s.apps = rand(Math.floor(maxApps/3), Math.floor(maxApps/1.5));
-                else s.apps = rand(0, Math.floor(maxApps/3)); // Cadangan
+                else s.apps = rand(0, Math.floor(maxApps/3)); 
             }
             if(s.apps < 0) s.apps = 0;
 
@@ -1515,11 +1537,9 @@
         function processEconomyHelper(yearlyIncome) {
             p.money += yearlyIncome;
 
-            // Advance Global Prices (Crypto & Gold)
-            globalPrices.btc = Math.max(1000, Math.floor(globalPrices.btc * (1 + ((Math.random() * 1.2) - 0.4)))); // -40% to +80%
-            globalPrices.gold = Math.max(10, Math.floor(globalPrices.gold * (1 + ((Math.random() * 0.15) - 0.05)))); // -5% to +10%
+            globalPrices.btc = Math.max(1000, Math.floor(globalPrices.btc * (1 + ((Math.random() * 1.2) - 0.4)))); 
+            globalPrices.gold = Math.max(10, Math.floor(globalPrices.gold * (1 + ((Math.random() * 0.15) - 0.05)))); 
 
-            // Investment Market Update
             let invMsg = [];
             let divTotal = 0;
             p.assets.forEach(a => {
@@ -1529,13 +1549,12 @@
                     } else if (a.type === 'investment_gold') {
                         a.unitPrice = globalPrices.gold;
                     } else {
-                        // Business/Club shares
-                        let change = (Math.random() * 0.4) - 0.15; // -15% to +25%
+                        let change = (Math.random() * 0.4) - 0.15;
                         let diff = Math.floor(a.currentTotalValue * change);
                         a.currentTotalValue += diff;
                         
                         if (a.currentTotalValue > 0) {
-                            let dividend = Math.floor(a.currentTotalValue * 0.03); // 3% passive dividend
+                            let dividend = Math.floor(a.currentTotalValue * 0.03); 
                             divTotal += dividend;
                         }
 
@@ -1553,17 +1572,14 @@
             p.money += divTotal;
             if (divTotal > 0) invMsg.push(`💰 Dividen tahunan dari aset perusahaan cair: ${formatMoney(divTotal)}`);
 
-            // Remove Bankrupt assets
             p.assets = p.assets.filter(a => !(a.type.startsWith('investment') && a.currentTotalValue === 0 && !a.unitPrice));
             temp.invDetails = invMsg.length > 0 ? "Kabar Pasar & Portofolio:\n" + invMsg.join('\n') : "";
             
-            // Debt & Bankruptcy Processing (Req 4)
             let debtMsgStr = "";
             let isBankrupt = false;
             
             if (p.debt > 0) {
                 p.debtYears++;
-                // Bunga naik semakin lama ditunggak
                 let interestRate = 0.10 + (p.debtYears * 0.05);
                 let interest = Math.floor(p.debt * interestRate); 
                 p.debt += interest;
@@ -1572,7 +1588,7 @@
                     p.money -= p.debt;
                     debtMsgStr = `Hutang beserta bunga senilai ${formatMoney(p.debt)} telah dilunasi otomatis.`;
                     p.debt = 0;
-                    p.debtYears = 0; // Reset strike
+                    p.debtYears = 0; 
                 } else {
                     let paid = p.money;
                     p.debt -= paid;
@@ -1591,14 +1607,13 @@
 
             generateMarketInvestments();
             
-            // Recalculate Limit
             p.debtLimit = p.initialDebtLimit + Math.floor(p.val * 0.15) + (p.wage * 50);
 
             return isBankrupt;
         }
 
         function triggerBankruptcy() {
-            getDom('customAlertModal').style.zIndex = "9999"; // Bawa ke paling depan
+            getDom('customAlertModal').style.zIndex = "9999"; 
             showCustomAlert("💥 KEBANGKRUTAN FINANSIAL! 💥\n\nKamu gagal melunasi hutang selama 3 tahun berturut-turut. Pihak bank dan pengadilan menyita seluruh asetmu. Karirmu hancur seketika akibat masalah hukum dan finansial.\n\nGAME OVER.", () => {
                 location.reload();
             });
@@ -1618,7 +1633,6 @@
             
             p.contract--;
             
-            // Income
             let yearlySalary = p.wage * 52;
             let sponsorPay = 0;
             if(p.sponsor) { 
@@ -1627,7 +1641,6 @@
                 if(p.sponsor.duration <= 0) p.sponsor = null; 
             }
             
-            // Agent Cut
             let agentFee = 0;
             if (p.wage > 0) {
                 agentFee = Math.floor(yearlySalary * p.agent.cut);
@@ -1636,7 +1649,6 @@
             let totalIncomeThisYear = yearlySalary + sponsorPay - agentFee;
             if (totalIncomeThisYear < 0) totalIncomeThisYear = 0;
             
-            // Process Economy & Check Bankruptcy
             let bankrupt = processEconomyHelper(totalIncomeThisYear);
             if (bankrupt) {
                 triggerBankruptcy();
@@ -1660,7 +1672,6 @@
                 if (curSeason.apps > 25 && diff >= 3) teamRank -= rand(1, 4); 
                 if (teamRank < 1) teamRank = 1; if (teamRank > totalTeams) teamRank = totalTeams;
 
-                // Promosi / Degradasi
                 if(teamRank <= 3 && p.league.tier > 1) { 
                     let higherLeague = db.leagues.find(l => l.country === p.league.country && l.tier === (p.league.tier - 1));
                     if(higherLeague) {
@@ -2089,28 +2100,44 @@
             }
         }
 
-        function showLeagueTableModal(period) {
-            if (p.club === 'Free Agent' || !p.league) {
-                showCustomAlert("Kamu tidak sedang bermain di liga manapun.");
-                return;
+        function showLeagueTableModal(period, overrideLeagueId = null, overrideHighlight = null) {
+            let isPlayerLeague = (overrideLeagueId == null) || (p.league && overrideLeagueId === p.league.id);
+            
+            if (isPlayerLeague && (p.club === 'Free Agent' || !p.league) && !p.isPostCareer) {
+                if (!overrideLeagueId) {
+                    showCustomAlert("Kamu tidak sedang bermain di liga manapun.");
+                    return;
+                }
             }
             
-            getDom('tableName').innerText = p.league.name;
+            let targetLeague = overrideLeagueId ? db.leagues.find(l => l.id === overrideLeagueId) : p.league;
+            if(!targetLeague) return;
+            
+            getDom('tableName').innerText = targetLeague.name;
             const tbody = document.querySelector('#leagueStandings tbody');
             tbody.innerHTML = '';
             
-            let allClubs = [...p.league.clubs];
-            allClubs = allClubs.filter(c => c !== p.club);
-            allClubs.sort(() => Math.random() - 0.5);
+            let allClubs = [...targetLeague.clubs];
             
-            let r = temp.rank;
-            if (r === '-' || r == null) r = Math.floor(allClubs.length / 2); 
-            
-            let posIndex = r - 1;
-            if (posIndex < 0) posIndex = 0;
-            if (posIndex > allClubs.length) posIndex = allClubs.length;
-            
-            allClubs.splice(posIndex, 0, p.club);
+            if (isPlayerLeague && !overrideHighlight && !p.isPostCareer && p.club !== 'Free Agent') {
+                allClubs = allClubs.filter(c => c !== p.club);
+                allClubs.sort(() => Math.random() - 0.5);
+                
+                let r = temp.rank;
+                if (r === '-' || r == null) r = Math.floor(allClubs.length / 2); 
+                
+                let posIndex = r - 1;
+                if (posIndex < 0) posIndex = 0;
+                if (posIndex > allClubs.length) posIndex = allClubs.length;
+                
+                allClubs.splice(posIndex, 0, p.club);
+            } else {
+                let sortedClubs = allClubs.map((c, i) => {
+                    return { club: c, score: (allClubs.length - i) * 10 + rand(0, 30) };
+                });
+                sortedClubs.sort((a,b) => b.score - a.score);
+                allClubs = sortedClubs.map(s => s.club);
+            }
             
             let totalMatches = (allClubs.length - 1) * 2;
             if (period === 'mid') totalMatches = Math.floor(totalMatches / 2); 
@@ -2118,7 +2145,8 @@
             let currentPoints = totalMatches * 2.6;
             
             allClubs.forEach((club, index) => {
-                let isPlayerTeam = (club === p.club);
+                let isPlayerTeam = (isPlayerLeague && club === p.club && !p.isPostCareer);
+                let isOwnedTeam = (club === overrideHighlight);
                 let matchPlayed = totalMatches;
                 
                 let win = Math.floor(currentPoints / 3);
@@ -2130,11 +2158,18 @@
                 let pts = (win * 3) + draw;
                 
                 let tr = document.createElement('tr');
-                if (isPlayerTeam) tr.style.background = 'rgba(0, 255, 204, 0.2)';
+                if (isPlayerTeam && isOwnedTeam) tr.style.background = 'linear-gradient(90deg, rgba(0,255,204,0.2) 0%, rgba(255,204,0,0.2) 100%)';
+                else if (isPlayerTeam) tr.style.background = 'rgba(0, 255, 204, 0.2)';
+                else if (isOwnedTeam) tr.style.background = 'rgba(255, 204, 0, 0.2)';
                 
+                let colorText = '#fff';
+                if (isPlayerTeam && isOwnedTeam) colorText = 'var(--accent)';
+                else if (isPlayerTeam) colorText = 'var(--accent)';
+                else if (isOwnedTeam) colorText = 'var(--warning)';
+
                 tr.innerHTML = `
                     <td>${index + 1}</td>
-                    <td class="text-left" style="font-weight:${isPlayerTeam ? 'bold' : 'normal'}; color:${isPlayerTeam ? 'var(--accent)' : '#fff'}">${club}</td>
+                    <td class="text-left" style="font-weight:${isPlayerTeam||isOwnedTeam ? 'bold' : 'normal'}; color:${colorText}">${club}</td>
                     <td>${matchPlayed}</td>
                     <td>${win}</td>
                     <td>${draw}</td>
@@ -2200,7 +2235,6 @@
             getDom('btnBackToDash').style.display = 'none'; getDom('btnRestart').style.display = 'inline-block';
             getDom('retireStatsTop').style.display = 'grid'; getDom('retireSummaryDetails').style.display = 'block';
             
-            // Tampilkan tombol lanjut karir post-retirement
             if (!p.isPostCareer) {
                 getDom('managerBtnContainer').style.display = 'block';
             }
@@ -2209,7 +2243,6 @@
             renderTable(); switchScreen('screen-retire');
         }
 
-        // Fitur Pasca Pensiun (Req 3)
         function startManagerCareer() {
             let rep = p.ovr + (p.trophies.league * 2) + p.stats.caps + p.stats.bd;
             let job = "";
@@ -2221,9 +2254,13 @@
             
             p.postCareerJob = job;
             p.postCareerSalary = salary;
+            p.postCareerContract = rand(2, 4);
             p.isPostCareer = true;
+
+            let selectHtml = db.leagues.map(l => `<option value="${l.id}">${l.name} (${l.country})</option>`).join('');
+            getDom('globalLeagueSelect').innerHTML = selectHtml;
             
-            showCustomAlert(`Berdasarkan karir dan reputasimu di dunia sepak bola, kamu direkrut sebagai:\n\n[ ${job} ]\n\nGaji: ${formatMoney(salary)} per pekan.\n\nKamu masih bisa mengurus bisnis dan kehidupan mewahmu hingga masa tuamu (Max Usia 65).`, () => {
+            showCustomAlert(`Berdasarkan karir dan reputasimu di dunia sepak bola, kamu direkrut sebagai:\n\n[ ${job} ]\n\nKontrak: ${p.postCareerContract} Tahun\nGaji: ${formatMoney(salary)} per pekan.\n\nKamu masih bisa mengurus bisnis dan kehidupan mewahmu hingga masa tuamu (Max Usia 65).`, () => {
                 getDom('managerBtnContainer').style.display = 'none';
                 getDom('postCareerContainer').style.display = 'block';
                 updatePostCareerUI();
@@ -2231,25 +2268,39 @@
         }
 
         function updatePostCareerUI() {
-            updateThemeColor(); // Akan kembalikan ke warna default netral
+            updateThemeColor(); 
+            getDom('retAge').innerText = p.age; // Bug Fix Visual Usia
+            
             getDom('postJob').innerText = p.postCareerJob;
+            let ct = getDom('postContract');
+            if(ct) ct.innerText = p.postCareerContract || 0;
+            
             getDom('postAgeDisplay').innerText = p.age;
             getDom('postSalaryDisplay').innerText = formatMoney(p.postCareerSalary);
+            
+            if (p.postCareerJob === 'Pengangguran') {
+                getDom('btnSimPostCareer').style.display = 'none';
+                getDom('btnSearchJob').style.display = 'block';
+            } else {
+                getDom('btnSimPostCareer').style.display = 'block';
+                getDom('btnSearchJob').style.display = 'none';
+            }
         }
 
         function simPostCareerYear() {
             if (p.age >= 65) {
                 showCustomAlert("Kamu telah mencapai usia pensiun dari segala aktivitas olahraga profesional (Usia 65). Sekarang saatnya bersantai menikmati hasil jerih payahmu di masa lalu!\n\nTerima kasih telah bermain Pro Football Simulator!");
                 getDom('btnSimPostCareer').style.display = 'none';
+                getDom('btnSearchJob').style.display = 'none';
                 return;
             }
 
             p.age++;
             p.seasonYear++;
+            p.postCareerContract--;
 
             let yearlySalary = p.postCareerSalary * 52;
             
-            // Proses Ekonomi (Gaji, Hutang, Dividen, Bangkrut)
             let bankrupt = processEconomyHelper(yearlySalary);
             if (bankrupt) {
                 triggerBankruptcy();
@@ -2260,9 +2311,82 @@
             if (temp.debtMsg) msg += `\n\n🏦 ${temp.debtMsg}`;
             if (temp.invDetails) msg += `\n\n📊 ${temp.invDetails}`;
             
-            showCustomAlert(msg, () => {
-                updatePostCareerUI();
-            });
+            if (p.postCareerContract <= 0) {
+                msg += `\n\n⚠️ Kontrak kerjamu sebagai ${p.postCareerJob} telah habis! Kamu kini berstatus pengangguran dan perlu mencari lowongan baru.`;
+                p.postCareerJob = 'Pengangguran';
+                p.postCareerSalary = 0;
+                
+                showCustomAlert(msg, () => {
+                    updatePostCareerUI();
+                    generatePostCareerOffers();
+                });
+            } else {
+                showCustomAlert(msg, () => {
+                    updatePostCareerUI();
+                });
+            }
+        }
+
+        function generatePostCareerOffers() {
+            let rep = p.ovr + (p.trophies.league * 2) + p.stats.caps + p.stats.bd;
+            let jobPoolTop = [
+                {title: "Pelatih Kepala Timnas Senior", salRange: [30000, 50000]},
+                {title: "Pelatih Kepala Klub Top Eropa", salRange: [25000, 60000]},
+                {title: "Direktur Olahraga Klub Elite", salRange: [20000, 40000]}
+            ];
+            let jobPoolMid = [
+                {title: "Asisten Pelatih Tim Utama", salRange: [10000, 18000]},
+                {title: "Pelatih Kepala Kasta Kedua", salRange: [8000, 15000]},
+                {title: "Pundit Eksklusif TV Nasional", salRange: [12000, 25000]}
+            ];
+            let jobPoolLow = [
+                {title: "Pelatih Akademi Usia Dini", salRange: [3000, 6000]},
+                {title: "Pencari Bakat (Scout) Lokal", salRange: [2500, 5000]},
+                {title: "Komentator Radio Lokal", salRange: [2000, 4000]}
+            ];
+            
+            let pool = [];
+            if(rep > 100) pool = jobPoolTop.concat(jobPoolMid);
+            else if(rep > 60) pool = jobPoolMid.concat(jobPoolLow);
+            else pool = jobPoolLow;
+            
+            pool.sort(() => Math.random() - 0.5); 
+            
+            let container = getDom('postJobOffersContainer');
+            container.innerHTML = '';
+            
+            for(let i=0; i<Math.min(3, pool.length); i++) {
+                let j = pool[i];
+                let sal = rand(j.salRange[0], j.salRange[1]);
+                let dur = rand(1, 4);
+                
+                let div = document.createElement('div');
+                div.className = 'offer-card brand';
+                div.innerHTML = `
+                    <div class="offer-details">
+                        <h4>${j.title}</h4>
+                        <p>Gaji: ${formatMoney(sal)}/pekan | Kontrak: ${dur} Thn</p>
+                    </div>
+                    <button class="btn btn-small" onclick="acceptPostJob('${j.title}', ${sal}, ${dur})">Terima</button>
+                `;
+                container.appendChild(div);
+            }
+            
+            getDom('postJobOffersModal').style.display = 'flex';
+        }
+
+        function acceptPostJob(title, salary, duration) {
+            p.postCareerJob = title;
+            p.postCareerSalary = salary;
+            p.postCareerContract = duration;
+            closeModal('postJobOffersModal');
+            updatePostCareerUI();
+            showCustomAlert(`Sukses! Kamu resmi menandatangani kontrak sebagai ${title} selama ${duration} tahun.`);
+        }
+
+        function viewGlobalLeague() {
+            let leagueId = getDom('globalLeagueSelect').value;
+            showLeagueTableModal('end', leagueId, null);
         }
 
         function renderTable() {
