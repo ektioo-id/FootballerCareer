@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pocket Football Career Simulator v1.6.2</title>
+    <title>Pocket Football Career Simulator v1.6.3</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap');
 
@@ -106,7 +106,7 @@
         .card { background: rgba(0, 0, 0, 0.2); border: 1px solid var(--glass-border); border-radius: 16px; padding: 15px; text-align: center; position: relative;}
         .card h3 { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 8px; }
         .card .value { font-size: 1.3rem; font-weight: 800; color: var(--accent); }
-        .card-clickable:hover { background: rgba(255,255,255,0.05); transform: translateY(-2px); transition: 0.2s; }
+        .card-clickable:hover { background: rgba(255,255,255,0.05); transform: translateY(-2px); transition: 0.2s; cursor: pointer; }
         
         .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
         .stat-box { background: rgba(255,255,255,0.05); padding: 10px; border-radius: 10px; font-size: 0.85rem; text-align: center; font-weight: 600;}
@@ -170,7 +170,7 @@
         
         .social-body { font-size: 0.9rem; color: #eee; line-height: 1.4; margin-bottom: 10px;}
         .social-actions { display: flex; gap: 15px; font-size: 0.85rem; color: #aaa; }
-        .social-action-btn { background: transparent; border: none; color: #aaa; cursor: pointer; display: flex; align-items: center; gap: 5px; font-size:0.85rem;}
+        .social-action-btn { background: transparent; border: none; color: #aaa; cursor: pointer; display: flex; align-items: center; gap: 5px; font-size:0.85rem; outline:none;}
         .social-action-btn:hover { color: var(--blue); }
         .social-action-btn.liked { color: var(--pink); }
         .social-action-btn.disliked { color: var(--danger); }
@@ -267,8 +267,8 @@
                 <div class="card"><h3>Moral</h3><div class="value" id="dashMorale" style="font-size:1.1rem;">Bahagia</div></div>
                 
                 <!-- SocialX Followers Card -->
-                <div class="card card-clickable" onclick="openSocialXModal()" style="border-color:var(--blue); background:rgba(0,170,255,0.05); cursor:pointer;">
-                    <h3 style="color:var(--blue);">SocialX</h3>
+                <div class="card card-clickable" onclick="openSocialXModal()" style="border-color:var(--blue); background:rgba(0,170,255,0.05);">
+                    <h3 style="color:var(--blue);"> SocialX</h3>
                     <div class="value" id="dashFollowers" style="font-size:1.1rem; color:#fff;">0</div>
                     <p style="font-size:0.7rem; color:var(--blue); margin-top:3px; font-weight:bold;">Tap to Open</p>
                 </div>
@@ -341,7 +341,7 @@
             
             <div style="display: flex; gap: 10px; margin-bottom: 15px; justify-content: center;">
                 <button class="btn btn-secondary" onclick="openShopModal()" style="margin:0; background:rgba(0,170,255,0.2); border-color:var(--blue); flex: 1 1 45%;">🛒 Market</button>
-                <button class="btn btn-secondary" onclick="openSocialXModal()" style="margin:0; background:rgba(255,0,127,0.2); border-color:var(--pink); flex: 1 1 45%;">SocialX</button>
+                <button class="btn btn-secondary" onclick="openSocialXModal()" style="margin:0; background:rgba(255,0,127,0.2); border-color:var(--pink); flex: 1 1 45%;"> SocialX</button>
             </div>
 
             <button class="btn btn-secondary" onclick="simSecondHalf()" style="margin-top:0;">Abaikan & Lanjut Paruh Kedua</button>
@@ -391,7 +391,7 @@
             <h2 style="font-size: 1.3rem;">Bursa Transfer Akhir Musim</h2>
             <div id="transferOffersContainer"></div>
             
-            <button class="btn btn-secondary" onclick="openSocialXModal()" style="margin-bottom: 10px; background:rgba(0,170,255,0.2); border-color:var(--blue);">SocialX (Cek Info & Berita)</button>
+            <button class="btn btn-secondary" onclick="openSocialXModal()" style="margin-bottom: 10px; background:rgba(0,170,255,0.2); border-color:var(--blue);"> SocialX (Cek Komentar & Berita)</button>
 
             <button class="btn btn-secondary" id="btnStayClub" onclick="nextSeason()">Lanjut Musim Depan</button>
         </div>
@@ -405,7 +405,7 @@
                 <div class="card"><h3>Rating Akhir</h3><div class="value" id="retOvr"></div></div>
             </div>
 
-            <!-- Post-Career Dashboard (Tampil setelah memilih lanjut karir) -->
+            <!-- Post-Career Dashboard -->
             <div id="postCareerContainer" style="display:none; margin-bottom:20px;">
                 <div class="card" style="background: rgba(212,175,55,0.1); border-color: var(--elite); text-align: center;">
                     <h3 style="color:var(--elite); margin-bottom:10px; font-size:1.1rem;">Fase Pasca Pensiun</h3>
@@ -417,9 +417,7 @@
 
                     <div class="form-group" style="margin-top: 15px; text-align:left;">
                         <label style="color:#fff; font-size:0.85rem;">Cek Klasemen Liga Global Musim Ini</label>
-                        <select id="globalLeagueSelect" style="padding: 10px; font-size: 0.85rem;">
-                            <!-- populated via js -->
-                        </select>
+                        <select id="globalLeagueSelect" style="padding: 10px; font-size: 0.85rem;"></select>
                         <button class="btn btn-small btn-secondary" style="width:100%; margin-top:5px; margin-bottom:0;" onclick="viewGlobalLeague()">🌍 Lihat Klasemen</button>
                     </div>
                 </div>
@@ -643,7 +641,6 @@
     </div>
 
     <script>
-        // Official Verified SVG Path Biru
         const verifiedBadgeSVG = `<svg class="verified-icon" viewBox="0 0 24 24"><path d="M22.5 12.5c0-1.58-.875-2.95-2.148-3.6.154-.435.238-.905.238-1.4 0-2.21-1.71-3.998-3.918-3.998-.47 0-.92.084-1.336.25C14.818 2.415 13.51 1.5 12 1.5s-2.816.917-3.337 2.25c-.416-.165-.866-.25-1.336-.25-2.21 0-3.918 1.792-3.918 4 0 .495.084.965.238 1.4-1.273.65-2.148 2.02-2.148 3.6 0 1.46.74 2.746 1.867 3.5-.132.42-.203.865-.203 1.3 0 2.21 1.71 4 3.918 4 .47 0 .92-.086 1.336-.25.52 1.335 1.826 2.25 3.337 2.25s2.816-.915 3.337-2.25c.416.164.866.25 1.336.25 2.21 0 3.918-1.79 3.918-4 0-.435-.07-.88-.203-1.3 1.127-.754 1.867-2.04 1.867-3.5zm-10.77 5.69l-4.81-4.81 1.56-1.56 3.12 3.12 7.02-7.02 1.56 1.57-8.45 8.45z"></path></svg>`;
 
         const db = {
@@ -659,37 +656,27 @@
                 { id: 'usa1', name: 'MLS', country: 'Amerika Serikat', tier: 1, rep: 68, wealth: 75, clubs: ['Inter Miami', 'LA Galaxy', 'LAFC', 'Seattle Sounders', 'Columbus Crew'] },
                 { id: 'idn1', name: 'Liga 1', country: 'Indonesia', tier: 1, rep: 50, wealth: 45, clubs: ['Persib', 'Persija', 'Persebaya', 'Bali United', 'Borneo FC', 'PSM Makassar', 'Arema FC'] }
             ],
-            nationalities: [
-                'Indonesia', 'Inggris', 'Spanyol', 'Jerman', 'Italia', 'Prancis', 'Belanda', 'Portugal', 'Brazil', 'Argentina', 
-                'Amerika Serikat', 'Arab Saudi', 'Korea Selatan', 'Jepang'
-            ],
-            positions: [
-                { id: 'ST', name: 'Striker (ST)' }, { id: 'LW', name: 'Left Winger (LW)' }, { id: 'RW', name: 'Right Winger (RW)' },
-                { id: 'CAM', name: 'Attacking Mid (CAM)' }, { id: 'CM', name: 'Central Mid (CM)' }, { id: 'CDM', name: 'Defensive Mid (CDM)' },
-                { id: 'CB', name: 'Center Back (CB)' }, { id: 'LB', name: 'Left Back (LB)' }, { id: 'RB', name: 'Right Back (RB)' }, { id: 'GK', name: 'Goalkeeper (GK)' }
-            ],
+            nationalities: [ 'Indonesia', 'Inggris', 'Spanyol', 'Jerman', 'Italia', 'Prancis', 'Belanda', 'Portugal', 'Brazil', 'Argentina', 'Amerika Serikat', 'Arab Saudi', 'Korea Selatan', 'Jepang' ],
+            positions: [ { id: 'ST', name: 'Striker (ST)' }, { id: 'LW', name: 'Left Winger (LW)' }, { id: 'RW', name: 'Right Winger (RW)' }, { id: 'CAM', name: 'Attacking Mid (CAM)' }, { id: 'CM', name: 'Central Mid (CM)' }, { id: 'CDM', name: 'Defensive Mid (CDM)' }, { id: 'CB', name: 'Center Back (CB)' }, { id: 'LB', name: 'Left Back (LB)' }, { id: 'RB', name: 'Right Back (RB)' }, { id: 'GK', name: 'Goalkeeper (GK)' } ],
             journalists: [
-                { name: 'Fabrizio Romano', handle: '@FabrizioRomano', color: '#1da1f2' },
-                { name: 'David Ornstein', handle: '@David_Ornstein', color: '#1da1f2' },
-                { name: 'Sky Sports News', handle: '@SkySportsNews', color: '#ff0000' },
-                { name: 'ESPN FC', handle: '@ESPNFC', color: '#ff0000' },
-                { name: 'TNT Sports', handle: '@footballontnt', color: '#ff007f' },
-                { name: 'Goal', handle: '@goal', color: '#00cc66' },
-                { name: 'Bleacher Report', handle: '@brfootball', color: '#ffcc00' }
+                { name: 'Fabrizio Romano', handle: '@FabrizioRomano', color: '#1da1f2' }, { name: 'David Ornstein', handle: '@David_Ornstein', color: '#1da1f2' },
+                { name: 'Sky Sports News', handle: '@SkySportsNews', color: '#ff0000' }, { name: 'ESPN FC', handle: '@ESPNFC', color: '#ff0000' },
+                { name: 'TNT Sports', handle: '@footballontnt', color: '#ff007f' }, { name: 'Goal', handle: '@goal', color: '#00cc66' },
+                { name: 'Bleacher Report', handle: '@brfootball', color: '#ffcc00' }, { name: 'BeIN Sports', handle: '@beINSPORTS', color: '#9c27b0'}
             ],
             socialTemplates: [
                 "Rumor kuat mengatakan [CLUB_A] sedang mempersiapkan tawaran besar untuk mendatangkan pemain baru.",
                 "Keputusan wasit di pertandingan semalam antara [CLUB_A] vs [CLUB_B] sangat kontroversial!",
                 "Manager [CLUB_B] berada di bawah tekanan besar setelah rentetan hasil buruk minggu ini.",
-                "HERE WE GO! Transfer kejutan akan segera terjadi di bursa transfer kali ini. Pemain rahasia menuju liga top.",
-                "Fans [CLUB_A] menuntut manajemen segera melakukan perombakan skuad. Kesabaran mereka sudah habis!",
-                "Penampilan luar biasa akhir pekan lalu! Apakah ini musim terbaik untuk kompetisi liga?",
-                "Berita duka untuk [CLUB_B], pemain bintang mereka dikabarkan cedera parah saat sesi latihan.",
-                "Rekor baru tercipta! Penjualan jersey terbanyak tahun ini masih dipimpin oleh tim-tim elit Eropa.",
-                "Analisis taktik: Mengapa gaya bermain [CLUB_A] musim ini sangat sulit diprediksi lawan?",
-                "Update: Negosiasi perpanjangan kontrak bintang utama [CLUB_B] menemui jalan buntu. Akankah pergi gratis?"
+                "HERE WE GO! Transfer kejutan akan segera terjadi di bursa transfer kali ini.",
+                "Fans [CLUB_A] menuntut manajemen segera melakukan perombakan skuad. Kesabaran habis!",
+                "Penampilan luar biasa akhir pekan lalu! Apakah ini musim terbaik liga?",
+                "Berita duka untuk [CLUB_B], bintang utama mereka dikabarkan cedera parah.",
+                "Rekor baru tercipta! Penjualan jersey terbanyak tahun ini masih dipimpin oleh raksasa Eropa.",
+                "Analisis taktik: Mengapa gaya bermain [CLUB_A] musim ini sangat sulit diprediksi?",
+                "Update: Negosiasi perpanjangan kontrak kapten [CLUB_B] menemui jalan buntu."
             ],
-            fanNames: ['BolaMania', 'UltrasGaruda', 'FootyFanatic', 'CurvaSud12', 'TheSupporter', 'HooliganX', 'GilaBola99', 'FansSejati_10'],
+            fanNames: ['BolaMania', 'UltrasSejati', 'FootyFanatic', 'CurvaSud12', 'TheSupporter', 'HooliganX', 'GilaBola99', 'Fans_GarisKeras'],
             brandsByCountry: { 'Indonesia': ['Indomie', 'Gojek', 'Tokopedia'], 'Inggris': ['Barclays', 'Vodafone'], 'Jepang': ['Sony', 'Toyota'] },
             brandsStd: ['Casio', 'New Balance', 'Spotify', 'Mastercard', 'Red Bull'],
             brandsElite: ['Rolex', 'EA Sports', 'Fly Emirates', 'BMW'],
@@ -698,12 +685,15 @@
             mediaNetworks: ['Sky Sports', 'BBC Sport', 'ESPN', 'BeIN Sports', 'Fox Sports', 'TNT Sports', 'Goal TV', 'Eurosport'],
             shopItems: [
                 { id: 'h2', name: 'Apartemen Studio', price: 80000, type: 'property' },
-                { id: 'h4', name: 'Apartemen Mewah', price: 1200000, type: 'property' },
+                { id: 'h4', name: 'Apartemen Mewah Pusat Kota', price: 1200000, type: 'property' },
                 { id: 'h5', name: 'Mansion Megah', price: 5000000, type: 'property' },
-                { id: 'c4', name: 'Sport Car (Porsche)', price: 250000, type: 'vehicle' },
-                { id: 'c5', name: 'Supercar (Ferrari)', price: 500000, type: 'vehicle' },
-                { id: 'e3', name: 'Laptop Gaming High-End', price: 4000, type: 'electronic' },
-                { id: 'f4', name: 'Jam Tangan (Rolex)', price: 15000, type: 'fashion' }
+                { id: 'c2', name: 'Mobil Harian (Honda Civic)', price: 40000, type: 'vehicle' },
+                { id: 'c4', name: 'Sport Car (Porsche 911 GT3)', price: 250000, type: 'vehicle' },
+                { id: 'c5', name: 'Supercar (Ferrari SF90)', price: 500000, type: 'vehicle' },
+                { id: 'e1', name: 'Smartphone (Apple iPhone 15 Pro)', price: 1500, type: 'electronic' },
+                { id: 'e3', name: 'Laptop Gaming (ASUS ROG)', price: 4000, type: 'electronic' },
+                { id: 'f2', name: 'Sepatu (Nike Air Jordan)', price: 2000, type: 'fashion' },
+                { id: 'f4', name: 'Jam Tangan (Rolex Daytona)', price: 15000, type: 'fashion' }
             ],
             agentNamesLvl1: ["Budi Santoso", "John Smith", "Carlos Ruiz"],
             agentNamesLvl2: ["Marco Van Ginkel", "David Levy", "Oliver Kahn"],
@@ -725,15 +715,8 @@
         };
 
         let curSeason = { apps:0, goals:0, astCs:0, yc:0, rc:0, ratingSum:0, ratingCount:0 };
-        let temp = {};
-        let currentOffers = [];
-        let currentMarketInvestments = [];
-        let currentMarketAgents = [];
-        let activeIndex = null;
-        let forceRetire = false;
-        let activeContainer = '';
-        let activeOffer = null;
-        
+        let temp = {}; let currentOffers = []; let currentMarketInvestments = []; let currentMarketAgents = [];
+        let activeIndex = null; let forceRetire = false; let activeContainer = ''; let activeOffer = null;
         let globalPrices = { btc: 65000, gold: 80 };
 
         const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
@@ -746,9 +729,7 @@
         const getDom = id => document.getElementById(id);
         const switchScreen = id => {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            getDom(id).classList.add('active');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-            updateThemeColor();
+            getDom(id).classList.add('active'); window.scrollTo({ top: 0, behavior: 'smooth' }); updateThemeColor();
         };
         const isDefensivePos = () => ['CB', 'LB', 'RB', 'CDM', 'GK'].includes(p.pos);
 
@@ -792,18 +773,13 @@
         function closeModal(id) { getDom(id).style.display = 'none'; activeOffer = null; activeIndex = null; }
 
         function startGame() {
-            p.name = getDom('playerName').value || 'Player One';
-            p.nat = getDom('playerNat').value;
-            p.pos = getDom('playerPos').value;
-            p.age = 15; p.maxLifeAge = rand(65, 70); 
-            p.ovr = rand(40, 50); p.potential = rand(75, 95); 
-            p.injuryTrait = db.injuryTraits[rand(0, db.injuryTraits.length - 1)];
+            p.name = getDom('playerName').value || 'Player One'; p.nat = getDom('playerNat').value; p.pos = getDom('playerPos').value;
+            p.age = 15; p.maxLifeAge = rand(65, 70); p.ovr = rand(40, 50); p.potential = rand(75, 95); p.injuryTrait = db.injuryTraits[rand(0, db.injuryTraits.length - 1)];
 
             let possibleLeagues = db.leagues.filter(l => l.country === p.nat);
             if(possibleLeagues.length === 0) possibleLeagues = db.leagues.filter(l => l.tier > 1 || l.rep < 65);
             
-            p.league = possibleLeagues[rand(0, possibleLeagues.length - 1)];
-            p.club = p.league.clubs[rand(0, p.league.clubs.length - 1)];
+            p.league = possibleLeagues[rand(0, possibleLeagues.length - 1)]; p.club = p.league.clubs[rand(0, p.league.clubs.length - 1)];
             p.contract = 2; p.initialDebtLimit = rand(10000, 50000); p.debtLimit = p.initialDebtLimit;
 
             updateResidence(); generateMarketInvestments(); generateAgentMarket(); generateSocialXFeed();
@@ -817,7 +793,6 @@
             updateAcadUI(); switchScreen('screen-academy');
         }
 
-        // --- SOCIALX LOGIC ---
         function getCoachFeedback(rating, isFA) {
             if (isFA) return "Statusmu tanpa klub. Teruslah berlatih mandiri agar kebugaranmu terjaga dan pantang menyerah.";
             if (rating >= 8.0) return ["Kamu benar-benar pembeda di lapangan!", "Sangat fantastis! Keseimbangan tim ini bergantung padamu.", "Pemain kelas dunia sejati!"][rand(0,2)];
@@ -838,7 +813,7 @@
         }
 
         function getMediaComment(rating, teamRank, isFA) {
-            if (isFA) return `Berita Transfer: Mantan bintang ${p.club || 'yang tak terikat'}, ${p.name}, masih mencari pelabuhan baru untuk karirnya.`;
+            if (isFA) return `Mantan bintang ${p.club || 'yang tak terikat'}, ${p.name}, masih mencari pelabuhan baru untuk karirnya.`;
             if (p.age > 33) return `Mengingat usianya, ${p.name} mungkin sedang menjalani tahun-tahun terakhirnya di rumput hijau.`;
             if (rating >= 8.0) return `HERE WE GO? Musim luar biasa dari ${p.name}! Kabarnya banyak klub elit mulai memantau situasinya.`;
             if (rating <= 6.0) return `Performa mengecewakan. Rumornya staf pelatih mempertimbangkan untuk melegonya di bursa transfer.`;
@@ -848,11 +823,9 @@
         function generateSocialXFeed() {
             p.socialXFeed = [];
             let numPosts = rand(4, 6);
-            
             for(let i=0; i<numPosts; i++) {
                 let author = db.journalists[rand(0, db.journalists.length-1)];
                 let rawText = db.socialTemplates[rand(0, db.socialTemplates.length-1)];
-                
                 let l1 = db.leagues[rand(0, db.leagues.length-1)]; let c1 = l1.clubs[rand(0, l1.clubs.length-1)];
                 let l2 = db.leagues[rand(0, db.leagues.length-1)]; let c2 = l2.clubs[rand(0, l2.clubs.length-1)];
                 let postText = rawText.replace(/\[CLUB_A\]/g, c1).replace(/\[CLUB_B\]/g, c2);
@@ -864,160 +837,77 @@
                 }
 
                 p.socialXFeed.push({
-                    id: 'post_' + Date.now() + i,
-                    authorName: author.name,
-                    authorHandle: author.handle,
-                    color: author.color,
-                    text: postText,
-                    likes: rand(10000, 500000), dislikes: rand(500, 5000),
-                    isLiked: false, isDisliked: false,
-                    isVerified: true
+                    id: 'post_' + Date.now() + i, authorName: author.name, authorHandle: author.handle, color: author.color, text: postText,
+                    likes: rand(10000, 500000), dislikes: rand(500, 5000), isLiked: false, isDisliked: false, isVerified: true
                 });
             }
         }
 
         function injectPersonalizedSocialX(rating, promRelText, teamRank, isFA) {
-            let coachColor = '#ffcc00';
-            let mediaName = db.mediaNetworks[rand(0, db.mediaNetworks.length-1)];
-            let mediaColor = '#ff007f';
-            let fanName = db.fanNames[rand(0, db.fanNames.length-1)];
+            let coachColor = '#ffcc00'; let mediaName = db.mediaNetworks[rand(0, db.mediaNetworks.length-1)]; let mediaColor = '#ff007f'; let fanName = db.fanNames[rand(0, db.fanNames.length-1)];
             
-            // Postingan Fan (Tidak Verified)
-            p.socialXFeed.unshift({
-                id: 'fan_' + Date.now(),
-                authorName: fanName,
-                authorHandle: '@' + fanName.toLowerCase(),
-                color: '#aaa',
-                text: getFanFeedback(rating, promRelText, isFA),
-                likes: rand(50, 500), dislikes: rand(5, 50),
-                isLiked: false, isDisliked: false,
-                isVerified: false
+            p.socialXFeed.unshift({ // Fan (Not Verified)
+                id: 'fan_' + Date.now(), authorName: fanName, authorHandle: '@' + fanName.toLowerCase(), color: '#aaa', text: getFanFeedback(rating, promRelText, isFA),
+                likes: rand(50, 500), dislikes: rand(5, 50), isLiked: false, isDisliked: false, isVerified: false
             });
-            
-            // Postingan Media (Verified)
-            p.socialXFeed.unshift({
-                id: 'media_' + Date.now(),
-                authorName: mediaName,
-                authorHandle: '@' + mediaName.replace(/\s+/g,'').toLowerCase(),
-                color: mediaColor,
-                text: getMediaComment(rating, teamRank, isFA),
-                likes: rand(5000, 50000), dislikes: rand(100, 1000),
-                isLiked: false, isDisliked: false,
-                isVerified: true
+            p.socialXFeed.unshift({ // Media (Verified)
+                id: 'media_' + Date.now(), authorName: mediaName, authorHandle: '@' + mediaName.replace(/\s+/g,'').toLowerCase(), color: mediaColor, text: getMediaComment(rating, teamRank, isFA),
+                likes: rand(5000, 50000), dislikes: rand(100, 1000), isLiked: false, isDisliked: false, isVerified: true
             });
-            
-            // Postingan Pelatih (Verified)
-            p.socialXFeed.unshift({
-                id: 'coach_' + Date.now(),
-                authorName: isFA ? 'Pengamat Pelatih' : 'Pelatih ' + p.club,
-                authorHandle: isFA ? '@pengamat' : '@coach_' + p.club.replace(/\s+/g,'').toLowerCase().substring(0, 10),
-                color: coachColor,
-                text: getCoachFeedback(rating, isFA),
-                likes: rand(1000, 10000), dislikes: rand(50, 500),
-                isLiked: false, isDisliked: false,
-                isVerified: true
+            p.socialXFeed.unshift({ // Coach (Verified)
+                id: 'coach_' + Date.now(), authorName: isFA ? 'Pengamat Pelatih' : 'Pelatih ' + p.club, authorHandle: isFA ? '@pengamat' : '@coach_' + p.club.replace(/\s+/g,'').toLowerCase().substring(0, 10), color: coachColor, text: getCoachFeedback(rating, isFA),
+                likes: rand(1000, 10000), dislikes: rand(50, 500), isLiked: false, isDisliked: false, isVerified: true
             });
         }
 
         function openSocialXModal() {
-            getDom('socialXModal').style.display = 'flex';
-            getDom('sxProfileInitial').innerText = p.name.charAt(0).toUpperCase();
-            getDom('sxProfileName').innerHTML = `${p.name} ${verifiedBadgeSVG}`;
-            getDom('sxProfileHandle').innerText = `@${p.name.replace(/\s+/g, '').toLowerCase()}`;
-            getDom('sxProfileFollowers').innerText = formatNum(p.followers);
-            switchSocialTab('feed');
+            getDom('socialXModal').style.display = 'flex'; getDom('sxProfileInitial').innerText = p.name.charAt(0).toUpperCase();
+            getDom('sxProfileName').innerHTML = `${p.name} ${verifiedBadgeSVG}`; getDom('sxProfileHandle').innerText = `@${p.name.replace(/\s+/g, '').toLowerCase()}`;
+            getDom('sxProfileFollowers').innerText = formatNum(p.followers); switchSocialTab('feed');
         }
 
         function switchSocialTab(tab) {
             getDom('tabFeed').classList.remove('active'); getDom('tabProfile').classList.remove('active');
             getDom('socialFeedContainer').style.display = 'none'; getDom('socialProfileContainer').style.display = 'none';
-            
-            if (tab === 'feed') {
-                getDom('tabFeed').classList.add('active');
-                getDom('socialFeedContainer').style.display = 'block';
-                renderSocialXFeed();
-            } else {
-                getDom('tabProfile').classList.add('active');
-                getDom('socialProfileContainer').style.display = 'flex';
-                getDom('socialProfileContainer').style.flexDirection = 'column';
-                renderMyPosts();
-            }
+            if (tab === 'feed') { getDom('tabFeed').classList.add('active'); getDom('socialFeedContainer').style.display = 'block'; renderSocialXFeed(); } 
+            else { getDom('tabProfile').classList.add('active'); getDom('socialProfileContainer').style.display = 'flex'; getDom('socialProfileContainer').style.flexDirection = 'column'; renderMyPosts(); }
         }
 
         function renderSocialXFeed() {
-            const container = getDom('socialFeedContainer');
-            container.innerHTML = '';
-            
+            const container = getDom('socialFeedContainer'); container.innerHTML = '';
             p.socialXFeed.forEach((post, index) => {
-                let div = document.createElement('div');
-                div.className = 'social-post';
+                let div = document.createElement('div'); div.className = 'social-post';
                 div.innerHTML = `
-                    <div class="social-header">
-                        <div class="social-avatar" style="background:${post.color}">${post.authorName.charAt(0)}</div>
-                        <div>
-                            <div class="social-name">${post.authorName} ${post.isVerified ? verifiedBadgeSVG : ''}</div>
-                            <div class="social-handle">${post.authorHandle}</div>
-                        </div>
-                    </div>
+                    <div class="social-header"><div class="social-avatar" style="background:${post.color}">${post.authorName.charAt(0)}</div><div><div class="social-name">${post.authorName} ${post.isVerified ? verifiedBadgeSVG : ''}</div><div class="social-handle">${post.authorHandle}</div></div></div>
                     <div class="social-body">${post.text}</div>
                     <div class="social-actions">
                         <button class="social-action-btn ${post.isLiked ? 'liked' : ''}" onclick="toggleLikeSocialX('feed', ${index}, 'like')">
                             ${post.isLiked ? '❤️' : '🤍'} ${formatNum(post.likes)}
                         </button>
-                    </div>
-                `;
+                    </div>`;
                 container.appendChild(div);
             });
         }
 
         function renderMyPosts() {
-            const container = getDom('sxMyPostsContainer');
-            container.innerHTML = '';
-            if (p.playerPosts.length === 0) {
-                container.innerHTML = '<p style="font-size:0.85rem; color:#aaa; text-align:center;">Belum ada postingan.</p>';
-                return;
-            }
-
-            [...p.playerPosts].reverse().forEach((post, rIndex) => {
-                let div = document.createElement('div');
-                div.className = 'social-post';
+            const container = getDom('sxMyPostsContainer'); container.innerHTML = '';
+            if (p.playerPosts.length === 0) { container.innerHTML = '<p style="font-size:0.85rem; color:#aaa; text-align:center;">Belum ada postingan.</p>'; return; }
+            [...p.playerPosts].reverse().forEach((post) => {
+                let div = document.createElement('div'); div.className = 'social-post';
                 div.innerHTML = `
-                    <div class="social-header">
-                        <div class="social-avatar" style="background:var(--accent); color:#000;">${p.name.charAt(0)}</div>
-                        <div>
-                            <div class="social-name">${p.name} ${verifiedBadgeSVG}</div>
-                            <div class="social-handle">@${p.name.replace(/\s+/g, '').toLowerCase()}</div>
-                        </div>
-                    </div>
+                    <div class="social-header"><div class="social-avatar" style="background:var(--accent); color:#000;">${p.name.charAt(0)}</div><div><div class="social-name">${p.name} ${verifiedBadgeSVG}</div><div class="social-handle">@${p.name.replace(/\s+/g, '').toLowerCase()}</div></div></div>
                     <div class="social-body">${post.text}</div>
-                    <div class="social-actions">
-                        <span class="social-action-btn liked">❤️ ${formatNum(post.likes)}</span>
-                        <span class="social-action-btn disliked">👎 ${formatNum(post.dislikes)}</span>
-                    </div>
-                `;
+                    <div class="social-actions"><span class="social-action-btn liked">❤️ ${formatNum(post.likes)}</span><span class="social-action-btn disliked">👎 ${formatNum(post.dislikes)}</span></div>`;
                 container.appendChild(div);
             });
         }
 
         function postSocialX() {
-            let text = getDom('sxComposeText').value.trim();
-            if(!text) return;
-            
-            let rating = temp.avgRating || 6.5; 
-            let baseEngagement = p.followers * 0.05; 
-            if (baseEngagement < 100) baseEngagement = 100;
-
-            let likeRatio = 0.5;
-            if (rating >= 8.0) likeRatio = 0.95;
-            else if (rating >= 7.0) likeRatio = 0.8;
-            else if (rating >= 6.0) likeRatio = 0.5;
-            else likeRatio = 0.15; 
-
+            let text = getDom('sxComposeText').value.trim(); if(!text) return;
+            let rating = temp.avgRating || 6.5; let baseEngagement = Math.max(100, p.followers * 0.05);
+            let likeRatio = rating >= 8.0 ? 0.95 : (rating >= 7.0 ? 0.8 : (rating >= 6.0 ? 0.5 : 0.15));
             let totalEngage = baseEngagement * (Math.random() * 0.5 + 0.5);
-            let likes = Math.floor(totalEngage * likeRatio);
-            let dislikes = Math.floor(totalEngage * (1 - likeRatio));
-
-            p.playerPosts.push({ text: text, likes: likes, dislikes: dislikes, season: p.seasonYear });
+            p.playerPosts.push({ text: text, likes: Math.floor(totalEngage * likeRatio), dislikes: Math.floor(totalEngage * (1 - likeRatio)), season: p.seasonYear });
             getDom('sxComposeText').value = ''; renderMyPosts();
         }
 
@@ -1027,43 +917,30 @@
             if (source === 'feed') renderSocialXFeed();
         }
 
-        function updateAcadUI() {
-            getDom('acadAge').innerText = p.age; getDom('acadOvr').innerText = p.ovr; getDom('acadOvrBar').style.width = p.ovr + '%';
-        }
+        function updateAcadUI() { getDom('acadAge').innerText = p.age; getDom('acadOvr').innerText = p.ovr; getDom('acadOvrBar').style.width = p.ovr + '%'; }
         
         function updateResidence() {
             if (p.club === 'Free Agent') { p.residence = "Bebas (Belum ada Klub)"; return; }
-            let hasProperty = p.assets.some(a => a.type === 'property');
-            p.residence = hasProperty ? `Rumah Pribadi (${p.league.country})` : `Fasilitas Klub (${p.league.country})`;
+            p.residence = p.assets.some(a => a.type === 'property') ? `Rumah Pribadi (${p.league.country})` : `Fasilitas Klub (${p.league.country})`;
         }
 
         function simAcademyYear() {
             let acApps = rand(15, 30); let acGoals = isDefensivePos() ? rand(0, 3) : rand(5, 20); let acRating = (rand(60, 85) / 10).toFixed(1);
             getDom('acadStatsInfo').innerText = `Statistik Musim Lalu: Main ${acApps} | Gol ${acGoals} | Rating ${acRating}`;
-            p.age++; p.contract--; let growth = rand(2, 5) + (p.potential > 85 ? 2 : 0); p.ovr = Math.min(99, p.ovr + growth);
-            updateAcadUI();
+            p.age++; p.contract--; p.ovr = Math.min(99, p.ovr + rand(2, 5) + (p.potential > 85 ? 2 : 0)); updateAcadUI();
 
             if(p.age >= 18 || (p.age >= 16 && acRating >= 7.5 && p.ovr >= 55)) {
                 p.isPro = true; p.contract = rand(2, 4); calculateDynamicValueWage();
-                let diff = p.ovr - p.league.rep; let status = 'Cadangan Pelapis';
-                if(diff >= -2) status = 'Pemain Inti (Wonderkid)'; else if (diff >= -8) status = 'Rotasi';
-                p.statusRole = status; getDom('dashStatus').innerText = p.statusRole; updateDashUI(); 
-                
-                showCustomAlert(`Luar Biasa! Statistik akademimu (${acRating}) meyakinkan pelatih. Kamu dipromosikan ke tim utama ${p.club}!`, () => {
-                    switchScreen('screen-dashboard');
-                    if(diff < -10 && Math.random() > 0.4) setTimeout(() => showCustomAlert("Pelatih menyarankanmu mencari jam terbang melalui peminjaman (Loan) di bursa transfer berikutnya."), 400);
-                });
+                let diff = p.ovr - p.league.rep; p.statusRole = diff >= -2 ? 'Pemain Inti (Wonderkid)' : (diff >= -8 ? 'Rotasi' : 'Cadangan Pelapis'); getDom('dashStatus').innerText = p.statusRole; updateDashUI(); 
+                showCustomAlert(`Luar Biasa! Statistik akademimu (${acRating}) meyakinkan pelatih. Kamu dipromosikan ke tim utama ${p.club}!`, () => { switchScreen('screen-dashboard'); if(diff < -10 && Math.random() > 0.4) setTimeout(() => showCustomAlert("Pelatih menyarankanmu mencari jam terbang melalui peminjaman (Loan) di bursa transfer berikutnya."), 400); });
             } else { showCustomAlert(`Selesai 1 tahun di akademi. Terus tingkatkan kemampuanmu!`); }
         }
 
         function calculateDynamicValueWage() {
             if(p.club === 'Free Agent') { p.val = 0; p.wage = 0; return; }
-            let baseV = Math.pow(p.ovr, 3) * 1.5; 
-            if(p.age <= 22) baseV *= (1 + (p.potential/100)); if(p.age > 30) baseV *= (1 - ((p.age-30)*0.1)); 
-            if(baseV < 10000) baseV = 10000; p.val = Math.floor(baseV);
-            let idealWage = Math.floor((p.val * 0.003) * p.agent.multiplier);
-            p.wage = p.wage === 0 ? idealWage : Math.floor((p.wage * 0.8) + (idealWage * 0.2)); 
-            if(p.wage < 500) p.wage = 500;
+            let baseV = Math.pow(p.ovr, 3) * 1.5; if(p.age <= 22) baseV *= (1 + (p.potential/100)); if(p.age > 30) baseV *= (1 - ((p.age-30)*0.1)); 
+            p.val = Math.max(10000, Math.floor(baseV));
+            let idealWage = Math.floor((p.val * 0.003) * p.agent.multiplier); p.wage = p.wage === 0 ? Math.max(500, idealWage) : Math.max(500, Math.floor((p.wage * 0.8) + (idealWage * 0.2)));
         }
 
         function updateDashUI() {
@@ -1071,18 +948,12 @@
             getDom('dashClub').innerText = p.club === 'Free Agent' ? 'Tanpa Klub (Free Agent)' : `${p.club} (${p.league.name})`;
             getDom('dashSeason').innerText = `${p.seasonYear}/${p.seasonYear+1}`; getDom('dashAgent').innerText = `${p.agent.name} (Lvl ${p.agent.lvl})`;
             getDom('dashStatus').innerText = p.statusRole; getDom('dashInjuryTrait').innerText = p.injuryTrait; getDom('dashResidence').innerText = p.residence;
-            
             getDom('dashOvr').innerText = p.ovr; getDom('dashOvrBar').style.width = p.ovr + '%';
             getDom('dashValue').innerText = formatMoney(p.val); getDom('dashWage').innerText = formatMoney(p.wage) + (p.club !== 'Free Agent' ? "/mg" : "");
             getDom('dashContract').innerText = p.contract; getDom('dashFollowers').innerText = formatNum(p.followers);
             getDom('dashMoney').innerText = formatMoney((p.money || 0) + (p.savings || 0)); 
-
-            if(p.sponsor) { getDom('dashSponsorsText').innerText = `${p.sponsor.brand} (Sisa ${p.sponsor.duration} Thn)`; getDom('dashSponsorsText').style.color = 'var(--accent)'; } 
-            else { getDom('dashSponsorsText').innerText = 'Belum ada kontrak eksklusif'; getDom('dashSponsorsText').style.color = '#ccc'; }
-
-            let moraleColor = '#fff'; if(p.morale === 'Sangat Bahagia' || p.morale === 'Bahagia') moraleColor = 'var(--success)'; else if(p.morale === 'Kecewa' || p.morale === 'Marah') moraleColor = 'var(--danger)';
-            getDom('dashMorale').innerText = p.morale; getDom('dashMorale').style.color = moraleColor;
-
+            getDom('dashSponsorsText').innerText = p.sponsor ? `${p.sponsor.brand} (Sisa ${p.sponsor.duration} Thn)` : 'Belum ada kontrak eksklusif'; getDom('dashSponsorsText').style.color = p.sponsor ? 'var(--accent)' : '#ccc';
+            getDom('dashMorale').innerText = p.morale; getDom('dashMorale').style.color = (p.morale === 'Sangat Bahagia' || p.morale === 'Bahagia') ? 'var(--success)' : ((p.morale === 'Kecewa' || p.morale === 'Marah') ? 'var(--danger)' : '#fff');
             getDom('statApps').innerText = p.stats.apps; getDom('statGoals').innerText = p.stats.goals; getDom('statAstCs').innerText = p.stats.astCs;
             getDom('statYc').innerText = p.stats.yc; getDom('statRc').innerText = p.stats.rc; getDom('statNtCaps').innerText = p.stats.caps; getDom('statNtGoals').innerText = p.stats.ntGoals;
             getDom('statTL').innerText = p.trophies.league; getDom('statTC').innerText = p.trophies.cup; getDom('statTCont').innerText = (p.trophies.cont + p.trophies.wc); getDom('statAwardVal').innerText = p.stats.indAwards;
@@ -1091,13 +962,20 @@
         function generateMarketInvestments() {
             currentMarketInvestments = [];
             let ownedClubs = p.assets.filter(a => a.type === 'investment_fc').map(a => a.club);
-            let numClubs = rand(1, 3);
-            for(let i=0; i<numClubs; i++) {
+            for(let i=0; i<rand(1, 3); i++) {
                 let l = db.leagues[rand(0, db.leagues.length-1)]; let c = l.clubs[rand(0, l.clubs.length-1)];
                 if (ownedClubs.includes(c)) continue; 
                 let share = rand(10, 100); let baseVal = l.wealth * 500000 + rand(10000000, 50000000);
                 if (l.rep > 80) baseVal *= rand(3, 8); if (l.rep > 88) baseVal *= rand(2, 4);
                 currentMarketInvestments.push({ id: 'inv_fc_'+c, name: `Saham Klub ${c}`, price: Math.floor(baseVal * (share/100)), type: 'investment_fc', baseVal: baseVal, share: share, club: c, leagueId: l.id });
+            }
+            let brandTypes = ['Tambang Emas', 'Tambang Batu Bara', 'Lahan Kelapa Sawit', 'Lahan Properti Komersial', 'Startup Teknologi AI', 'Brand Fashion Lokal', 'Franchise Restoran Cepat Saji', 'Perusahaan Otomotif', 'Platform Media Online', 'Pabrik Semikonduktor', 'Perusahaan Farmasi', 'Maskapai Penerbangan'];
+            let ownedBrands = p.assets.filter(a => a.type === 'investment_biz').map(a => a.baseName);
+            for(let i=0; i<rand(2, 4); i++) {
+                let t = brandTypes[rand(0, brandTypes.length-1)];
+                if (ownedBrands.includes(t)) continue;
+                let share = rand(5, 50); let baseVal = rand(500000, 20000000);
+                currentMarketInvestments.push({ id: 'inv_br_'+t.replace(/\s+/g,''), name: `Saham ${t}`, price: Math.floor(baseVal * (share/100)), type: 'investment_biz', baseVal: baseVal, share: share, baseName: t });
             }
             currentMarketInvestments.unshift({ id: 'inv_gold', name: 'Emas (Logam Mulia)', unitPrice: globalPrices.gold, type: 'investment_gold', unit: 'g' });
             currentMarketInvestments.unshift({ id: 'inv_btc', name: 'Bitcoin (Kripto)', unitPrice: globalPrices.btc, type: 'investment_crypto', unit: 'BTC' });
@@ -1113,8 +991,7 @@
         }
 
         function openShopModal() {
-            if (p.isPostCareer) getDom('btnShopAgent').style.display = 'none'; else getDom('btnShopAgent').style.display = 'inline-block';
-            renderShop('property'); 
+            getDom('btnShopAgent').style.display = p.isPostCareer ? 'none' : 'inline-block'; renderShop('property'); 
             let nonInv = p.assets.filter(a => !a.type.startsWith('investment')); let invCount = p.assets.length - nonInv.length;
             let txt = nonInv.length > 0 ? nonInv.map(a => a.name).join(', ') : 'Belum ada aset fisik.'; if (invCount > 0) txt += ` (+ ${invCount} Aset Portofolio)`;
             getDom('ownedAssetsText').innerText = txt; getDom('shopModal').style.display = 'flex';
@@ -1138,8 +1015,7 @@
                         <h4 style="margin-bottom:15px; font-size:0.9rem;">Hutang Aktif: <span style="color:var(--danger)">${formatMoney(p.debt)}</span></h4>
                         <div style="margin-bottom:10px;"><input type="number" id="borrowAmount" placeholder="Jumlah pinjam..." style="width:60%; display:inline-block; padding:10px;"><button class="btn btn-small" onclick="borrowMoney()" style="width:35%; display:inline-block; margin-left:2%; background:var(--warning); color:#000;">Pinjam</button></div>
                         <div style="margin-bottom:10px;"><input type="number" id="repayAmount" placeholder="Jumlah bayar..." style="width:60%; display:inline-block; padding:10px;"><button class="btn btn-small btn-secondary" onclick="repayMoney()" style="width:35%; display:inline-block; margin-left:2%;">Bayar</button></div>
-                    </div>
-                `; return;
+                    </div>`; return;
             }
 
             if (category === 'casino') {
@@ -1147,17 +1023,15 @@
             }
 
             let filteredItems = category === 'investment' ? currentMarketInvestments : (category === 'agent' ? currentMarketAgents : db.shopItems.filter(i => i.type === category));
-            if (filteredItems.length === 0) { container.innerHTML = '<p style="text-align:center; font-size:0.85rem; color:#aaa;">Tidak ada penawaran tersedia.</p>'; }
+            if (filteredItems.length === 0) container.innerHTML = '<p style="text-align:center; font-size:0.85rem; color:#aaa;">Tidak ada penawaran tersedia.</p>';
 
             filteredItems.forEach(item => {
                 let isOwned = category === 'agent' ? (p.agent.name === item.name) : (!item.type.startsWith('investment') && p.assets.some(a => a.id === item.id));
                 let extraDesc = item.type === 'agent' ? `<br><span style="font-size:0.75rem; color:#aaa;">${item.desc}</span>` : "";
                 let div = document.createElement('div'); div.className = 'shop-item';
-                
-                let qtyInputId = 'buy_qty_' + item.id;
                 if (item.type.startsWith('investment')) {
                     if (item.unitPrice) {
-                        div.innerHTML = `<div style="flex-grow:1;"><h4>${item.name}</h4><p>${formatMoney(item.unitPrice)} / ${item.unit}</p></div><div style="display:flex; flex-direction:column; gap:5px; align-items:flex-end; width:100px;"><input type="number" id="${qtyInputId}" min="1" value="1" style="width:100%; padding:5px; text-align:center;"><button class="btn btn-small" style="margin:0; width:100%;" onclick="buyItem('${item.id}')">Beli</button></div>`;
+                        div.innerHTML = `<div style="flex-grow:1;"><h4>${item.name}</h4><p>${formatMoney(item.unitPrice)} / ${item.unit}</p></div><div style="display:flex; flex-direction:column; gap:5px; align-items:flex-end; width:100px;"><input type="number" id="buy_qty_${item.id}" min="1" value="1" style="width:100%; padding:5px; text-align:center;"><button class="btn btn-small" style="margin:0; width:100%;" onclick="buyItem('${item.id}')">Beli</button></div>`;
                     } else {
                         div.innerHTML = `<div><h4>${item.name}</h4><p>${formatMoney(item.price)}<br><span style="font-size:0.75rem; color:var(--success);">Tawaran Porsi: ${item.share}%</span></p></div><button class="btn btn-small" style="margin:0;" onclick="buyItem('${item.id}')">Beli</button>`;
                     }
@@ -1168,18 +1042,34 @@
             });
         }
 
-        function depositSavings() { let amt = parseInt(getDom('depositAmount').value) || 0; if (amt > 0 && amt <= p.money) { p.money -= amt; p.savings += amt; showCustomAlert(`Berhasil menabung ${formatMoney(amt)}.`); if(!p.isPostCareer) updateDashUI(); else updatePostCareerUI(); renderShop('bank'); } else { showCustomAlert("Jumlah tidak valid atau saldo dompet kurang."); } }
-        function withdrawSavings() { let amt = parseInt(getDom('withdrawAmount').value) || 0; if (amt > 0 && amt <= p.savings) { p.savings -= amt; p.money += amt; showCustomAlert(`Berhasil menarik ${formatMoney(amt)}.`); if(!p.isPostCareer) updateDashUI(); else updatePostCareerUI(); renderShop('bank'); } else { showCustomAlert("Jumlah tidak valid atau saldo tabungan kurang."); } }
-        function borrowMoney() { let amt = parseInt(getDom('borrowAmount').value) || 0; if (amt > 0 && (p.debt || 0) + amt <= p.debtLimit) { p.debt = (p.debt || 0) + amt; p.money = (p.money || 0) + amt; showCustomAlert(`Peminjaman ${formatMoney(amt)} Berhasil!`); if(!p.isPostCareer) updateDashUI(); else updatePostCareerUI(); renderShop('bank'); } else { showCustomAlert("Melebihi limit kredit!"); } }
-        function repayMoney() { let amt = parseInt(getDom('repayAmount').value) || 0; if (amt > 0 && amt <= p.money) { if (amt > p.debt) amt = p.debt; p.money -= amt; p.debt -= amt; if (p.debt === 0) p.debtYears = 0; showCustomAlert(`Berhasil mencicil ${formatMoney(amt)}.`); if(!p.isPostCareer) updateDashUI(); else updatePostCareerUI(); renderShop('bank'); } else { showCustomAlert("Jumlah tidak valid atau saldo dompet kurang."); } }
-        function playCasino() { let bet = parseInt(getDom('betAmount').value) || 0; if (bet > 0 && bet <= p.money) { p.money -= bet; if (Math.random() < 0.48) { p.money += bet*2; p.morale = 'Sangat Bahagia'; showCustomAlert(`🎉 JACKPOT! Menang ${formatMoney(bet*2)}!`); } else { p.morale = 'Kecewa'; showCustomAlert(`💀 ZONK! Uang hangus.`); } if(!p.isPostCareer) updateDashUI(); else updatePostCareerUI(); renderShop('casino'); } else { showCustomAlert("Taruhan tidak valid."); } }
+        function depositSavings() { let amt = Math.floor(Number(getDom('depositAmount').value)) || 0; if (amt > 0 && amt <= p.money) { p.money -= amt; p.savings += amt; showCustomAlert(`Berhasil menabung ${formatMoney(amt)}.`); if(!p.isPostCareer) updateDashUI(); else updatePostCareerUI(); renderShop('bank'); } else { showCustomAlert("Jumlah tidak valid atau saldo dompet kurang."); } }
+        function withdrawSavings() { let amt = Math.floor(Number(getDom('withdrawAmount').value)) || 0; if (amt > 0 && amt <= p.savings) { p.savings -= amt; p.money += amt; showCustomAlert(`Berhasil menarik ${formatMoney(amt)}.`); if(!p.isPostCareer) updateDashUI(); else updatePostCareerUI(); renderShop('bank'); } else { showCustomAlert("Jumlah tidak valid atau saldo tabungan kurang."); } }
+        function borrowMoney() { let amt = Math.floor(Number(getDom('borrowAmount').value)) || 0; if (amt > 0 && (p.debt || 0) + amt <= p.debtLimit) { p.debt = (p.debt || 0) + amt; p.money = (p.money || 0) + amt; showCustomAlert(`Peminjaman ${formatMoney(amt)} Berhasil!`); if(!p.isPostCareer) updateDashUI(); else updatePostCareerUI(); renderShop('bank'); } else { showCustomAlert("Melebihi limit kredit!"); } }
+        function repayMoney() { let amt = Math.floor(Number(getDom('repayAmount').value)) || 0; if (amt > 0 && amt <= p.money) { if (amt > p.debt) amt = p.debt; p.money -= amt; p.debt -= amt; if (p.debt === 0) p.debtYears = 0; showCustomAlert(`Berhasil mencicil ${formatMoney(amt)}.`); if(!p.isPostCareer) updateDashUI(); else updatePostCareerUI(); renderShop('bank'); } else { showCustomAlert("Jumlah tidak valid atau saldo dompet kurang."); } }
         
+        function playCasino() {
+            let betInput = getDom('betAmount').value;
+            let bet = Math.floor(Number(betInput));
+            if (!bet || isNaN(bet) || bet <= 0) { showCustomAlert("Masukkan jumlah taruhan yang valid!"); return; }
+            if (bet > p.money) { showCustomAlert("Saldo dompet tidak mencukupi untuk taruhan sebesar itu!"); return; }
+            
+            p.money -= bet;
+            if (Math.random() < 0.48) { 
+                let win = bet * 2; p.money += win; p.morale = 'Sangat Bahagia';
+                showCustomAlert(`🎉 JACKPOT JACKPOT!\n\nTaruhanmu berhasil! Kamu memenangkan ${formatMoney(win)}! Moralmu naik drastis.`);
+            } else {
+                p.morale = 'Kecewa';
+                showCustomAlert(`💀 ZONK!\n\nSayang sekali taruhanmu meleset. Uangmu hangus dimakan bandar. Moralmu menurun.`);
+            }
+            getDom('betAmount').value = ''; 
+            if(!p.isPostCareer) updateDashUI(); else updatePostCareerUI();
+            renderShop('casino');
+        }
+
         function buyItem(id) {
             let item = db.shopItems.find(i => i.id === id) || currentMarketInvestments.find(i => i.id === id) || currentMarketAgents.find(i => i.id === id);
             if (!item) return;
-            let qtyElem = getDom('buy_qty_' + id);
-            let qty = qtyElem ? (parseInt(qtyElem.value) || 1) : 1;
-            let price = item.unitPrice ? (item.unitPrice * qty) : item.price;
+            let qtyElem = getDom('buy_qty_' + id); let qty = qtyElem ? (Math.floor(Number(qtyElem.value)) || 1) : 1; let price = item.unitPrice ? (item.unitPrice * qty) : item.price;
 
             if (p.money >= price) {
                 p.money -= price;
@@ -1211,8 +1101,7 @@
             invests.forEach(a => {
                 let div = document.createElement('div'); div.className = 'shop-item'; div.style.flexDirection = 'column'; div.style.alignItems = 'stretch';
                 let currentVal = a.unitPrice ? (a.unitPrice * a.ownedAmount) : a.currentTotalValue; let profitLoss = currentVal - a.totalInvested;
-                let color = profitLoss >= 0 ? 'var(--success)' : 'var(--danger)';
-                let unitName = a.unitPrice ? a.unit : '%';
+                let color = profitLoss >= 0 ? 'var(--success)' : 'var(--danger)'; let unitName = a.unitPrice ? a.unit : '%';
                 div.innerHTML = `
                     <div style="display:flex; justify-content:space-between;">
                         <div><h4>${a.name}</h4><p style="font-size:0.75rem; color:#ccc;">Dimiliki: ${a.ownedAmount} ${unitName} | Modal: ${formatMoney(a.totalInvested)}</p></div>
@@ -1230,8 +1119,7 @@
 
         function sellInvestment(id) {
             let assetIndex = p.assets.findIndex(a => a.id === id); if(assetIndex === -1) return; let a = p.assets[assetIndex];
-            let sliderElem = getDom('sell_slider_' + id);
-            let sellAmount = sliderElem ? (parseInt(sliderElem.value) || a.ownedAmount) : a.ownedAmount;
+            let sliderElem = getDom('sell_slider_' + id); let sellAmount = sliderElem ? (Math.floor(Number(sliderElem.value)) || a.ownedAmount) : a.ownedAmount;
             let proportion = sellAmount / a.ownedAmount;
             let currentVal = a.unitPrice ? (a.unitPrice * sellAmount) : Math.floor(a.currentTotalValue * proportion);
             
@@ -1307,9 +1195,7 @@
             let totalTeams = p.league.clubs.length; let expectedRank = Math.round((p.league.clubs.indexOf(p.club) / totalTeams) * totalTeams);
             temp.rank = Math.max(1, Math.min(totalTeams, expectedRank + rand(-4, 4)));
 
-            generateSocialXFeed();
-            injectPersonalizedSocialX(s1.rating, "", temp.rank, false);
-
+            generateSocialXFeed(); injectPersonalizedSocialX(s1.rating, "", temp.rank, false);
             generateMidOffers(s1.apps);
             activeContainer = 'midOffersContainer'; switchScreen('screen-midseason');
         }
@@ -1320,7 +1206,7 @@
             globalPrices.btc = Math.max(1000, Math.floor(globalPrices.btc * (1 + ((Math.random() * 1.2) - 0.4)))); 
             globalPrices.gold = Math.max(10, Math.floor(globalPrices.gold * (1 + ((Math.random() * 0.15) - 0.05)))); 
 
-            let invMsg = []; let divTotal = 0;
+            let divTotal = 0;
             p.assets.forEach(a => {
                 if(a.type.startsWith('investment')) {
                     if (a.type === 'investment_crypto') a.unitPrice = globalPrices.btc;
@@ -1328,7 +1214,7 @@
                     else {
                         let change = (Math.random() * 0.4) - 0.15; a.currentTotalValue += Math.floor(a.currentTotalValue * change);
                         if (a.currentTotalValue > 0) divTotal += Math.floor(a.currentTotalValue * 0.03);
-                        if (a.currentTotalValue <= 0) { a.currentTotalValue = 0; invMsg.push(`📉 Saham [${a.name}] bangkrut!`); } 
+                        if (a.currentTotalValue <= 0) { a.currentTotalValue = 0; } 
                     }
                 }
             });
@@ -1412,22 +1298,44 @@
 
             if(p.isLoaned) { p.club = p.parentClub; p.league = p.parentLeague; p.isLoaned = false; updateResidence(); }
 
-            generateSocialXFeed();
-            injectPersonalizedSocialX(avgRating, promRelText, teamRank, isFA);
+            generateSocialXFeed(); injectPersonalizedSocialX(avgRating, promRelText, teamRank, isFA);
 
             if(forceRetire) { showCustomAlert(`Tubuhmu sudah tidak sanggup lagi bertanding. Saatnya gantung sepatu!`, () => { executeRetire(); }); } 
             else { showSummaryScreen(); }
         }
 
         function generateMidOffers(h1Apps) {
-            currentOffers = []; if (p.isLoaned) { renderOffers('midOffersContainer'); return; }
+            currentOffers = [];
+            if (p.isLoaned) { renderOffers('midOffersContainer'); return; }
+
             let numOffers = (Math.random() > 0.5) ? rand(0, 1) : 0;
+            if(h1Apps < 5 && p.age < 23) numOffers = rand(1, 2); 
+            if (p.agent.lvl === 3 && Math.random() > 0.4) numOffers++;
+
+            let isPrime = p.age >= 24 && p.age <= 30 && p.ovr > 80; let isOld = p.age > 30;
             let offeredClubs = new Set([p.club]); 
             for(let i=0; i<numOffers; i++) {
-                let tL = db.leagues[rand(0, db.leagues.length - 1)]; let tC = tL.clubs[rand(0, tL.clubs.length - 1)];
+                let tRepMin = p.ovr - 10; let tRepMax = p.ovr + 8;
+                if (isPrime) { if (curSeason.ratingSum >= 7.5 || p.ovr >= 85) { tRepMin = Math.max(tRepMin, 75); tRepMax = 100; if (Math.random() < 0.1) { tRepMin = 50; tRepMax = 70; } } } 
+                else if (isOld) { tRepMin = Math.max(40, p.ovr - 20); tRepMax = p.ovr + 2; if (p.ovr > 86 && curSeason.ratingSum >= 7.5) tRepMax = 95; }
+
+                if (curSeason.ratingSum >= 8.0) { tRepMin += 5; tRepMax += 5; }
+                if (curSeason.ratingSum < 6.0) { tRepMin -= 10; tRepMax -= 5; }
+
+                let possible = db.leagues.filter(l => l.rep >= tRepMin && l.rep <= tRepMax);
+                if(possible.length === 0) possible = db.leagues; 
+                let tL = possible[rand(0, possible.length - 1)]; let tC = tL.clubs[rand(0, tL.clubs.length - 1)];
+
+                let attempts = 0; while(offeredClubs.has(tC) && attempts < 15) { tC = tL.clubs[rand(0, tL.clubs.length - 1)]; attempts++; }
+
                 if(!offeredClubs.has(tC)) {
-                    offeredClubs.add(tC); let baseW = (tL.wealth * 500) + (p.ovr * 200);
-                    currentOffers.push({ type: 'transfer', club: tC, league: tL, wage: Math.floor(baseW), isFree: false, negoTries: 3 });
+                    offeredClubs.add(tC); let isLoan = (h1Apps < 5 && p.age < 23) ? true : (Math.random() > 0.8);
+                    let baseW = (tL.wealth * 500) + (p.ovr * 200);
+                    if (tL.country === 'Arab Saudi') baseW *= rand(25, 40) / 10; else if (tL.wealth >= 85) baseW *= rand(15, 25) / 10; 
+                    if (curSeason.ratingSum >= 7.5) baseW *= 1.3;
+
+                    let offWage = Math.floor(baseW * (1 + (Math.random() * 0.4 - 0.2)) * p.agent.multiplier);
+                    currentOffers.push({ type: isLoan ? 'loan' : 'transfer', club: tC, league: tL, wage: offWage, isFree: false, negoTries: 3 });
                 }
             }
             renderOffers('midOffersContainer');
@@ -1435,18 +1343,53 @@
 
         function generateEndOffers(offerRenewal) {
             currentOffers = [];
-            if(offerRenewal) currentOffers.push({ type: 'renewal', club: p.club, league: p.league, wage: Math.floor(p.wage * 1.1), negoTries: 3 });
-            
-            let numOffers = p.club === 'Free Agent' ? rand(2, 5) : rand(1, 3);
+
+            if(!p.sponsor && p.followers >= 500000 && Math.random() > 0.4) {
+                let localBrands = db.brandsByCountry[p.nat] || []; let isLocal = localBrands.length > 0 && Math.random() > 0.4;
+                let brandList = p.followers >= 3000000 ? db.brandsElite : db.brandsStd;
+                let brand = isLocal ? localBrands[rand(0, localBrands.length-1)] : brandList[rand(0, brandList.length-1)];
+                let pay = Math.floor(p.followers * (Math.random() * 0.5 + 0.2) * p.agent.multiplier);
+                currentOffers.push({ type: 'sponsor', brand, pay, dur: rand(1,3) });
+            }
+
+            if(offerRenewal) {
+                let rWage = Math.floor(p.wage * (1 + (Math.random()*0.2)) * p.agent.multiplier);
+                if (temp.awardText) rWage = Math.floor(rWage * 1.25); 
+                currentOffers.push({ type: 'renewal', club: p.club, league: p.league, wage: rWage, negoTries: 3 });
+            }
+
+            let numOffers = p.club === 'Free Agent' ? rand(2, 5) : 0;
+            if (p.club !== 'Free Agent') {
+                if (p.ovr > 88) numOffers = rand(2, 4); else if (temp.avgRating >= 8.0) numOffers = rand(2, 3); else if (temp.avgRating >= 7.0) numOffers = rand(1, 2); else if (temp.avgRating < 6.0) numOffers = rand(0, 1);  
+                if (temp.awardText || temp.trophyText) numOffers += rand(1, 2);
+                if (p.contract >= 3 && Math.random() > 0.3 && p.ovr < 85) numOffers = Math.max(0, numOffers - 2); 
+            }
+            if (p.agent.lvl === 3 && p.ovr > 70 && numOffers === 0 && Math.random() > 0.5) numOffers = 1;
+
             let offeredClubs = new Set([p.club]); 
             for(let i=0; i<numOffers; i++) {
-                let possible = db.leagues.filter(l => l.rep >= p.ovr - 15 && l.rep <= p.ovr + 8);
+                let tRepMin = p.club === 'Free Agent' ? p.ovr - 15 : p.ovr - 10; let tRepMax = p.ovr + 8;
+                if (p.age >= 24 && p.age <= 30 && p.ovr >= 80) { if (temp.avgRating >= 7.5 || p.ovr > 86) { tRepMin = Math.max(tRepMin, 75); tRepMax = 100; if (Math.random() < 0.15) { tRepMin = 50; tRepMax = 70; } } } 
+                else if (p.age > 30) { tRepMin = Math.max(40, p.ovr - 25); tRepMax = p.ovr + 2; if (p.ovr > 86 && temp.avgRating >= 7.5) tRepMax = 95; }
+                if (temp.avgRating >= 8.0) { tRepMin += 5; tRepMax += 5; } if (temp.avgRating < 6.0) { tRepMin -= 10; tRepMax -= 5; }
+
+                let possible = db.leagues.filter(l => l.rep >= tRepMin && l.rep <= tRepMax);
                 if(possible.length === 0) possible = db.leagues; 
-                let tL = possible[rand(0, possible.length - 1)]; let tC = tL.clubs[rand(0, tL.clubs.length - 1)];
                 
+                let tL = (p.agent.lvl === 3 && Math.random() > 0.6) ? possible.sort((a,b) => b.rep - a.rep)[0] : possible[rand(0, possible.length - 1)];
+                let tC = tL.clubs[rand(0, tL.clubs.length - 1)];
+                let attempts = 0; while(offeredClubs.has(tC) && attempts < 15) { tC = tL.clubs[rand(0, tL.clubs.length - 1)]; attempts++; }
+
                 if(!offeredClubs.has(tC)) {
-                    offeredClubs.add(tC); let baseW = (tL.wealth * 500) + (p.ovr * 200);
-                    currentOffers.push({ type: 'transfer', club: tC, league: tL, wage: Math.floor(baseW), isFree: p.club === 'Free Agent', negoTries: 3 });
+                    offeredClubs.add(tC);
+                    let baseW = (tL.wealth * 500) + (p.ovr * 200);
+                    if (tL.country === 'Arab Saudi') baseW *= rand(25, 40) / 10; else if (tL.wealth >= 85) baseW *= rand(15, 25) / 10; 
+                    if (temp.avgRating >= 7.5) baseW *= 1.3;
+
+                    let offWage = Math.floor(baseW * (1 + (Math.random() * 0.4 - 0.2)) * p.agent.multiplier);
+                    if (p.age > 30 && tL.rep < 75) offWage = Math.floor(offWage * rand(1.5, 3)); 
+                    let isLoan = (temp.apps < 15 && p.age < 23 && p.club !== 'Free Agent') ? true : false;
+                    currentOffers.push({ type: isLoan ? 'loan' : 'transfer', club: tC, league: tL, wage: offWage, isFree: p.club === 'Free Agent', negoTries: 3 });
                 }
             }
             renderOffers('transferOffersContainer');
@@ -1456,10 +1399,11 @@
             activeContainer = 'transferOffersContainer';
             getDom('sumSeason').innerText = `${p.seasonYear-1}/${p.seasonYear}`; getDom('sumRank').innerText = temp.rank;
             getDom('sumPromRelText').innerText = temp.promRelText || "";
+            
+            // Re-bind values correctly to fix empty Assist bug
             getDom('sumApps').innerText = temp.apps; getDom('sumGoals').innerText = temp.goals; 
             getDom('sumAst').innerText = temp.astCs; getDom('sumAvg').innerText = temp.avgRating;
             getDom('sumYc').innerText = temp.yc; getDom('sumRc').innerText = temp.rc;
-            getDom('sumOvrGrowth').innerText = temp.growth > 0 ? `+${temp.growth}` : temp.growth; getDom('sumNewOvr').innerText = p.ovr;
 
             let offerRenewal = false; 
             let cInfo = getDom('sumContractInfo');
@@ -1476,79 +1420,122 @@
             const container = getDom(containerId); container.innerHTML = '';
             let btnStay = containerId === 'midOffersContainer' ? null : getDom('btnStayClub');
 
-            if(currentOffers.length === 0 && containerId === 'midOffersContainer') { container.innerHTML = '<p style="font-size:0.9rem; color:#aaa;">Tidak ada tawaran transfer.</p>'; return; }
+            if(currentOffers.length === 0 && p.club === 'Free Agent' && btnStay) { container.innerHTML = '<p style="text-align:center; font-size:0.9rem;">Tidak ada klub yang berminat merekrutmu saat ini.</p>'; btnStay.style.display = 'block'; btnStay.innerText = "Lanjut (Tetap Free Agent)"; return; }
+            if(currentOffers.length === 0 && containerId === 'midOffersContainer') { container.innerHTML = '<p style="text-align:center; font-size:0.9rem; color:#aaa;">Tidak ada pergerakan transfer di jeda paruh musim ini.</p>'; return; }
+            if(currentOffers.length === 0 && containerId === 'transferOffersContainer') { container.innerHTML = '<p style="text-align:center; font-size:0.9rem; color:#aaa;">Tidak ada tawaran transfer masuk.</p>'; }
 
             currentOffers.forEach((off, index) => {
-                let div = document.createElement('div'); div.className = 'offer-card' + (off.type === 'renewal' ? ' renewal' : '');
-                let badge = off.type === 'renewal' ? '<span class="badge badge-renewal">PERPANJANG</span>' : '';
-                div.innerHTML = `<div class="offer-details"><h4>${off.club} ${badge}</h4><p>${off.league ? off.league.name : '-'}</p><p style="color:var(--accent);">Gaji: ${formatMoney(off.wage)}</p></div><button class="btn btn-small" onclick="openNego(${index}, '${containerId}')">Nego</button>`;
+                let div = document.createElement('div');
+                if(off.type === 'sponsor') {
+                    div.className = 'offer-card brand'; div.innerHTML = `<div class="offer-details"><h4>Sponsor: ${off.brand}</h4><p>Nilai: ${formatMoney(off.pay)}/thn | Durasi: ${off.dur} Thn</p></div><button class="btn btn-small" onclick="acceptSponsor(${index}, '${containerId}')">Terima</button>`;
+                } else {
+                    let className = 'offer-card' + (off.type === 'loan' ? ' loan' : (off.type === 'renewal' ? ' renewal' : ''));
+                    let badge = off.type === 'loan' ? '<span class="badge badge-loan">LOAN</span>' : (off.type === 'renewal' ? '<span class="badge badge-renewal">PERPANJANG</span>' : (off.isFree ? '<span class="badge badge-free">FREE AGENT</span>' : ''));
+                    div.className = className; div.innerHTML = `<div class="offer-details"><h4>${off.club} ${badge}</h4><p>${off.league ? off.league.name : '-'}</p><p style="color:var(--accent); font-weight:600;">Tawaran: ${formatMoney(off.wage)}/pekan</p></div><button class="btn btn-small" onclick="openNego(${index}, '${containerId}')">Negosiasi</button>`;
+                }
                 container.appendChild(div);
             });
 
-            if(btnStay) btnStay.innerText = p.club === 'Free Agent' ? "Abaikan (Tetap Free Agent)" : "Tolak Semua & Lanjut";
+            if(btnStay) {
+                let hasClubOffers = currentOffers.some(o => ['transfer','loan','renewal'].includes(o.type));
+                if(p.club === 'Free Agent') { btnStay.style.display = 'block'; btnStay.innerText = "Abaikan & Lanjut (Tetap Free Agent)"; } 
+                else { btnStay.style.display = 'block'; btnStay.innerText = p.contract === 0 ? "Tolak Semua & Berpisah (Jadi Free Agent)" : (hasClubOffers ? "Tolak Semua & Lanjut di Klub Ini" : "Lanjut Musim Depan"); }
+            }
         }
+
+        function acceptSponsor(index, containerId) { let off = currentOffers[index]; p.sponsor = { brand: off.brand, pay: off.pay, duration: off.dur }; showCustomAlert(`Kontrak eksklusif dengan ${off.brand} ditandatangani!`); currentOffers.splice(index, 1); renderOffers(containerId); }
+        function updateNegoStars() { let stars = ""; for(let i=0; i<activeOffer.negoTries; i++) stars += "⭐️"; getDom('negoTriesText').innerText = `Kesempatan Nego: ${stars} (${activeOffer.negoTries}/3)`; }
 
         function openNego(index, containerId) {
             activeIndex = index; activeOffer = currentOffers[index]; activeContainer = containerId; getDom('negoModal').style.display = 'flex';
-            getDom('negoTitle').innerText = `Tawaran ${activeOffer.club}`; getDom('negoWage').value = activeOffer.wage;
+            getDom('negoTitle').innerText = activeOffer.type === 'loan' ? `Pinjaman ke ${activeOffer.club}` : (activeOffer.type === 'renewal' ? `Perpanjang di ${activeOffer.club}` : `Transfer ke ${activeOffer.club}`);
+            let extraTxt = (activeOffer.type === 'renewal' && temp.awardText) ? " (Posisi tawar kuat!)" : "";
+            getDom('negoDesc').innerText = `Tawaran awal gaji: ${formatMoney(activeOffer.wage)}/pekan.${extraTxt}`;
+            getDom('negoWage').value = activeOffer.wage; getDom('negoRole').value = p.statusRole === 'Cadangan Pelapis' ? 'rotation' : 'regular'; updateNegoStars();
+            
+            if(activeOffer.type === 'loan') {
+                let nYGroup = getDom('negoYearsGroup');
+                if(nYGroup) nYGroup.style.display = 'none';
+            } else { 
+                let nYGroup = getDom('negoYearsGroup');
+                if(nYGroup) { nYGroup.style.display = 'block'; getDom('negoYears').value = rand(2,4); }
+            }
         }
 
         function submitNegotiation() {
-            let reqWage = parseInt(getDom('negoWage').value) || 500; let reqYears = parseInt(getDom('negoYears').value) || 1; let reqRole = getDom('negoRole').value;
-            let tolerance = activeOffer.wage * 1.2; 
+            let reqWage = parseInt(getDom('negoWage').value); let reqYears = parseInt(getDom('negoYears').value) || 1; let reqRole = getDom('negoRole').value;
+            let tolerance = activeOffer.wage * (1.1 + (p.agent.multiplier * 0.2)); 
+            if (activeOffer.type === 'renewal' && temp.awardText) tolerance *= 1.25; if (activeOffer.type === 'renewal' && temp.trophyText) tolerance *= 1.15;
+
+            let roleDemerit = 0; let diffToLeague = p.ovr - activeOffer.league.rep;
+            if (reqRole === 'star' && diffToLeague < 3) roleDemerit = 30 + (Math.abs(diffToLeague) * 10);
+            if (reqRole === 'regular' && diffToLeague < -3) roleDemerit = 20 + (Math.abs(diffToLeague) * 5);
+            if (p.injuryTrait === 'Rentan Cedera' && (reqRole === 'star' || reqRole === 'regular')) roleDemerit += 20;
+
+            let chance = 100 - ((reqWage / activeOffer.wage) * 100 - 100) * (3 / p.agent.multiplier); chance -= roleDemerit; 
+            if (chance < 0) chance = 0; if (reqWage <= activeOffer.wage && roleDemerit === 0) chance = 100; 
             
-            if(reqWage <= tolerance && Math.random() < 0.7) {
-                showCustomAlert(`Negosiasi Sukses!`, () => {
-                    p.statusRole = reqRole === 'star' ? "Pemain Bintang (Starter Utama)" : "Pemain Inti (Reguler)"; p.wage = reqWage; p.contract = reqYears;
-                    if(activeOffer.type !== 'renewal') { p.club = activeOffer.club; p.league = activeOffer.league; updateResidence(); }
+            if(reqWage <= activeOffer.wage && roleDemerit === 0 || (reqWage <= tolerance && Math.random() * 100 < chance)) {
+                showCustomAlert(`Negosiasi Sukses! ${activeOffer.club} menyetujui tuntutanmu.`, () => {
+                    p.statusRole = reqRole === 'star' ? "Pemain Bintang (Starter Utama)" : (reqRole === 'regular' ? "Pemain Inti (Reguler)" : (reqRole === 'backup' ? "Cadangan Pelapis" : "Rotasi"));
+                    if(activeOffer.type === 'loan') { p.parentClub = p.club; p.parentLeague = p.league; p.isLoaned = true; p.club = activeOffer.club; p.league = activeOffer.league; p.wage = reqWage; updateResidence(); } 
+                    else { p.wage = reqWage; p.contract = reqYears; p.isLoaned = false; if(activeOffer.type !== 'renewal') { p.club = activeOffer.club; p.league = activeOffer.league; updateResidence(); } }
                     closeModal('negoModal'); currentOffers = []; if(activeContainer === 'midOffersContainer') simSecondHalf(); else nextSeason();
                 });
             } else {
                 activeOffer.negoTries--;
-                if (activeOffer.negoTries > 0) showCustomAlert(`Ditolak! Turunkan tuntutanmu. Sisa ${activeOffer.negoTries} nego.`);
-                else showCustomAlert(`Gagal! Klub menarik tawaran.`, () => { currentOffers.splice(activeIndex, 1); closeModal('negoModal'); renderOffers(activeContainer); });
+                let reason = roleDemerit > 20 ? "mereka tidak berani menjamin waktu bermain seperti yang kamu tuntut." : "permintaan gajimu terlalu tinggi dari anggaran klub.";
+                if (p.injuryTrait === 'Rentan Cedera' && roleDemerit > 20) reason = "mereka ragu memberimu menit bermain reguler karena riwayat cederamu.";
+
+                if (activeOffer.negoTries > 0) {
+                    updateNegoStars(); showCustomAlert(`Klub keberatan dengan permintaanmu! ${activeOffer.club} menyatakan ${reason}\n\nTurunkan tuntutan gaji atau waktu bermain. Sisa ${activeOffer.negoTries} kesempatan nego.`);
+                } else {
+                    let msgFa = (activeOffer.type === 'renewal') ? "\nKarena ini perpanjangan kontrak, kamu harus memilih tawaran lain atau berstatus Free Agent!" : "";
+                    showCustomAlert(`Negosiasi GAGAL TOTAL! ${activeOffer.club} menarik tawaran karena ${reason}` + msgFa, () => { currentOffers.splice(activeIndex, 1); closeModal('negoModal'); renderOffers(activeContainer); });
+                }
             }
         }
 
-        function nextSeason() { currentOffers = []; updateDashUI(); switchScreen('screen-dashboard'); }
-        
-        function showLeagueTableModal(period, ovLId=null, ovC=null) { 
-            let targetLeague = p.league;
-            if (!targetLeague && db.leagues.length > 0) targetLeague = db.leagues[0];
-            if (!targetLeague) return;
-
-            getDom('tableName').innerText = targetLeague.name; 
-            const tbody = document.querySelector('#leagueStandings tbody'); 
-            tbody.innerHTML = '';
+        function showLeagueTableModal(period, overrideLeagueId = null, overrideHighlight = null) {
+            let targetLeague = overrideLeagueId ? db.leagues.find(l => l.id === overrideLeagueId) : p.league; if(!targetLeague) return;
+            getDom('tableName').innerText = targetLeague.name; const tbody = document.querySelector('#leagueStandings tbody'); tbody.innerHTML = '';
             
             let allClubs = [...targetLeague.clubs];
-            if (p.club && p.club !== 'Free Agent' && targetLeague.clubs.includes(p.club)) {
-                allClubs = allClubs.filter(c => c !== p.club);
+            let isPlayerLeague = (targetLeague === p.league) && !p.isPostCareer && p.club !== 'Free Agent';
+            
+            if (isPlayerLeague && !overrideHighlight) {
+                allClubs = allClubs.filter(c => c !== p.club); 
                 allClubs.sort(() => Math.random() - 0.5);
-                let r = (temp.rank === '-' || temp.rank == null) ? Math.floor(allClubs.length / 2) : temp.rank;
-                let posIndex = Math.max(0, Math.min(r - 1, allClubs.length));
-                allClubs.splice(posIndex, 0, p.club);
+                let r = (temp.rank && temp.rank !== '-') ? temp.rank : Math.floor(targetLeague.clubs.length / 2);
+                let posIndex = Math.max(0, Math.min(r - 1, allClubs.length)); 
+                allClubs.splice(posIndex, 0, p.club); // Force player's team to exactly correct rank
+            } else {
+                allClubs.sort(() => Math.random() - 0.5);
             }
-
+            
             let totalMatches = period === 'mid' ? Math.floor((allClubs.length - 1) * 2 / 2) : (allClubs.length - 1) * 2;
             let currentPoints = totalMatches * 2.6;
-
+            
             allClubs.forEach((club, index) => {
-                let isPlayerTeam = (p.club && club === p.club && !p.isPostCareer);
-                let win = Math.min(Math.floor(currentPoints / 3), totalMatches); 
-                let draw = win === totalMatches ? 0 : Math.floor(currentPoints % 3); 
-                let loss = Math.max(0, totalMatches - win - draw);
+                let isPlayerTeam = (isPlayerLeague && club === p.club && !p.isPostCareer); let isOwnedTeam = (club === overrideHighlight);
+                let win = Math.min(Math.floor(currentPoints / 3), totalMatches); let draw = win === totalMatches ? 0 : Math.floor(currentPoints % 3); let loss = Math.max(0, totalMatches - win - draw);
                 let pts = (win * 3) + draw;
                 
                 let tr = document.createElement('tr');
-                if (isPlayerTeam) tr.style.background = 'rgba(0, 255, 204, 0.2)';
+                if (isPlayerTeam && isOwnedTeam) tr.style.background = 'linear-gradient(90deg, rgba(0,255,204,0.2) 0%, rgba(255,204,0,0.2) 100%)';
+                else if (isPlayerTeam) tr.style.background = 'rgba(0, 255, 204, 0.2)'; else if (isOwnedTeam) tr.style.background = 'rgba(255, 204, 0, 0.2)';
                 
-                tr.innerHTML = `<td>${index + 1}</td><td class="text-left" style="font-weight:${isPlayerTeam ? 'bold' : 'normal'}; color:${isPlayerTeam ? 'var(--accent)' : '#fff'}">${club}</td><td>${totalMatches}</td><td>${win}</td><td>${draw}</td><td>${loss}</td><td style="font-weight:bold;">${pts}</td>`;
-                tbody.appendChild(tr); 
-                currentPoints = Math.max(0, currentPoints - rand(1, 4));
+                let colorText = (isPlayerTeam && isOwnedTeam) || isPlayerTeam ? 'var(--accent)' : (isOwnedTeam ? 'var(--warning)' : '#fff');
+                tr.innerHTML = `<td>${index + 1}</td><td class="text-left" style="font-weight:${isPlayerTeam||isOwnedTeam ? 'bold' : 'normal'}; color:${colorText}">${club}</td><td>${totalMatches}</td><td>${win}</td><td>${draw}</td><td>${loss}</td><td style="font-weight:bold;">${pts}</td>`;
+                tbody.appendChild(tr); currentPoints = Math.max(0, currentPoints - rand(1, 4));
             });
+            getDom('tableModal').style.display = 'flex';
+        }
 
-            getDom('tableModal').style.display = 'flex'; 
+        function nextSeason() {
+            currentOffers = [];
+            if(p.contract === 0 && p.club !== 'Free Agent') { p.club = 'Free Agent'; p.wage = 0; p.statusRole = 'Tidak Jelas'; updateResidence(); }
+            updateDashUI(); switchScreen('screen-dashboard'); 
         }
 
         function showHistory() {
