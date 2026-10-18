@@ -165,7 +165,7 @@
         .social-name { font-weight: bold; font-size: 0.95rem; color: #fff; display: flex; align-items: center;}
         .social-handle { font-size: 0.8rem; color: var(--text-muted); }
         
-        /* Verified SVG Icon CSS (Biru Murni) */
+        /* Verified SVG Icon CSS */
         .verified-icon { width: 16px; height: 16px; fill: #1da1f2; vertical-align: middle; margin-left: 4px; display: inline-block; margin-top: -1px; }
         
         .social-body { font-size: 0.9rem; color: #eee; line-height: 1.4; margin-bottom: 10px;}
@@ -268,7 +268,7 @@
                 
                 <!-- SocialX Followers Card -->
                 <div class="card card-clickable" onclick="openSocialXModal()" style="border-color:var(--blue); background:rgba(0,170,255,0.05); cursor:pointer;">
-                    <h3 style="color:var(--blue);"<h3>SocialX</h3>
+                    <h3 style="color:var(--blue);">📱 Akun SocialX</h3>
                     <div class="value" id="dashFollowers" style="font-size:1.1rem; color:#fff;">0</div>
                     <p style="font-size:0.7rem; color:var(--blue); margin-top:3px; font-weight:bold;">Tap to Open</p>
                 </div>
@@ -341,7 +341,7 @@
             
             <div style="display: flex; gap: 10px; margin-bottom: 15px; justify-content: center;">
                 <button class="btn btn-secondary" onclick="openShopModal()" style="margin:0; background:rgba(0,170,255,0.2); border-color:var(--blue); flex: 1 1 45%;">🛒 Market</button>
-                <button class="btn btn-secondary" onclick="openSocialXModal()" style="margin:0; background:rgba(255,0,127,0.2); border-color:var(--pink); flex: 1 1 45%;"> SocialX</button>
+                <button class="btn btn-secondary" onclick="openSocialXModal()" style="margin:0; background:rgba(255,0,127,0.2); border-color:var(--pink); flex: 1 1 45%;">📱 Cek SocialX</button>
             </div>
 
             <button class="btn btn-secondary" onclick="simSecondHalf()" style="margin-top:0;">Abaikan & Lanjut Paruh Kedua</button>
@@ -391,7 +391,7 @@
             <h2 style="font-size: 1.3rem;">Bursa Transfer Akhir Musim</h2>
             <div id="transferOffersContainer"></div>
             
-            <button class="btn btn-secondary" onclick="openSocialXModal()" style="margin-bottom: 10px; background:rgba(0,170,255,0.2); border-color:var(--blue);">SocialX (Cek Info & Berita)</button>
+            <button class="btn btn-secondary" onclick="openSocialXModal()" style="margin-bottom: 10px; background:rgba(0,170,255,0.2); border-color:var(--blue);">📱 Buka SocialX (Cek Info & Berita)</button>
 
             <button class="btn btn-secondary" id="btnStayClub" onclick="nextSeason()">Lanjut Musim Depan</button>
         </div>
@@ -524,7 +524,7 @@
     <div class="modal-overlay" id="socialXModal">
         <div class="modal-content" style="text-align: left; padding: 20px; max-height: 85vh; display: flex; flex-direction: column;">
             <h2 style="color:#fff; text-align:center; margin-bottom:5px; display:flex; align-items:center; justify-content:center; gap:8px;">
-                <span style="color:var(--blue); font-size:1.6rem;">✴️</span> SocialX
+                <span style="color:var(--blue); font-size:1.6rem;">📱</span> SocialX
             </h2>
             <p style="text-align:center; font-size:0.8rem; color:#aaa; margin-bottom:15px;">Timeline Berita Sepakbola Dunia</p>
             
@@ -1402,8 +1402,10 @@
             p.careerHistory.push({ season: p.seasonYear, age: p.age, club: p.isLoaned ? p.club + ' (Loan)' : p.club, league: isFA ? '-' : p.league.name, apps: curSeason.apps, goals: curSeason.goals, astCs: curSeason.astCs, rating: avgRating.toFixed(2), trophies: trophyText.length > 0 ? trophyText.join(", ") : '-' });
             
             p.stats.apps += curSeason.apps; p.stats.goals += curSeason.goals; p.stats.astCs += curSeason.astCs;
+            p.stats.yc += curSeason.yc; p.stats.rc += curSeason.rc;
             
-            temp.apps = curSeason.apps; temp.goals = curSeason.goals; temp.astCs = curSeason.astCs; temp.avgRating = avgRating.toFixed(2);
+            temp.apps = curSeason.apps; temp.goals = curSeason.goals; temp.astCs = curSeason.astCs;
+            temp.yc = curSeason.yc; temp.rc = curSeason.rc; temp.avgRating = avgRating.toFixed(2);
             temp.growth = growth; temp.natStatus = natStatus; temp.promRelText = promRelText;
             temp.trophyText = trophyText.join(" | "); temp.awardText = awardText.join(" | "); temp.rank = isFA ? '-' : teamRank; 
 
@@ -1456,7 +1458,9 @@
             activeContainer = 'transferOffersContainer';
             getDom('sumSeason').innerText = `${p.seasonYear-1}/${p.seasonYear}`; getDom('sumRank').innerText = temp.rank;
             getDom('sumPromRelText').innerText = temp.promRelText || "";
-            getDom('sumApps').innerText = temp.apps; getDom('sumGoals').innerText = temp.goals; getDom('sumAvg').innerText = temp.avgRating;
+            getDom('sumApps').innerText = temp.apps; getDom('sumGoals').innerText = temp.goals; 
+            getDom('sumAst').innerText = temp.astCs; getDom('sumAvg').innerText = temp.avgRating;
+            getDom('sumYc').innerText = temp.yc; getDom('sumRc').innerText = temp.rc;
             getDom('sumOvrGrowth').innerText = temp.growth > 0 ? `+${temp.growth}` : temp.growth; getDom('sumNewOvr').innerText = p.ovr;
 
             let offerRenewal = false; 
