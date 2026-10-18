@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pocket Football Career Simulator v1.6</title>
+    <title>Pocket Football Career Simulator v1.6.2</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap');
 
@@ -391,7 +391,7 @@
             <h2 style="font-size: 1.3rem;">Bursa Transfer Akhir Musim</h2>
             <div id="transferOffersContainer"></div>
             
-            <button class="btn btn-secondary" onclick="openSocialXModal()" style="margin-bottom: 10px; background:rgba(0,170,255,0.2); border-color:var(--blue);">Buka SocialX (Cek Info & Berita)</button>
+            <button class="btn btn-secondary" onclick="openSocialXModal()" style="margin-bottom: 10px; background:rgba(0,170,255,0.2); border-color:var(--blue);">SocialX (Cek Info & Berita)</button>
 
             <button class="btn btn-secondary" id="btnStayClub" onclick="nextSeason()">Lanjut Musim Depan</button>
         </div>
@@ -534,9 +534,7 @@
             </div>
 
             <!-- Feed Tab -->
-            <div id="socialFeedContainer" style="overflow-y:auto; flex-grow:1; padding-right:5px; margin-bottom:10px;" class="hide-scrollbar">
-                <!-- Feed items rendered here -->
-            </div>
+            <div id="socialFeedContainer" style="overflow-y:auto; flex-grow:1; padding-right:5px; margin-bottom:10px;" class="hide-scrollbar"></div>
 
             <!-- Profile Tab -->
             <div id="socialProfileContainer" style="display:none; overflow-y:auto; flex-grow:1; padding-right:5px; margin-bottom:10px;" class="hide-scrollbar">
@@ -557,9 +555,7 @@
                 </div>
 
                 <h4 style="font-size:0.9rem; color:var(--text-muted); margin-bottom:10px;">Postingan Kamu:</h4>
-                <div id="sxMyPostsContainer">
-                    <!-- Player posts rendered here -->
-                </div>
+                <div id="sxMyPostsContainer"></div>
             </div>
 
             <button class="btn btn-secondary" style="margin-top: auto;" onclick="closeModal('socialXModal')">Tutup</button>
@@ -647,7 +643,7 @@
     </div>
 
     <script>
-        // Official Verified SVG Path Biru (Tanpa Emoji)
+        // Official Verified SVG Path Biru
         const verifiedBadgeSVG = `<svg class="verified-icon" viewBox="0 0 24 24"><path d="M22.5 12.5c0-1.58-.875-2.95-2.148-3.6.154-.435.238-.905.238-1.4 0-2.21-1.71-3.998-3.918-3.998-.47 0-.92.084-1.336.25C14.818 2.415 13.51 1.5 12 1.5s-2.816.917-3.337 2.25c-.416-.165-.866-.25-1.336-.25-2.21 0-3.918 1.792-3.918 4 0 .495.084.965.238 1.4-1.273.65-2.148 2.02-2.148 3.6 0 1.46.74 2.746 1.867 3.5-.132.42-.203.865-.203 1.3 0 2.21 1.71 4 3.918 4 .47 0 .92-.086 1.336-.25.52 1.335 1.826 2.25 3.337 2.25s2.816-.915 3.337-2.25c.416.164.866.25 1.336.25 2.21 0 3.918-1.79 3.918-4 0-.435-.07-.88-.203-1.3 1.127-.754 1.867-2.04 1.867-3.5zm-10.77 5.69l-4.81-4.81 1.56-1.56 3.12 3.12 7.02-7.02 1.56 1.57-8.45 8.45z"></path></svg>`;
 
         const db = {
@@ -741,11 +737,11 @@
         let globalPrices = { btc: 65000, gold: 80 };
 
         const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
-        const formatMoney = (num) => { return '$' + Math.floor(num).toLocaleString('en-US'); };
+        const formatMoney = (num) => { return '$' + Math.floor(num || 0).toLocaleString('en-US'); };
         const formatNum = (num) => {
             if(num >= 1000000) return (num/1000000).toFixed(1) + 'M';
             if(num >= 1000) return (num/1000).toFixed(1) + 'K';
-            return num;
+            return num || 0;
         };
         const getDom = id => document.getElementById(id);
         const switchScreen = id => {
@@ -1079,7 +1075,7 @@
             getDom('dashOvr').innerText = p.ovr; getDom('dashOvrBar').style.width = p.ovr + '%';
             getDom('dashValue').innerText = formatMoney(p.val); getDom('dashWage').innerText = formatMoney(p.wage) + (p.club !== 'Free Agent' ? "/mg" : "");
             getDom('dashContract').innerText = p.contract; getDom('dashFollowers').innerText = formatNum(p.followers);
-            getDom('dashMoney').innerText = formatMoney(p.money + p.savings); 
+            getDom('dashMoney').innerText = formatMoney((p.money || 0) + (p.savings || 0)); 
 
             if(p.sponsor) { getDom('dashSponsorsText').innerText = `${p.sponsor.brand} (Sisa ${p.sponsor.duration} Thn)`; getDom('dashSponsorsText').style.color = 'var(--accent)'; } 
             else { getDom('dashSponsorsText').innerText = 'Belum ada kontrak eksklusif'; getDom('dashSponsorsText').style.color = '#ccc'; }
@@ -1158,9 +1154,10 @@
                 let extraDesc = item.type === 'agent' ? `<br><span style="font-size:0.75rem; color:#aaa;">${item.desc}</span>` : "";
                 let div = document.createElement('div'); div.className = 'shop-item';
                 
+                let qtyInputId = 'buy_qty_' + item.id;
                 if (item.type.startsWith('investment')) {
                     if (item.unitPrice) {
-                        div.innerHTML = `<div style="flex-grow:1;"><h4>${item.name}</h4><p>${formatMoney(item.unitPrice)} / ${item.unit}</p></div><div style="display:flex; flex-direction:column; gap:5px; align-items:flex-end; width:100px;"><input type="number" id="buy_qty_${item.id}" min="1" value="1" style="width:100%; padding:5px; text-align:center;"><button class="btn btn-small" style="margin:0; width:100%;" onclick="buyItem('${item.id}')">Beli</button></div>`;
+                        div.innerHTML = `<div style="flex-grow:1;"><h4>${item.name}</h4><p>${formatMoney(item.unitPrice)} / ${item.unit}</p></div><div style="display:flex; flex-direction:column; gap:5px; align-items:flex-end; width:100px;"><input type="number" id="${qtyInputId}" min="1" value="1" style="width:100%; padding:5px; text-align:center;"><button class="btn btn-small" style="margin:0; width:100%;" onclick="buyItem('${item.id}')">Beli</button></div>`;
                     } else {
                         div.innerHTML = `<div><h4>${item.name}</h4><p>${formatMoney(item.price)}<br><span style="font-size:0.75rem; color:var(--success);">Tawaran Porsi: ${item.share}%</span></p></div><button class="btn btn-small" style="margin:0;" onclick="buyItem('${item.id}')">Beli</button>`;
                     }
@@ -1171,16 +1168,17 @@
             });
         }
 
-        function depositSavings() { let amt = parseInt(getDom('depositAmount').value); if (amt > 0 && amt <= p.money) { p.money -= amt; p.savings += amt; showCustomAlert(`Berhasil menabung ${formatMoney(amt)}.`); if(!p.isPostCareer) updateDashUI(); else updatePostCareerUI(); renderShop('bank'); } }
-        function withdrawSavings() { let amt = parseInt(getDom('withdrawAmount').value); if (amt > 0 && amt <= p.savings) { p.savings -= amt; p.money += amt; showCustomAlert(`Berhasil menarik ${formatMoney(amt)}.`); if(!p.isPostCareer) updateDashUI(); else updatePostCareerUI(); renderShop('bank'); } }
-        function borrowMoney() { let amt = parseInt(getDom('borrowAmount').value); if (amt > 0 && p.debt + amt <= p.debtLimit) { p.debt += amt; p.money += amt; showCustomAlert(`Peminjaman ${formatMoney(amt)} Berhasil!`); if(!p.isPostCareer) updateDashUI(); else updatePostCareerUI(); renderShop('bank'); } else { showCustomAlert("Melebihi limit kredit!");} }
-        function repayMoney() { let amt = parseInt(getDom('repayAmount').value); if (amt > 0 && amt <= p.money) { if (amt > p.debt) amt = p.debt; p.money -= amt; p.debt -= amt; if (p.debt === 0) p.debtYears = 0; showCustomAlert(`Berhasil mencicil ${formatMoney(amt)}.`); if(!p.isPostCareer) updateDashUI(); else updatePostCareerUI(); renderShop('bank'); } }
-        function playCasino() { let bet = parseInt(getDom('betAmount').value); if (bet > 0 && bet <= p.money) { p.money -= bet; if (Math.random() < 0.48) { p.money += bet*2; p.morale = 'Sangat Bahagia'; showCustomAlert(`🎉 JACKPOT! Menang ${formatMoney(bet*2)}!`); } else { p.morale = 'Kecewa'; showCustomAlert(`💀 ZONK! Uang hangus.`); } if(!p.isPostCareer) updateDashUI(); else updatePostCareerUI(); renderShop('casino'); } }
+        function depositSavings() { let amt = parseInt(getDom('depositAmount').value) || 0; if (amt > 0 && amt <= p.money) { p.money -= amt; p.savings += amt; showCustomAlert(`Berhasil menabung ${formatMoney(amt)}.`); if(!p.isPostCareer) updateDashUI(); else updatePostCareerUI(); renderShop('bank'); } else { showCustomAlert("Jumlah tidak valid atau saldo dompet kurang."); } }
+        function withdrawSavings() { let amt = parseInt(getDom('withdrawAmount').value) || 0; if (amt > 0 && amt <= p.savings) { p.savings -= amt; p.money += amt; showCustomAlert(`Berhasil menarik ${formatMoney(amt)}.`); if(!p.isPostCareer) updateDashUI(); else updatePostCareerUI(); renderShop('bank'); } else { showCustomAlert("Jumlah tidak valid atau saldo tabungan kurang."); } }
+        function borrowMoney() { let amt = parseInt(getDom('borrowAmount').value) || 0; if (amt > 0 && (p.debt || 0) + amt <= p.debtLimit) { p.debt = (p.debt || 0) + amt; p.money = (p.money || 0) + amt; showCustomAlert(`Peminjaman ${formatMoney(amt)} Berhasil!`); if(!p.isPostCareer) updateDashUI(); else updatePostCareerUI(); renderShop('bank'); } else { showCustomAlert("Melebihi limit kredit!"); } }
+        function repayMoney() { let amt = parseInt(getDom('repayAmount').value) || 0; if (amt > 0 && amt <= p.money) { if (amt > p.debt) amt = p.debt; p.money -= amt; p.debt -= amt; if (p.debt === 0) p.debtYears = 0; showCustomAlert(`Berhasil mencicil ${formatMoney(amt)}.`); if(!p.isPostCareer) updateDashUI(); else updatePostCareerUI(); renderShop('bank'); } else { showCustomAlert("Jumlah tidak valid atau saldo dompet kurang."); } }
+        function playCasino() { let bet = parseInt(getDom('betAmount').value) || 0; if (bet > 0 && bet <= p.money) { p.money -= bet; if (Math.random() < 0.48) { p.money += bet*2; p.morale = 'Sangat Bahagia'; showCustomAlert(`🎉 JACKPOT! Menang ${formatMoney(bet*2)}!`); } else { p.morale = 'Kecewa'; showCustomAlert(`💀 ZONK! Uang hangus.`); } if(!p.isPostCareer) updateDashUI(); else updatePostCareerUI(); renderShop('casino'); } else { showCustomAlert("Taruhan tidak valid."); } }
         
         function buyItem(id) {
             let item = db.shopItems.find(i => i.id === id) || currentMarketInvestments.find(i => i.id === id) || currentMarketAgents.find(i => i.id === id);
             if (!item) return;
-            let qty = getDom('buy_qty_' + id) ? parseInt(getDom('buy_qty_' + id).value) : 1;
+            let qtyElem = getDom('buy_qty_' + id);
+            let qty = qtyElem ? (parseInt(qtyElem.value) || 1) : 1;
             let price = item.unitPrice ? (item.unitPrice * qty) : item.price;
 
             if (p.money >= price) {
@@ -1203,7 +1201,7 @@
                 }
                 if(!p.isPostCareer) updateDashUI(); else updatePostCareerUI();
                 renderShop(item.type.startsWith('investment') ? 'investment' : item.type);
-            } else showCustomAlert("Uang dompet tidak cukup!");
+            } else { showCustomAlert("Uang dompet tidak cukup!"); }
         }
 
         function renderPortfolio() {
@@ -1232,7 +1230,8 @@
 
         function sellInvestment(id) {
             let assetIndex = p.assets.findIndex(a => a.id === id); if(assetIndex === -1) return; let a = p.assets[assetIndex];
-            let sellAmount = parseInt(getDom('sell_slider_' + id).value);
+            let sliderElem = getDom('sell_slider_' + id);
+            let sellAmount = sliderElem ? (parseInt(sliderElem.value) || a.ownedAmount) : a.ownedAmount;
             let proportion = sellAmount / a.ownedAmount;
             let currentVal = a.unitPrice ? (a.unitPrice * sellAmount) : Math.floor(a.currentTotalValue * proportion);
             
@@ -1296,7 +1295,8 @@
             if(p.club === 'Free Agent') { curSeason = { apps:0, goals:0, astCs:0, yc:0, rc:0, ratingSum:0, ratingCount:0 }; simSecondHalf(true); return; }
             let s1 = generateMatchStats(0.5);
             curSeason.apps = s1.apps; curSeason.goals = s1.goals; curSeason.astCs = s1.astCs;
-            curSeason.yc = s1.yc; curSeason.rc = s1.rc; curSeason.ratingSum = s1.rating; curSeason.ratingCount = s1.apps > 0 ? 1 : 0;
+            curSeason.yc = s1.yc; curSeason.rc = s1.rc;
+            curSeason.ratingSum = s1.rating; curSeason.ratingCount = s1.apps > 0 ? 1 : 0;
             temp.half1InjuryText = s1.injuryDetails; temp.half1LackPlay = s1.lackOfPlayReason;
             temp.avgRating = s1.rating; 
 
@@ -1307,7 +1307,6 @@
             let totalTeams = p.league.clubs.length; let expectedRank = Math.round((p.league.clubs.indexOf(p.club) / totalTeams) * totalTeams);
             temp.rank = Math.max(1, Math.min(totalTeams, expectedRank + rand(-4, 4)));
 
-            // Update feed sosmed
             generateSocialXFeed();
             injectPersonalizedSocialX(s1.rating, "", temp.rank, false);
 
@@ -1316,8 +1315,8 @@
         }
 
         function processEconomyHelper(yearlyIncome) {
-            p.money += yearlyIncome;
-            let savingsInterest = p.savings > 0 ? Math.floor(p.savings * 0.03) : 0; p.savings += savingsInterest;
+            p.money = (p.money || 0) + yearlyIncome;
+            let savingsInterest = (p.savings || 0) > 0 ? Math.floor(p.savings * 0.03) : 0; p.savings = (p.savings || 0) + savingsInterest;
             globalPrices.btc = Math.max(1000, Math.floor(globalPrices.btc * (1 + ((Math.random() * 1.2) - 0.4)))); 
             globalPrices.gold = Math.max(10, Math.floor(globalPrices.gold * (1 + ((Math.random() * 0.15) - 0.05)))); 
 
@@ -1336,9 +1335,9 @@
             p.money += divTotal;
             p.assets = p.assets.filter(a => !(a.type.startsWith('investment') && a.currentTotalValue === 0 && !a.unitPrice));
             
-            let debtMsgStr = ""; let isBankrupt = false;
-            if (p.debt > 0) {
-                p.debtYears++; p.debt += Math.floor(p.debt * (0.10 + (p.debtYears * 0.05)));
+            let isBankrupt = false;
+            if ((p.debt || 0) > 0) {
+                p.debtYears = (p.debtYears || 0) + 1; p.debt += Math.floor(p.debt * (0.10 + (p.debtYears * 0.05)));
                 if (p.money >= p.debt) { p.money -= p.debt; p.debt = 0; p.debtYears = 0; } 
                 else { p.debt -= p.money; p.money = 0; if (p.debtYears >= 3) isBankrupt = true; }
             } else { p.debtYears = 0; }
@@ -1370,7 +1369,7 @@
 
             let teamRank = 18; let promRelText = ""; let trophyText = []; let awardText = [];
             
-            if(!isFA) {
+            if(!isFA && p.league) {
                 let totalTeams = p.league.clubs.length; let expectedRank = Math.round((p.league.clubs.indexOf(p.club) / totalTeams) * totalTeams);
                 teamRank = Math.max(1, Math.min(totalTeams, expectedRank + rand(-3, 3)));
 
@@ -1399,7 +1398,7 @@
                 natStatus = `✅ Timnas Senior`;
             }
 
-            p.careerHistory.push({ season: p.seasonYear, age: p.age, club: p.isLoaned ? p.club + ' (Loan)' : p.club, league: isFA ? '-' : p.league.name, apps: curSeason.apps, goals: curSeason.goals, astCs: curSeason.astCs, rating: avgRating.toFixed(2), trophies: trophyText.length > 0 ? trophyText.join(", ") : '-' });
+            p.careerHistory.push({ season: p.seasonYear, age: p.age, club: p.isLoaned ? p.club + ' (Loan)' : p.club, league: isFA || !p.league ? '-' : p.league.name, apps: curSeason.apps, goals: curSeason.goals, astCs: curSeason.astCs, rating: avgRating.toFixed(2), trophies: trophyText.length > 0 ? trophyText.join(", ") : '-' });
             
             p.stats.apps += curSeason.apps; p.stats.goals += curSeason.goals; p.stats.astCs += curSeason.astCs;
             p.stats.yc += curSeason.yc; p.stats.rc += curSeason.rc;
@@ -1413,7 +1412,6 @@
 
             if(p.isLoaned) { p.club = p.parentClub; p.league = p.parentLeague; p.isLoaned = false; updateResidence(); }
 
-            // Update Feed Sosmed
             generateSocialXFeed();
             injectPersonalizedSocialX(avgRating, promRelText, teamRank, isFA);
 
@@ -1483,7 +1481,7 @@
             currentOffers.forEach((off, index) => {
                 let div = document.createElement('div'); div.className = 'offer-card' + (off.type === 'renewal' ? ' renewal' : '');
                 let badge = off.type === 'renewal' ? '<span class="badge badge-renewal">PERPANJANG</span>' : '';
-                div.innerHTML = `<div class="offer-details"><h4>${off.club} ${badge}</h4><p>${off.league.name}</p><p style="color:var(--accent);">Gaji: ${formatMoney(off.wage)}</p></div><button class="btn btn-small" onclick="openNego(${index}, '${containerId}')">Nego</button>`;
+                div.innerHTML = `<div class="offer-details"><h4>${off.club} ${badge}</h4><p>${off.league ? off.league.name : '-'}</p><p style="color:var(--accent);">Gaji: ${formatMoney(off.wage)}</p></div><button class="btn btn-small" onclick="openNego(${index}, '${containerId}')">Nego</button>`;
                 container.appendChild(div);
             });
 
@@ -1496,7 +1494,7 @@
         }
 
         function submitNegotiation() {
-            let reqWage = parseInt(getDom('negoWage').value); let reqYears = parseInt(getDom('negoYears').value); let reqRole = getDom('negoRole').value;
+            let reqWage = parseInt(getDom('negoWage').value) || 500; let reqYears = parseInt(getDom('negoYears').value) || 1; let reqRole = getDom('negoRole').value;
             let tolerance = activeOffer.wage * 1.2; 
             
             if(reqWage <= tolerance && Math.random() < 0.7) {
@@ -1513,7 +1511,45 @@
         }
 
         function nextSeason() { currentOffers = []; updateDashUI(); switchScreen('screen-dashboard'); }
-        function showLeagueTableModal(period, ovLId=null, ovC=null) { getDom('tableName').innerText = p.league ? p.league.name : ""; getDom('tableModal').style.display='flex'; }
+        
+        function showLeagueTableModal(period, ovLId=null, ovC=null) { 
+            let targetLeague = p.league;
+            if (!targetLeague && db.leagues.length > 0) targetLeague = db.leagues[0];
+            if (!targetLeague) return;
+
+            getDom('tableName').innerText = targetLeague.name; 
+            const tbody = document.querySelector('#leagueStandings tbody'); 
+            tbody.innerHTML = '';
+            
+            let allClubs = [...targetLeague.clubs];
+            if (p.club && p.club !== 'Free Agent' && targetLeague.clubs.includes(p.club)) {
+                allClubs = allClubs.filter(c => c !== p.club);
+                allClubs.sort(() => Math.random() - 0.5);
+                let r = (temp.rank === '-' || temp.rank == null) ? Math.floor(allClubs.length / 2) : temp.rank;
+                let posIndex = Math.max(0, Math.min(r - 1, allClubs.length));
+                allClubs.splice(posIndex, 0, p.club);
+            }
+
+            let totalMatches = period === 'mid' ? Math.floor((allClubs.length - 1) * 2 / 2) : (allClubs.length - 1) * 2;
+            let currentPoints = totalMatches * 2.6;
+
+            allClubs.forEach((club, index) => {
+                let isPlayerTeam = (p.club && club === p.club && !p.isPostCareer);
+                let win = Math.min(Math.floor(currentPoints / 3), totalMatches); 
+                let draw = win === totalMatches ? 0 : Math.floor(currentPoints % 3); 
+                let loss = Math.max(0, totalMatches - win - draw);
+                let pts = (win * 3) + draw;
+                
+                let tr = document.createElement('tr');
+                if (isPlayerTeam) tr.style.background = 'rgba(0, 255, 204, 0.2)';
+                
+                tr.innerHTML = `<td>${index + 1}</td><td class="text-left" style="font-weight:${isPlayerTeam ? 'bold' : 'normal'}; color:${isPlayerTeam ? 'var(--accent)' : '#fff'}">${club}</td><td>${totalMatches}</td><td>${win}</td><td>${draw}</td><td>${loss}</td><td style="font-weight:bold;">${pts}</td>`;
+                tbody.appendChild(tr); 
+                currentPoints = Math.max(0, currentPoints - rand(1, 4));
+            });
+
+            getDom('tableModal').style.display = 'flex'; 
+        }
 
         function showHistory() {
             getDom('retireTitle').innerText = "Riwayat Karir Berjalan"; getDom('btnBackToDash').style.display = 'inline-block'; getDom('btnRestart').style.display = 'none';
@@ -1593,7 +1629,7 @@
         }
 
         function acceptPostJob(title, salary, duration) { p.postCareerJob = title; p.postCareerSalary = salary; p.postCareerContract = duration; closeModal('postJobOffersModal'); updatePostCareerUI(); showCustomAlert(`Sukses tanda tangan kontrak sebagai ${title}.`); }
-        function viewGlobalLeague() { showLeagueTableModal('end'); }
+        function viewGlobalLeague() { let leagueId = getDom('globalLeagueSelect').value; showLeagueTableModal('end', leagueId, null); }
         function renderTable() { const tbody = document.querySelector('#historyTable tbody'); tbody.innerHTML = ''; p.careerHistory.forEach(h => { let tr = document.createElement('tr'); tr.innerHTML = `<td>${h.season}</td><td>${h.age}</td><td class="text-left">${h.club}</td><td>${h.apps}</td><td>${h.goals}</td><td>${h.astCs}</td><td>${h.rating}</td><td style="color:gold; font-size:0.75rem;">${h.trophies}</td>`; tbody.appendChild(tr); }); }
     </script>
 </body>
