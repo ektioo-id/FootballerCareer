@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pocket Football Career Simulator v1.6.3</title>
+    <title>Pocket Football Career Simulator v1.6.5</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap');
 
@@ -268,7 +268,7 @@
                 
                 <!-- SocialX Followers Card -->
                 <div class="card card-clickable" onclick="openSocialXModal()" style="border-color:var(--blue); background:rgba(0,170,255,0.05);">
-                    <h3 style="color:var(--blue);"> SocialX</h3>
+                    <h3 style="color:var(--blue);">SocialX</h3>
                     <div class="value" id="dashFollowers" style="font-size:1.1rem; color:#fff;">0</div>
                     <p style="font-size:0.7rem; color:var(--blue); margin-top:3px; font-weight:bold;">Tap to Open</p>
                 </div>
@@ -341,7 +341,7 @@
             
             <div style="display: flex; gap: 10px; margin-bottom: 15px; justify-content: center;">
                 <button class="btn btn-secondary" onclick="openShopModal()" style="margin:0; background:rgba(0,170,255,0.2); border-color:var(--blue); flex: 1 1 45%;">🛒 Market</button>
-                <button class="btn btn-secondary" onclick="openSocialXModal()" style="margin:0; background:rgba(255,0,127,0.2); border-color:var(--pink); flex: 1 1 45%;"> SocialX</button>
+                <button class="btn btn-secondary" onclick="openSocialXModal()" style="margin:0; background:rgba(255,0,127,0.2); border-color:var(--pink); flex: 1 1 45%;">SocialX</button>
             </div>
 
             <button class="btn btn-secondary" onclick="simSecondHalf()" style="margin-top:0;">Abaikan & Lanjut Paruh Kedua</button>
@@ -581,7 +581,7 @@
                 <input type="number" id="negoWage" min="500">
             </div>
             <div class="form-group" id="negoYearsGroup">
-                <label>Durasi Kontrak</label>
+                <label id="negoYearsLabel">Durasi Kontrak</label>
                 <select id="negoYears">
                     <option value="1">1 Tahun</option>
                     <option value="2">2 Tahun</option>
@@ -702,7 +702,7 @@
 
         let p = {
             name: '', nat: '', pos: '', age: 15, ovr: 0, potential: 0, injuryTrait: 'Normal',
-            club: null, league: null, isLoaned: false, parentClub: null, parentLeague: null,
+            club: null, league: null, isLoaned: false, parentClub: null, parentLeague: null, loanDuration: 1,
             val: 0, wage: 0, contract: 0, seasonYear: 2026, statusRole: 'Cadangan',
             morale: 'Bahagia', followers: 0, money: 0, savings: 0, residence: "Fasilitas Klub (Sewa)",
             stats: { apps: 0, goals: 0, astCs: 0, caps: 0, ntGoals: 0, bd: 0, indAwards: 0, yc: 0, rc: 0 },
@@ -846,15 +846,15 @@
         function injectPersonalizedSocialX(rating, promRelText, teamRank, isFA) {
             let coachColor = '#ffcc00'; let mediaName = db.mediaNetworks[rand(0, db.mediaNetworks.length-1)]; let mediaColor = '#ff007f'; let fanName = db.fanNames[rand(0, db.fanNames.length-1)];
             
-            p.socialXFeed.unshift({ // Fan (Not Verified)
+            p.socialXFeed.unshift({ 
                 id: 'fan_' + Date.now(), authorName: fanName, authorHandle: '@' + fanName.toLowerCase(), color: '#aaa', text: getFanFeedback(rating, promRelText, isFA),
                 likes: rand(50, 500), dislikes: rand(5, 50), isLiked: false, isDisliked: false, isVerified: false
             });
-            p.socialXFeed.unshift({ // Media (Verified)
+            p.socialXFeed.unshift({ 
                 id: 'media_' + Date.now(), authorName: mediaName, authorHandle: '@' + mediaName.replace(/\s+/g,'').toLowerCase(), color: mediaColor, text: getMediaComment(rating, teamRank, isFA),
                 likes: rand(5000, 50000), dislikes: rand(100, 1000), isLiked: false, isDisliked: false, isVerified: true
             });
-            p.socialXFeed.unshift({ // Coach (Verified)
+            p.socialXFeed.unshift({ 
                 id: 'coach_' + Date.now(), authorName: isFA ? 'Pengamat Pelatih' : 'Pelatih ' + p.club, authorHandle: isFA ? '@pengamat' : '@coach_' + p.club.replace(/\s+/g,'').toLowerCase().substring(0, 10), color: coachColor, text: getCoachFeedback(rating, isFA),
                 likes: rand(1000, 10000), dislikes: rand(50, 500), isLiked: false, isDisliked: false, isVerified: true
             });
@@ -1102,6 +1102,12 @@
                 let div = document.createElement('div'); div.className = 'shop-item'; div.style.flexDirection = 'column'; div.style.alignItems = 'stretch';
                 let currentVal = a.unitPrice ? (a.unitPrice * a.ownedAmount) : a.currentTotalValue; let profitLoss = currentVal - a.totalInvested;
                 let color = profitLoss >= 0 ? 'var(--success)' : 'var(--danger)'; let unitName = a.unitPrice ? a.unit : '%';
+                
+                let extraButtons = '';
+                if (a.type === 'investment_fc') {
+                    extraButtons = `<button class="btn btn-small" style="width:100%; margin-top:8px; background:rgba(255,255,255,0.1); color:#fff; font-size:0.8rem; padding:8px;" onclick="showLeagueTableModal('end', '${a.leagueId}', '${a.club}')">📊 Klasemen Klub ${a.club}</button>`;
+                }
+
                 div.innerHTML = `
                     <div style="display:flex; justify-content:space-between;">
                         <div><h4>${a.name}</h4><p style="font-size:0.75rem; color:#ccc;">Dimiliki: ${a.ownedAmount} ${unitName} | Modal: ${formatMoney(a.totalInvested)}</p></div>
@@ -1112,6 +1118,7 @@
                         <span id="sell_val_${a.id}" style="font-size:0.9rem; font-weight:bold; min-width:55px; text-align:right;">${a.ownedAmount} ${unitName}</span>
                     </div>
                     <button class="btn btn-small" style="width:100%; background:var(--warning); color:#000;" onclick="sellInvestment('${a.id}')">Cairkan / Jual</button>
+                    ${extraButtons}
                 `;
                 container.appendChild(div);
             });
@@ -1247,7 +1254,13 @@
             if(s2.apps > 0) { curSeason.ratingSum += s2.rating; curSeason.ratingCount++; }
             
             let avgRating = curSeason.ratingCount > 0 ? (curSeason.ratingSum / curSeason.ratingCount) : 0;
-            p.contract--;
+            
+            if (p.isLoaned && p.loanDuration === 0.5) {
+                // Return after 6 months
+                p.club = p.parentClub; p.league = p.parentLeague; p.isLoaned = false; updateResidence();
+            } else {
+                p.contract--;
+            }
             
             let sponsorPay = 0; if(p.sponsor) { sponsorPay = p.sponsor.pay; p.sponsor.duration--; if(p.sponsor.duration <= 0) p.sponsor = null; }
             let agentFee = p.wage > 0 ? Math.floor((p.wage * 52) * p.agent.cut) : 0; temp.agentFee = agentFee;
@@ -1296,7 +1309,7 @@
 
             p.age++; p.seasonYear++; calculateDynamicValueWage();
 
-            if(p.isLoaned) { p.club = p.parentClub; p.league = p.parentLeague; p.isLoaned = false; updateResidence(); }
+            if(p.isLoaned && p.loanDuration === 1) { p.club = p.parentClub; p.league = p.parentLeague; p.isLoaned = false; updateResidence(); }
 
             generateSocialXFeed(); injectPersonalizedSocialX(avgRating, promRelText, teamRank, isFA);
 
@@ -1400,7 +1413,6 @@
             getDom('sumSeason').innerText = `${p.seasonYear-1}/${p.seasonYear}`; getDom('sumRank').innerText = temp.rank;
             getDom('sumPromRelText').innerText = temp.promRelText || "";
             
-            // Re-bind values correctly to fix empty Assist bug
             getDom('sumApps').innerText = temp.apps; getDom('sumGoals').innerText = temp.goals; 
             getDom('sumAst').innerText = temp.astCs; getDom('sumAvg').innerText = temp.avgRating;
             getDom('sumYc').innerText = temp.yc; getDom('sumRc').innerText = temp.rc;
@@ -1453,17 +1465,23 @@
             getDom('negoDesc').innerText = `Tawaran awal gaji: ${formatMoney(activeOffer.wage)}/pekan.${extraTxt}`;
             getDom('negoWage').value = activeOffer.wage; getDom('negoRole').value = p.statusRole === 'Cadangan Pelapis' ? 'rotation' : 'regular'; updateNegoStars();
             
-            if(activeOffer.type === 'loan') {
-                let nYGroup = getDom('negoYearsGroup');
-                if(nYGroup) nYGroup.style.display = 'none';
-            } else { 
-                let nYGroup = getDom('negoYearsGroup');
-                if(nYGroup) { nYGroup.style.display = 'block'; getDom('negoYears').value = rand(2,4); }
+            let nYGroup = getDom('negoYearsGroup');
+            if (nYGroup) {
+                nYGroup.style.display = 'block';
+                let nYSelect = getDom('negoYears');
+                if(activeOffer.type === 'loan') {
+                    getDom('negoYearsLabel').innerText = "Durasi Peminjaman";
+                    nYSelect.innerHTML = `<option value="0.5">6 Bulan (Setengah Musim)</option><option value="1">1 Tahun (1 Musim Full)</option>`;
+                } else {
+                    getDom('negoYearsLabel').innerText = "Durasi Kontrak";
+                    nYSelect.innerHTML = `<option value="1">1 Tahun</option><option value="2">2 Tahun</option><option value="3">3 Tahun</option><option value="4">4 Tahun</option><option value="5">5 Tahun</option>`;
+                    nYSelect.value = rand(2, 4);
+                }
             }
         }
 
         function submitNegotiation() {
-            let reqWage = parseInt(getDom('negoWage').value); let reqYears = parseInt(getDom('negoYears').value) || 1; let reqRole = getDom('negoRole').value;
+            let reqWage = parseInt(getDom('negoWage').value); let reqYears = parseFloat(getDom('negoYears').value) || 1; let reqRole = getDom('negoRole').value;
             let tolerance = activeOffer.wage * (1.1 + (p.agent.multiplier * 0.2)); 
             if (activeOffer.type === 'renewal' && temp.awardText) tolerance *= 1.25; if (activeOffer.type === 'renewal' && temp.trophyText) tolerance *= 1.15;
 
@@ -1478,7 +1496,7 @@
             if(reqWage <= activeOffer.wage && roleDemerit === 0 || (reqWage <= tolerance && Math.random() * 100 < chance)) {
                 showCustomAlert(`Negosiasi Sukses! ${activeOffer.club} menyetujui tuntutanmu.`, () => {
                     p.statusRole = reqRole === 'star' ? "Pemain Bintang (Starter Utama)" : (reqRole === 'regular' ? "Pemain Inti (Reguler)" : (reqRole === 'backup' ? "Cadangan Pelapis" : "Rotasi"));
-                    if(activeOffer.type === 'loan') { p.parentClub = p.club; p.parentLeague = p.league; p.isLoaned = true; p.club = activeOffer.club; p.league = activeOffer.league; p.wage = reqWage; updateResidence(); } 
+                    if(activeOffer.type === 'loan') { p.parentClub = p.club; p.parentLeague = p.league; p.isLoaned = true; p.club = activeOffer.club; p.league = activeOffer.league; p.wage = reqWage; p.loanDuration = reqYears; updateResidence(); } 
                     else { p.wage = reqWage; p.contract = reqYears; p.isLoaned = false; if(activeOffer.type !== 'renewal') { p.club = activeOffer.club; p.league = activeOffer.league; updateResidence(); } }
                     closeModal('negoModal'); currentOffers = []; if(activeContainer === 'midOffersContainer') simSecondHalf(); else nextSeason();
                 });
@@ -1508,9 +1526,10 @@
                 allClubs.sort(() => Math.random() - 0.5);
                 let r = (temp.rank && temp.rank !== '-') ? temp.rank : Math.floor(targetLeague.clubs.length / 2);
                 let posIndex = Math.max(0, Math.min(r - 1, allClubs.length)); 
-                allClubs.splice(posIndex, 0, p.club); // Force player's team to exactly correct rank
+                allClubs.splice(posIndex, 0, p.club);
             } else {
-                allClubs.sort(() => Math.random() - 0.5);
+                let sortedClubs = allClubs.map((c, i) => { return { club: c, score: (allClubs.length - i) * 10 + rand(0, 30) }; });
+                sortedClubs.sort((a,b) => b.score - a.score); allClubs = sortedClubs.map(s => s.club);
             }
             
             let totalMatches = period === 'mid' ? Math.floor((allClubs.length - 1) * 2 / 2) : (allClubs.length - 1) * 2;
@@ -1554,22 +1573,33 @@
             getDom('retireMarketBtns').style.display = 'flex'; renderTable(); switchScreen('screen-retire');
         }
 
+        function getRandomClubOrNat() {
+            if (Math.random() > 0.8) {
+                return `Timnas ${db.nationalities[rand(0, db.nationalities.length-1)]}`;
+            } else {
+                let l = db.leagues[rand(0, db.leagues.length-1)];
+                return `Klub ${l.clubs[rand(0, l.clubs.length-1)]}`;
+            }
+        }
+        
+        function getRandomMedia() {
+            return db.mediaNetworks[rand(0, db.mediaNetworks.length-1)];
+        }
+
         function startManagerCareer() {
-            let job = `Pelatih Kepala Klub`; let salary = rand(15000, 30000);
-            p.postCareerJob = job; p.postCareerSalary = salary; p.postCareerContract = rand(2, 4); p.isPostCareer = true;
-            let selectHtml = db.leagues.map(l => `<option value="${l.id}">${l.name}</option>`).join('');
+            p.isPostCareer = true;
+            let selectHtml = db.leagues.map(l => `<option value="${l.id}">${l.name} (${l.country})</option>`).join('');
             getDom('globalLeagueSelect').innerHTML = selectHtml;
-            
-            showCustomAlert(`Kamu direkrut sebagai:\n[ ${job} ]\nKontrak: ${p.postCareerContract} Tahun\nGaji: ${formatMoney(salary)} /pekan.`, () => {
-                getDom('managerBtnContainer').style.display = 'none'; getDom('postCareerContainer').style.display = 'block'; updatePostCareerUI();
-            });
+            getDom('managerBtnContainer').style.display = 'none';
+            getDom('postCareerContainer').style.display = 'block';
+            generatePostCareerOffers();
         }
 
         function updatePostCareerUI() {
-            updateThemeColor(); getDom('retAge').innerText = p.age; getDom('postJob').innerText = p.postCareerJob; 
+            updateThemeColor(); getDom('retAge').innerText = p.age; getDom('postJob').innerText = p.postCareerJob || 'Pengangguran'; 
             let ct = getDom('postContract'); if(ct) ct.innerText = p.postCareerContract || 0;
             getDom('postAgeDisplay').innerText = p.age; getDom('postSalaryDisplay').innerText = formatMoney(p.postCareerSalary);
-            if (p.postCareerJob === 'Pengangguran') { getDom('btnSimPostCareer').style.display = 'none'; getDom('btnSearchJob').style.display = 'block'; } 
+            if (!p.postCareerJob || p.postCareerJob === 'Pengangguran') { getDom('btnSimPostCareer').style.display = 'none'; getDom('btnSearchJob').style.display = 'block'; } 
             else { getDom('btnSimPostCareer').style.display = 'block'; getDom('btnSearchJob').style.display = 'none'; }
         }
 
@@ -1585,37 +1615,58 @@
             let msg = `1 Tahun berlalu (Usia ${p.age}). Gaji ${formatMoney(p.postCareerSalary * 52)} masuk rekening.`;
             
             if (p.postCareerContract <= 0) {
-                if (Math.random() > 0.3) { 
-                    let newDur = rand(1, 3);
-                    showCustomConfirm(`${msg}\n\n📝 Manajemen puas dan menawarkan perpanjangan kontrak sebagai ${p.postCareerJob} selama ${newDur} tahun.\nTerima?`, (yes) => {
-                        if(yes) { p.postCareerContract = newDur; updatePostCareerUI(); } 
-                        else {
-                            p.postCareerJob = 'Pengangguran'; p.postCareerSalary = 0; updatePostCareerUI();
-                            setTimeout(() => { generatePostCareerOffers(); }, 500);
-                        }
-                    });
-                } else {
-                    showCustomAlert(`${msg}\n\n⚠️ Manajemen memutuskan TIDAK memperpanjang kontrakmu. Kamu kini pengangguran.`, () => {
-                        p.postCareerJob = 'Pengangguran'; p.postCareerSalary = 0; updatePostCareerUI(); generatePostCareerOffers();
-                    });
-                }
+                let offerSalary = Math.floor(p.postCareerSalary * (1 + (Math.random() * 0.2 - 0.05)));
+                let offerYears = rand(2, 4);
+                showCustomConfirm(`${msg}\n\n📝 Kontrak kerjamu sebagai ${p.postCareerJob} telah habis!\nManajemen menawarkan perpanjangan kontrak:\n• Gaji: ${formatMoney(offerSalary)}/pekan\n• Durasi: ${offerYears} Tahun\n\nTerima perpanjangan kontrak ini?`, (yes) => {
+                    if (yes) {
+                        p.postCareerSalary = offerSalary;
+                        p.postCareerContract = offerYears;
+                        showCustomAlert(`Berhasil memperpanjang kontrak sebagai ${p.postCareerJob} selama ${offerYears} tahun!`);
+                        updatePostCareerUI();
+                    } else {
+                        p.postCareerJob = 'Pengangguran'; p.postCareerSalary = 0; updatePostCareerUI();
+                        setTimeout(() => { generatePostCareerOffers(); }, 400);
+                    }
+                });
             } else {
                 showCustomAlert(msg, () => { updatePostCareerUI(); });
             }
         }
 
         function generatePostCareerOffers() {
+            let rep = p.ovr + (p.trophies.league * 2) + p.stats.caps + p.stats.bd;
+            let jobPoolTop = [
+                { title: `Pelatih Kepala ${getRandomClubOrNat()}`, salRange: [25000, 50000] },
+                { title: `Direktur Olahraga ${getRandomClubOrNat()}`, salRange: [20000, 40000] }
+            ];
+            let jobPoolMid = [
+                { title: `Asisten Pelatih di ${getRandomClubOrNat()}`, salRange: [10000, 20000] },
+                { title: `Pundit Eksklusif di ${getRandomMedia()}`, salRange: [12000, 25000] }
+            ];
+            let jobPoolLow = [
+                { title: `Pelatih Akademi di ${getRandomClubOrNat()}`, salRange: [4000, 8000] },
+                { title: `Pencari Bakat (Scout) di ${getRandomClubOrNat()}`, salRange: [3000, 6000] },
+                { title: `Komentator di ${getRandomMedia()}`, salRange: [2500, 5000] }
+            ];
+
+            let pool = [];
+            if (rep > 100) pool = jobPoolTop.concat(jobPoolMid);
+            else if (rep > 60) pool = jobPoolMid.concat(jobPoolLow);
+            else pool = jobPoolLow;
+            
+            pool.sort(() => Math.random() - 0.5);
+
             let container = getDom('postJobOffersContainer'); container.innerHTML = '';
-            for(let i=0; i<3; i++) {
-                let sal = rand(10000, 30000); let dur = rand(1, 4);
+            for(let i=0; i<Math.min(3, pool.length); i++) {
+                let j = pool[i]; let sal = rand(j.salRange[0], j.salRange[1]); let dur = rand(1, 4);
                 let div = document.createElement('div'); div.className = 'offer-card brand';
-                div.innerHTML = `<div class="offer-details"><h4>Pelatih/Pundit Profesional</h4><p>Gaji: ${formatMoney(sal)} | Kontrak: ${dur} Thn</p></div><button class="btn btn-small" onclick="acceptPostJob('Pekerjaan Sepakbola', ${sal}, ${dur})">Terima</button>`;
+                div.innerHTML = `<div class="offer-details"><h4>${j.title}</h4><p>Gaji: ${formatMoney(sal)}/pekan | Kontrak: ${dur} Thn</p></div><button class="btn btn-small" onclick="acceptPostJob('${j.title}', ${sal}, ${dur})">Terima Pekerjaan</button>`;
                 container.appendChild(div);
             }
             getDom('postJobOffersModal').style.display = 'flex';
         }
 
-        function acceptPostJob(title, salary, duration) { p.postCareerJob = title; p.postCareerSalary = salary; p.postCareerContract = duration; closeModal('postJobOffersModal'); updatePostCareerUI(); showCustomAlert(`Sukses tanda tangan kontrak sebagai ${title}.`); }
+        function acceptPostJob(title, salary, duration) { p.postCareerJob = title; p.postCareerSalary = salary; p.postCareerContract = duration; closeModal('postJobOffersModal'); updatePostCareerUI(); showCustomAlert(`Sukses tanda tangan kontrak sebagai ${title} selama ${duration} tahun.`); }
         function viewGlobalLeague() { let leagueId = getDom('globalLeagueSelect').value; showLeagueTableModal('end', leagueId, null); }
         function renderTable() { const tbody = document.querySelector('#historyTable tbody'); tbody.innerHTML = ''; p.careerHistory.forEach(h => { let tr = document.createElement('tr'); tr.innerHTML = `<td>${h.season}</td><td>${h.age}</td><td class="text-left">${h.club}</td><td>${h.apps}</td><td>${h.goals}</td><td>${h.astCs}</td><td>${h.rating}</td><td style="color:gold; font-size:0.75rem;">${h.trophies}</td>`; tbody.appendChild(tr); }); }
     </script>
