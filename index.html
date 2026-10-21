@@ -268,7 +268,7 @@
                 
                 <!-- SocialX Followers Card -->
                 <div class="card card-clickable" onclick="openSocialXModal()" style="border-color:var(--blue); background:rgba(0,170,255,0.05);">
-                    <h3 style="color:var(--blue);">SocialX</h3>
+                    <h3 style="color:var(--blue);">📱 Akun SocialX</h3>
                     <div class="value" id="dashFollowers" style="font-size:1.1rem; color:#fff;">0</div>
                     <p style="font-size:0.7rem; color:var(--blue); margin-top:3px; font-weight:bold;">Tap to Open</p>
                 </div>
@@ -341,7 +341,7 @@
             
             <div style="display: flex; gap: 10px; margin-bottom: 15px; justify-content: center;">
                 <button class="btn btn-secondary" onclick="openShopModal()" style="margin:0; background:rgba(0,170,255,0.2); border-color:var(--blue); flex: 1 1 45%;">🛒 Market</button>
-                <button class="btn btn-secondary" onclick="openSocialXModal()" style="margin:0; background:rgba(255,0,127,0.2); border-color:var(--pink); flex: 1 1 45%;">SocialX</button>
+                <button class="btn btn-secondary" onclick="openSocialXModal()" style="margin:0; background:rgba(255,0,127,0.2); border-color:var(--pink); flex: 1 1 45%;">📱 Cek SocialX</button>
             </div>
 
             <button class="btn btn-secondary" onclick="simSecondHalf()" style="margin-top:0;">Abaikan & Lanjut Paruh Kedua</button>
@@ -391,7 +391,7 @@
             <h2 style="font-size: 1.3rem;">Bursa Transfer Akhir Musim</h2>
             <div id="transferOffersContainer"></div>
             
-            <button class="btn btn-secondary" onclick="openSocialXModal()" style="margin-bottom: 10px; background:rgba(0,170,255,0.2); border-color:var(--blue);"> SocialX (Cek Komentar & Berita)</button>
+            <button class="btn btn-secondary" onclick="openSocialXModal()" style="margin-bottom: 10px; background:rgba(0,170,255,0.2); border-color:var(--blue);">📱 Buka SocialX (Cek Komentar & Berita)</button>
 
             <button class="btn btn-secondary" id="btnStayClub" onclick="nextSeason()">Lanjut Musim Depan</button>
         </div>
@@ -522,7 +522,7 @@
     <div class="modal-overlay" id="socialXModal">
         <div class="modal-content" style="text-align: left; padding: 20px; max-height: 85vh; display: flex; flex-direction: column;">
             <h2 style="color:#fff; text-align:center; margin-bottom:5px; display:flex; align-items:center; justify-content:center; gap:8px;">
-                <span style="color:var(--blue); font-size:1.6rem;">✴️</span> SocialX
+                <span style="color:var(--blue); font-size:1.6rem;">📱</span> SocialX
             </h2>
             <p style="text-align:center; font-size:0.8rem; color:#aaa; margin-bottom:15px;">Timeline Berita Sepakbola Dunia</p>
             
@@ -1146,8 +1146,15 @@
 
             let isInjured = Math.random() < (baseInjProb * fraction); let injuryWeeks = 0;
             if(isInjured) {
-                if(Math.random() < 0.25) { let w = rand(12, 36); s.injuryDetails = `🚑 Cedera Parah (Absen ${w} Pekan)`; injuryWeeks = w; } 
-                else { let w = rand(1, 5); s.injuryDetails = `🤕 Cedera Ringan (Absen ${w} Pekan)`; injuryWeeks = w; }
+                if(Math.random() < 0.25) { 
+                    const severe = [ {t: "Cedera ACL Parah", w: rand(24, 36)}, {t: "Patah Tulang Kaki", w: rand(16, 24)}, {t: "Robek Otot Paha", w: rand(12, 16)}, {t: "Kerusakan Ligamen Lutut", w: rand(20, 28)} ];
+                    let inj = severe[rand(0, severe.length - 1)];
+                    s.injuryDetails = `🚑 ${inj.t} (Absen ${inj.w} Pekan)`; injuryWeeks = inj.w;
+                } else {
+                    const light = [ {t: "Cedera Hamstring", w: rand(2, 5)}, {t: "Keseleo Engkel", w: rand(1, 3)}, {t: "Kelelahan Otot", w: rand(1, 2)}, {t: "Cedera Bahu", w: rand(2, 4)} ];
+                    let inj = light[rand(0, light.length - 1)];
+                    s.injuryDetails = `🤕 ${inj.t} (Absen ${inj.w} Pekan)`; injuryWeeks = inj.w;
+                }
             }
 
             let maxAppsPossible = Math.floor(50 * fraction);
@@ -1163,7 +1170,11 @@
             }
 
             if (s.apps < Math.floor(maxAppsPossible * 0.4) && !isInjured) {
-                s.lackOfPlayReason = p.ovr < p.league.rep - 5 ? "Kalah bersaing kualitas" : "Rotasi manajer ketat";
+                if (p.ovr < p.league.rep - 5) {
+                    s.lackOfPlayReason = ["Kalah bersaing kualitas dengan tim inti", "Level liga masih terlalu tinggi", "Manajer menganggap belum siap"][rand(0,2)];
+                } else {
+                    s.lackOfPlayReason = ["Rotasi taktik manajer", "Rotasi skuad ketat", "Kurang meyakinkan saat latihan"][rand(0,2)];
+                }
             }
 
             if(s.apps > 0) {
@@ -1246,7 +1257,7 @@
         }
 
         function simSecondHalf(isFA = false) {
-            let s2 = isFA ? {apps:0, goals:0, astCs:0, yc:0, rc:0, rating:0} : generateMatchStats(0.5);
+            let s2 = isFA ? {apps:0, goals:0, astCs:0, yc:0, rc:0, rating:0, injuryDetails:"", lackOfPlayReason:""} : generateMatchStats(0.5);
             temp.half2InjuryText = s2.injuryDetails || ""; temp.half2LackPlay = s2.lackOfPlayReason || "";
 
             curSeason.apps += s2.apps; curSeason.goals += s2.goals; curSeason.astCs += s2.astCs;
@@ -1256,7 +1267,6 @@
             let avgRating = curSeason.ratingCount > 0 ? (curSeason.ratingSum / curSeason.ratingCount) : 0;
             
             if (p.isLoaned && p.loanDuration === 0.5) {
-                // Return after 6 months
                 p.club = p.parentClub; p.league = p.parentLeague; p.isLoaned = false; updateResidence();
             } else {
                 p.contract--;
@@ -1281,8 +1291,14 @@
                 }
 
                 if(teamRank === 1) { p.trophies.league++; trophyText.push("🏆 Juara Liga!"); p.followers += 50000; }
+                if(Math.random() < (teamRank <= 3 ? 0.20 : 0.05)) { p.trophies.cup++; trophyText.push("🏆 Juara Cup!"); p.followers += 20000; }
+                if(p.league.tier === 1 && p.league.rep >= 75 && teamRank <= 4 && Math.random() < 0.15) { p.trophies.cont++; trophyText.push("🏆 Juara Benua!"); p.followers += 200000; }
+
                 if(!isDefensivePos() && curSeason.goals >= 20 && teamRank <= 5) { p.stats.indAwards++; awardText.push("👟 Top Skor!"); p.followers += 150000; }
+                else if(p.pos === 'GK' && curSeason.astCs >= 15 && teamRank <= 6) { p.stats.indAwards++; awardText.push("🧤 Golden Glove!"); p.followers += 100000; }
             }
+
+            if(p.seasonYear % 4 === 2 && p.ovr > 82 && p.stats.caps > 5 && Math.random() < 0.05) { p.trophies.wc++; trophyText.push(`🏆 JUARA PIALA DUNIA!`); p.followers += 1500000; }
 
             p.morale = curSeason.apps > 30 ? 'Bahagia' : (curSeason.apps > 15 ? 'Biasa' : 'Kecewa');
             p.followers += Math.floor((curSeason.apps * 50) + (curSeason.goals * 500) + (curSeason.astCs * 200));
@@ -1291,10 +1307,30 @@
             p.ovr = Math.max(40, Math.min(99, p.ovr + growth));
             if(p.age >= rand(40, 43) || (p.age >= 38 && p.ovr < 55)) forceRetire = true;
 
-            let natStatus = "❌ Tidak Dipanggil Timnas";
-            if (!isFA && curSeason.apps > 5 && avgRating > 6.0 && p.ovr > 70 && Math.random() < 0.6) {
-                let newCaps = rand(3, 10); p.stats.caps += newCaps; p.stats.ntGoals += rand(0, Math.floor(newCaps / 2));
-                natStatus = `✅ Timnas Senior`;
+            // Detailed National Team logic (Youth U-17, U-19, U-21 & Senior Callups)
+            let natStatus = "❌ Tidak Dipanggil Timnas"; let newCaps = 0; let newNtGoals = 0;
+            if (!isFA && curSeason.apps > 5 && avgRating > 6.0) {
+                if (p.age <= 17 && p.ovr > 55 && Math.random() > 0.3) natStatus = `✅ Skuad Timnas ${p.nat} U-17`;
+                else if (p.age <= 19 && p.ovr > 60 && Math.random() > 0.3) natStatus = `✅ Skuad Timnas ${p.nat} U-19`;
+                else if (p.age <= 21 && p.ovr > 65 && Math.random() > 0.3) natStatus = `✅ Skuad Timnas ${p.nat} U-21`;
+                else if (p.ovr > 70 && (p.league ? (p.league.tier === 1 || p.league.rep >= 55) : false)) {
+                    let callProb = p.ovr >= 82 ? 1.0 : (p.ovr >= 78 && avgRating >= 7.0 ? 0.9 : (p.ovr >= 75 && avgRating > 6.8 ? 0.6 : 0.2));
+                    if (p.age > 33 && p.ovr < 80) callProb *= 0.5;
+                    if (avgRating >= 8.0 || awardText.length > 0) callProb = 1.0;
+
+                    if (Math.random() < callProb) {
+                        newCaps = rand(3, 10);
+                        if (!isDefensivePos()) newNtGoals = rand(0, Math.floor(newCaps / 2));
+                        else if (['CAM', 'CM'].includes(p.pos)) newNtGoals = rand(0, Math.floor(newCaps / 4));
+                        
+                        natStatus = `✅ Timnas Senior ${p.nat} (${newCaps} Caps, ${newNtGoals} Gol)`;
+                        p.stats.caps += newCaps; p.stats.ntGoals += newNtGoals;
+                    }
+                }
+            }
+
+            if(!isFA && p.ovr > 88 && curSeason.goals > 25 && p.league && p.league.rep >= 84 && teamRank <= 2 && avgRating > 8.0 && Math.random() > 0.4) {
+                p.stats.bd++; awardText.push(`🥇 BALLON D'OR!`); p.followers += 5000000;
             }
 
             p.careerHistory.push({ season: p.seasonYear, age: p.age, club: p.isLoaned ? p.club + ' (Loan)' : p.club, league: isFA || !p.league ? '-' : p.league.name, apps: curSeason.apps, goals: curSeason.goals, astCs: curSeason.astCs, rating: avgRating.toFixed(2), trophies: trophyText.length > 0 ? trophyText.join(", ") : '-' });
@@ -1411,19 +1447,48 @@
         function showSummaryScreen() {
             activeContainer = 'transferOffersContainer';
             getDom('sumSeason').innerText = `${p.seasonYear-1}/${p.seasonYear}`; getDom('sumRank').innerText = temp.rank;
-            getDom('sumPromRelText').innerText = temp.promRelText || "";
             
+            let pR = getDom('sumPromRelText'); 
+            pR.innerText = temp.promRelText || "";
+            pR.style.color = (temp.promRelText && temp.promRelText.includes("PROMOSI")) ? 'var(--success)' : 'var(--danger)';
+
+            let finalInj = []; 
+            if(temp.half1InjuryText) finalInj.push("Paruh 1: " + temp.half1InjuryText); 
+            if(temp.half2InjuryText) finalInj.push("Paruh 2: " + temp.half2InjuryText);
+            getDom('sumInjuryText').innerText = finalInj.join(" | ");
+
+            let finalPlay = []; 
+            if(temp.half1LackPlay) finalPlay.push("Paruh 1: " + temp.half1LackPlay); 
+            if(temp.half2LackPlay) finalPlay.push("Paruh 2: " + temp.half2LackPlay);
+            getDom('sumPlayTimeText').innerText = finalPlay.length > 0 ? "⚠️ Laporan: " + finalPlay.join(" & ") : "";
+
+            getDom('sumTrophyText').innerText = temp.trophyText || ""; 
+            getDom('sumAwardText').innerText = temp.awardText || ""; 
+            getDom('sumNatText').innerText = temp.natStatus || "";
+
+            let wInfo = temp.wageInfo || ""; 
+            if (temp.debtMsg) wInfo += (wInfo ? "\n\n" : "") + `🏦 ${temp.debtMsg}`; 
+            if (temp.invDetails) wInfo += (wInfo ? "\n\n" : "") + `${temp.invDetails}`;
+            getDom('sumWageInfoText').innerText = wInfo; 
+            getDom('sumAgentFeeText').innerText = temp.agentFee > 0 ? `Menyetorkan potongan gaji agen (${p.agent.cut*100}%) senilai ${formatMoney(temp.agentFee)}` : "";
+
             getDom('sumApps').innerText = temp.apps; getDom('sumGoals').innerText = temp.goals; 
             getDom('sumAst').innerText = temp.astCs; getDom('sumAvg').innerText = temp.avgRating;
             getDom('sumYc').innerText = temp.yc; getDom('sumRc').innerText = temp.rc;
+            getDom('sumOvrGrowth').innerText = temp.growth > 0 ? `+${temp.growth}` : temp.growth; 
+            getDom('sumOvrGrowth').style.color = temp.growth >= 0 ? 'var(--success)' : 'var(--danger)'; 
+            getDom('sumNewOvr').innerText = p.ovr;
 
             let offerRenewal = false; 
             let cInfo = getDom('sumContractInfo');
-            if(p.contract > 0) { cInfo.innerText = `Sisa ${p.contract} Tahun`; } 
+            if(p.contract > 0) { cInfo.innerText = `Sisa ${p.contract} Tahun`; cInfo.style.color = '#fff'; } 
             else if(p.contract === 0 && p.club !== 'Free Agent') {
-                if(temp.avgRating < 6.0) { cInfo.innerText = `KONTRAK HABIS & DILEPAS`; p.club = 'Free Agent'; p.wage = 0; updateResidence(); } 
-                else { cInfo.innerText = `KONTRAK HABIS (Nego)`; offerRenewal = true; }
-            } else { cInfo.innerText = `FREE AGENT`; }
+                if(temp.avgRating < 6.0 || temp.apps < 5) {
+                    cInfo.innerText = `KONTRAK HABIS & DILEPAS`; cInfo.style.color = 'var(--danger)'; p.club = 'Free Agent'; p.wage = 0; updateResidence();
+                } else {
+                    cInfo.innerText = `KONTRAK HABIS (Nego)`; cInfo.style.color = 'var(--warning)'; offerRenewal = true;
+                }
+            } else { cInfo.innerText = `FREE AGENT`; cInfo.style.color = 'var(--danger)'; }
             
             generateEndOffers(offerRenewal); switchScreen('screen-summary');
         }
