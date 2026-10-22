@@ -497,6 +497,9 @@
                 <button class="btn btn-small btn-secondary" style="flex-shrink:0; margin:0;" onclick="renderShop('vehicle')">Kendaraan</button>
                 <button class="btn btn-small btn-secondary" style="flex-shrink:0; margin:0;" onclick="renderShop('electronic')">Elektronik</button>
                 <button class="btn btn-small btn-secondary" style="flex-shrink:0; margin:0;" onclick="renderShop('fashion')">Fashion</button>
+                
+                <button class="btn btn-small btn-secondary" style="flex-shrink:0; margin:0;" onclick="renderShop('lifestyle')">Lifestyle</button>
+                
                 <button class="btn btn-small btn-secondary" style="flex-shrink:0; margin:0;" onclick="renderShop('investment')">Investasi</button>
                 <button class="btn btn-small btn-secondary" style="flex-shrink:0; margin:0; border-color:var(--blue); color:var(--blue);" onclick="renderShop('bank')">Bank</button>
                 <button class="btn btn-small btn-secondary" style="flex-shrink:0; margin:0; border-color:var(--danger); color:var(--danger);" onclick="renderShop('casino')">Casino</button>
@@ -645,37 +648,903 @@
 
         const db = {
             leagues: [
-                { id: 'eng1', name: 'Premier League', country: 'Inggris', tier: 1, rep: 90, wealth: 95, clubs: ['Man City', 'Arsenal', 'Liverpool', 'Man United', 'Chelsea', 'Tottenham', 'Newcastle', 'Aston Villa', 'West Ham', 'Brighton', 'Wolves', 'Fulham', 'Crystal Palace', 'Bournemouth', 'Everton', 'Brentford', 'Nott Forest', 'Burnley', 'Luton', 'Sheffield Utd'] },
-                { id: 'eng2', name: 'Championship', country: 'Inggris', tier: 2, rep: 70, wealth: 60, clubs: ['Leicester', 'Leeds', 'Sunderland', 'West Brom', 'Southampton', 'Middlesbrough', 'Hull City', 'Norwich', 'Coventry', 'Preston'] },
-                { id: 'esp1', name: 'La Liga', country: 'Spanyol', tier: 1, rep: 88, wealth: 85, clubs: ['Real Madrid', 'Barcelona', 'Atletico Madrid', 'Sevilla', 'Real Sociedad', 'Athletic Club', 'Betis', 'Valencia', 'Villarreal', 'Getafe', 'Osasuna', 'Alaves', 'Celta Vigo'] },
-                { id: 'ita1', name: 'Serie A', country: 'Italia', tier: 1, rep: 85, wealth: 75, clubs: ['Inter Milan', 'AC Milan', 'Juventus', 'Napoli', 'AS Roma', 'Lazio', 'Atalanta', 'Fiorentina', 'Bologna', 'Torino'] },
-                { id: 'ger1', name: 'Bundesliga', country: 'Jerman', tier: 1, rep: 84, wealth: 80, clubs: ['Bayern Munich', 'Bayer Leverkusen', 'Dortmund', 'RB Leipzig', 'Stuttgart', 'Eintracht Frankfurt', 'Hoffenheim', 'Wolfsburg'] },
-                { id: 'fra1', name: 'Ligue 1', country: 'Prancis', tier: 1, rep: 80, wealth: 75, clubs: ['PSG', 'Monaco', 'Marseille', 'Lille', 'Lyon', 'Lens', 'Nice', 'Rennes'] },
-                { id: 'ned1', name: 'Eredivisie', country: 'Belanda', tier: 1, rep: 75, wealth: 65, clubs: ['PSV', 'Ajax', 'Feyenoord', 'AZ Alkmaar', 'Twente'] },
-                { id: 'ksa1', name: 'Pro League', country: 'Arab Saudi', tier: 1, rep: 72, wealth: 98, clubs: ['Al Hilal', 'Al Nassr', 'Al Ahli', 'Al Ittihad', 'Al Taawoun'] },
-                { id: 'usa1', name: 'MLS', country: 'Amerika Serikat', tier: 1, rep: 68, wealth: 75, clubs: ['Inter Miami', 'LA Galaxy', 'LAFC', 'Seattle Sounders', 'Columbus Crew'] },
-                { id: 'idn1', name: 'Liga 1', country: 'Indonesia', tier: 1, rep: 50, wealth: 45, clubs: ['Persib', 'Persija', 'Persebaya', 'Bali United', 'Borneo FC', 'PSM Makassar', 'Arema FC'] }
+                
+{
+    id: 'eng1',
+    name: 'Premier League',
+    country: 'Inggris',
+    tier: 1,
+    rep: 90,
+    wealth: 95,
+    clubs: [
+        'Arsenal',
+        'Aston Villa',
+        'Bournemouth',
+        'Brentford',
+        'Brighton',
+        'Chelsea',
+        'Coventry City',
+        'Crystal Palace',
+        'Everton',
+        'Fulham',
+        'Hull City',
+        'Ipswich Town',
+        'Leeds United',
+        'Liverpool',
+        'Man City',
+        'Man United',
+        'Newcastle',
+        'Nott Forest',
+        'Sunderland',
+        'Tottenham'
+    ]
+},
+                
+{
+    id: 'eng2',
+    name: 'Championship',
+    country: 'Inggris',
+    tier: 2,
+    rep: 70,
+    wealth: 60,
+    clubs: [
+        'Birmingham City',
+        'Blackburn Rovers',
+        'Bolton Wanderers',
+        'Bristol City',
+        'Burnley',
+        'Cardiff City',
+        'Charlton Athletic',
+        'Derby County',
+        'Lincoln City',
+        'Middlesbrough',
+        'Millwall',
+        'Norwich',
+        'Portsmouth',
+        'Preston',
+        'QPR',
+        'Sheffield Utd',
+        'Southampton',
+        'Stoke City',
+        'Swansea City',
+        'Watford',
+        'West Brom',
+        'West Ham',
+        'Wolves',
+        'Wrexham'
+    ]
+},
+
+                
+{
+    id: 'esp1',
+    name: 'La Liga',
+    country: 'Spanyol',
+    tier: 1,
+    rep: 88,
+    wealth: 85,
+    clubs: [
+        'Real Madrid',
+        'Barcelona',
+        'Atletico Madrid',
+        'Athletic Club',
+        'Real Betis',
+        'Celta Vigo',
+        'Deportivo Alaves',
+        'Elche',
+        'Espanyol',
+        'Getafe',
+        'Levante',
+        'Malaga',
+        'Osasuna',
+        'Rayo Vallecano',
+        'Racing Santander',
+        'Deportivo La Coruna',
+        'Real Sociedad',
+        'Sevilla',
+        'Valencia',
+        'Villarreal'
+    ]
+},
+
+{
+    id: 'esp2',
+    name: 'Segunda División',
+    country: 'Spanyol',
+    tier: 2,
+    rep: 65,
+    wealth: 50,
+    clubs: [
+        'Albacete',
+        'Almeria',
+        'Burgos',
+        'Cadiz',
+        'Castellon',
+        'Celta Fortuna',
+        'Ceuta',
+        'Cordoba',
+        'Eibar',
+        'Eldense',
+        'FC Andorra',
+        'Girona',
+        'Granada',
+        'Las Palmas',
+        'Leganes',
+        'Mallorca',
+        'Real Oviedo',
+        'Real Sociedad B',
+        'Sporting Gijon',
+        'Real Valladolid',
+        'Tenerife',
+        'Sabadell'
+    ]
+},
+
+               {
+    id: 'ita1',
+    name: 'Serie A',
+    country: 'Italia',
+    tier: 1,
+    rep: 85,
+    wealth: 75,
+    clubs: [
+        'Inter Milan',
+        'AC Milan',
+        'Juventus',
+        'Napoli',
+        'AS Roma',
+        'Lazio',
+        'Atalanta',
+        'Fiorentina',
+        'Bologna',
+        'Como',
+        'Torino',
+        'Udinese',
+        'Genoa',
+        'Cagliari',
+        'Lecce',
+        'Parma',
+        'Sassuolo',
+        'Venezia',
+        'Frosinone',
+        'Monza'
+    ]
+},
+{
+    id: 'ita2',
+    name: 'Serie B',
+    country: 'Italia',
+    tier: 2,
+    rep: 65,
+    wealth: 50,
+    clubs: [
+        'Cremonese',
+        'Hellas Verona',
+        'Pisa',
+        'Avellino',
+        'Carrarese',
+        'Catanzaro',
+        'Cesena',
+        'Empoli',
+        'Virtus Entella',
+        'Juve Stabia',
+        'Mantova',
+        'Modena',
+        'Padova',
+        'Palermo',
+        'Sampdoria',
+        'Sudtirol',
+        'Vicenza',
+        'Arezzo',
+        'Benevento',
+        'Ascoli'
+    ]
+},
+
+               {
+    id: 'ger1',
+    name: 'Bundesliga',
+    country: 'Jerman',
+    tier: 1,
+    rep: 84,
+    wealth: 80,
+    clubs: [
+        'Bayern Munich',
+        'Bayer Leverkusen',
+        'Dortmund',
+        'RB Leipzig',
+        'Stuttgart',
+        'Eintracht Frankfurt',
+        'Hoffenheim',
+        'Freiburg',
+        'Mainz',
+        'Borussia Monchengladbach',
+        'Werder Bremen',
+        'Augsburg',
+        'Union Berlin',
+        'Hamburg',
+        'Cologne',
+        'Schalke 04',
+        'SC Paderborn',
+        'SV Elversberg'
+    ]
+},
+
+{
+    id: 'ger2',
+    name: '2. Bundesliga',
+    country: 'Jerman',
+    tier: 2,
+    rep: 64,
+    wealth: 48,
+    clubs: [
+        'Hertha Berlin',
+        'Nuremberg',
+        'Wolfsburg',
+        'Kaiserslautern',
+        'Heidenheim',
+        'Magdeburg',
+        'St Pauli',
+        'Arminia Bielefeld',
+        'Energie Cottbus',
+        'Greuther Furth',
+        'Dynamo Dresden',
+        'VfL Osnabruck',
+        'Karlsruhe',
+        'Hannover 96',
+        'Eintracht Braunschweig',
+        'Bochum',
+        'Darmstadt',
+        'Holstein Kiel'
+    ]
+},
+               {
+    id: 'fra1',
+    name: 'Ligue 1',
+    country: 'Prancis',
+    tier: 1,
+    rep: 80,
+    wealth: 75,
+    clubs: [
+        'PSG',
+        'Monaco',
+        'Marseille',
+        'Lille',
+        'Lyon',
+        'Lens',
+        'Nice',
+        'Rennes',
+        'Strasbourg',
+        'Toulouse',
+        'Brest',
+        'Angers',
+        'Auxerre',
+        'Le Havre',
+        'Lorient',
+        'Le Mans',
+        'Paris FC',
+        'Troyes'
+    ]
+},
+
+
+{
+    id: 'por1',
+    name: 'Primeira Liga',
+    country: 'Portugal',
+    tier: 1,
+    rep: 77,
+    wealth: 67,
+    clubs: [
+        'Benfica',
+        'Porto',
+        'Sporting CP',
+        'Braga',
+        'Vitoria Guimaraes',
+        'Famalicao',
+        'Gil Vicente',
+        'Moreirense',
+        'Rio Ave',
+        'Arouca',
+        'Estoril',
+        'Casa Pia',
+        'Estrela Amadora',
+        'Santa Clara',
+        'Nacional',
+        'Alverca',
+        'Maritimo',
+        'Academico de Viseu'
+    ]
+},
+
+
+
+                {
+    id: 'ned1',
+    name: 'Eredivisie',
+    country: 'Belanda',
+    tier: 1,
+    rep: 75,
+    wealth: 65,
+    clubs: [
+        'PSV',
+        'Ajax',
+        'Feyenoord',
+        'AZ Alkmaar',
+        'Twente',
+        'Utrecht',
+        'NEC Nijmegen',
+        'Go Ahead Eagles',
+        'Heerenveen',
+        'Groningen',
+        'Sparta Rotterdam',
+        'Fortuna Sittard',
+        'PEC Zwolle',
+        'Excelsior',
+        'ADO Den Haag',
+        'SC Cambuur',
+        'Telstar',
+        'Willem II'
+    ]
+},
+                {
+    id: 'ksa1',
+    name: 'Pro League',
+    country: 'Arab Saudi',
+    tier: 1,
+    rep: 72,
+    wealth: 98,
+    clubs: [
+        'Al Hilal',
+        'Al Nassr',
+        'Al Ahli',
+        'Al Ittihad',
+        'Al Qadsiah',
+        'Al Taawoun',
+        'Al Shabab',
+        'Al Ettifaq',
+        'Al Fateh',
+        'Al Fayha',
+        'Al Khaleej',
+        'Al Kholood',
+        'Al Hazem',
+        'Al Riyadh',
+        'Abha',
+        'Al Faisaly',
+        'Diriyah',
+        'NEOM'
+    ]
+},
+                {
+    id: 'usa1',
+    name: 'MLS',
+    country: 'Amerika Serikat',
+    tier: 1,
+    rep: 68,
+    wealth: 70,
+    clubs: [
+        'Inter Miami',
+        'LA Galaxy',
+        'LAFC',
+        'Seattle Sounders',
+        'Columbus Crew',
+        'Atlanta United',
+        'Austin FC',
+        'Charlotte FC',
+        'Chicago Fire',
+        'FC Cincinnati',
+        'Colorado Rapids',
+        'DC United',
+        'FC Dallas',
+        'Houston Dynamo',
+        'Minnesota United',
+        'Montreal',
+        'Nashville SC',
+        'New England Revolution',
+        'New York City FC',
+        'New York Red Bulls',
+        'Orlando City',
+        'Philadelphia Union',
+        'Portland Timbers',
+        'Real Salt Lake',
+        'St. Louis City',
+        'San Diego FC',
+        'San Jose Earthquakes',
+        'Sporting Kansas City',
+        'Toronto FC',
+        'Vancouver Whitecaps'
+    ]
+},
+
+
+{
+    id: 'arg1',
+    name: 'Liga Profesional',
+    country: 'Argentina',
+    tier: 1,
+    rep: 68,
+    wealth: 63,
+    clubs: [
+        'Boca Juniors',
+        'River Plate',
+        'Racing Club',
+        'Independiente',
+        'San Lorenzo',
+        'Velez Sarsfield',
+        'Estudiantes',
+        'Rosario Central',
+        'Newells Old Boys',
+        'Lanus',
+        'Talleres',
+        'Belgrano',
+        'Huracan',
+        'Argentinos Juniors',
+        'Defensa y Justicia',
+        'Godoy Cruz',
+        'Banfield',
+        'Union Santa Fe',
+        'Gimnasia La Plata',
+        'Platense',
+        'Tigre',
+        'Instituto',
+        'Central Cordoba',
+        'Sarmiento',
+        'Barracas Central',
+        'Deportivo Riestra',
+        'Aldosivi',
+        'Atletico Tucuman',
+        'Independiente Rivadavia',
+        'Gimnasia Mendoza'
+    ]
+},
+
+
+{
+    id: 'bra1',
+    name: 'Brasileirao Serie A',
+    country: 'Brasil',
+    tier: 1,
+    rep: 82,
+    wealth: 63,
+    clubs: [
+        'Flamengo',
+        'Palmeiras',
+        'Sao Paulo',
+        'Corinthians',
+        'Santos',
+        'Gremio',
+        'Internacional',
+        'Atletico Mineiro',
+        'Cruzeiro',
+        'Fluminense',
+        'Botafogo',
+        'Vasco da Gama',
+        'Bahia',
+        'Athletico Paranaense',
+        'Red Bull Bragantino',
+        'Vitoria',
+        'Mirassol',
+        'Coritiba',
+        'Chapecoense',
+        'Remo'
+    ]
+},
+
+
+{
+    id: 'kor1',
+    name: 'K League 1',
+    country: 'Korea Selatan',
+    tier: 1,
+    rep: 70,
+    wealth: 64,
+    clubs: [
+        'Jeonbuk Hyundai Motors',
+        'Ulsan HD',
+        'FC Seoul',
+        'Pohang Steelers',
+        'Suwon FC',
+        'Daejeon Hana Citizen',
+        'Gangwon FC',
+        'Gwangju FC',
+        'Daegu FC',
+        'Incheon United',
+        'Bucheon FC 1995',
+        'Jeju SK'
+    ]
+},
+
+{
+    id: 'jpn1',
+    name: 'J1 League',
+    country: 'Jepang',
+    tier: 1,
+    rep: 70,
+    wealth: 73,
+    clubs: [
+        'Kashima Antlers',
+        'Urawa Reds',
+        'Yokohama F Marinos',
+        'Kawasaki Frontale',
+        'Vissel Kobe',
+        'Gamba Osaka',
+        'Cerezo Osaka',
+        'Sanfrecce Hiroshima',
+        'FC Tokyo',
+        'Kashiwa Reysol',
+        'Nagoya Grampus',
+        'Avispa Fukuoka',
+        'Kyoto Sanga',
+        'Shonan Bellmare',
+        'Albirex Niigata',
+        'Machida Zelvia',
+        'Tokyo Verdy',
+        'Fagiano Okayama',
+        'JEF United Chiba',
+        'Mito HollyHock'
+    ]
+},
+
+
+{
+    id: 'tha1',
+    name: 'Thai League 1',
+    country: 'Thailand',
+    tier: 1,
+    rep: 56,
+    wealth: 48,
+    clubs: [
+        'Buriram United',
+        'BG Pathum United',
+        'Port FC',
+        'Bangkok United',
+        'Muangthong United',
+        'Chiangrai United',
+        'Ratchaburi FC',
+        'PT Prachuap',
+        'Uthai Thani FC',
+        'Rayong FC',
+        'Ayutthaya United',
+        'Chonburi FC',
+        'Lamphun Warriors',
+        'Sukhothai FC',
+        'Sisaket United',
+        'Pattani FC'
+    ]
+},
+
+
+                {
+    id: 'idn1',
+    name: 'Super League',
+    country: 'Indonesia',
+    tier: 1,
+    rep: 58,
+    wealth: 45,
+    clubs: [
+        'Persib Bandung',
+        'Persija Jakarta',
+        'Persebaya Surabaya',
+        'PSM Makassar',
+        'Arema FC',
+        'Bali United',
+        'Borneo FC',
+        'Dewa United',
+        'Persita Tangerang',
+        'Madura United',
+        'Bhayangkara FC',
+        'Persik Kediri',
+        'Garudayaksa FC',
+        'PSS Sleman',
+        'Isenmulang Kalteng',
+        'PSIM Yogyakarta',
+        'Persijap Jepara',
+        'Java United'
+    ]
+},
+
+
+
+{
+    id: 'mas1',
+    name: 'Malaysia Super League',
+    country: 'Malaysia',
+    tier: 1,
+    rep: 58,
+    wealth: 43,
+    clubs: [
+        'Johor Darul Tazim',
+        'Kuching City',
+        'Selangor',
+        'Kuala Lumpur City',
+        'Terengganu',
+        'Star City',
+        'Negeri Sembilan',
+        'Penang',
+        'Sabah',
+        'DPMM',
+        'Melaka',
+        'Kelantan Red Warrior'
+    ]
+}
+
+
             ],
-            nationalities: [ 'Indonesia', 'Inggris', 'Spanyol', 'Jerman', 'Italia', 'Prancis', 'Belanda', 'Portugal', 'Brazil', 'Argentina', 'Amerika Serikat', 'Arab Saudi', 'Korea Selatan', 'Jepang' ],
+            nationalities: [ 'Indonesia', 'Inggris', 'Spanyol', 'Jerman', 'Italia', 'Prancis', 'Belanda', 'Portugal', 'Brazil', 'Argentina', 'Amerika Serikat', 'Arab Saudi', 'Korea Selatan', 'Jepang', 'Thailand', 'Malaysia' ],
             positions: [ { id: 'ST', name: 'Striker (ST)' }, { id: 'LW', name: 'Left Winger (LW)' }, { id: 'RW', name: 'Right Winger (RW)' }, { id: 'CAM', name: 'Attacking Mid (CAM)' }, { id: 'CM', name: 'Central Mid (CM)' }, { id: 'CDM', name: 'Defensive Mid (CDM)' }, { id: 'CB', name: 'Center Back (CB)' }, { id: 'LB', name: 'Left Back (LB)' }, { id: 'RB', name: 'Right Back (RB)' }, { id: 'GK', name: 'Goalkeeper (GK)' } ],
-            journalists: [
-                { name: 'Fabrizio Romano', handle: '@FabrizioRomano', color: '#1da1f2' }, { name: 'David Ornstein', handle: '@David_Ornstein', color: '#1da1f2' },
-                { name: 'Sky Sports News', handle: '@SkySportsNews', color: '#ff0000' }, { name: 'ESPN FC', handle: '@ESPNFC', color: '#ff0000' },
-                { name: 'TNT Sports', handle: '@footballontnt', color: '#ff007f' }, { name: 'Goal', handle: '@goal', color: '#00cc66' },
-                { name: 'Bleacher Report', handle: '@brfootball', color: '#ffcc00' }, { name: 'BeIN Sports', handle: '@beINSPORTS', color: '#9c27b0'}
-            ],
-            socialTemplates: [
-                "Rumor kuat mengatakan [CLUB_A] sedang mempersiapkan tawaran besar untuk mendatangkan pemain baru.",
-                "Keputusan wasit di pertandingan semalam antara [CLUB_A] vs [CLUB_B] sangat kontroversial!",
-                "Manager [CLUB_B] berada di bawah tekanan besar setelah rentetan hasil buruk minggu ini.",
-                "HERE WE GO! Transfer kejutan akan segera terjadi di bursa transfer kali ini.",
-                "Fans [CLUB_A] menuntut manajemen segera melakukan perombakan skuad. Kesabaran habis!",
-                "Penampilan luar biasa akhir pekan lalu! Apakah ini musim terbaik liga?",
-                "Berita duka untuk [CLUB_B], bintang utama mereka dikabarkan cedera parah.",
-                "Rekor baru tercipta! Penjualan jersey terbanyak tahun ini masih dipimpin oleh raksasa Eropa.",
-                "Analisis taktik: Mengapa gaya bermain [CLUB_A] musim ini sangat sulit diprediksi?",
-                "Update: Negosiasi perpanjangan kontrak kapten [CLUB_B] menemui jalan buntu."
-            ],
+            
+journalists: [
+    // ===== GLOBAL TRANSFER JOURNALISTS =====
+    { name: 'Fabrizio Romano', handle: '@FabrizioRomano', color: '#1DA1F2' },
+    { name: 'David Ornstein', handle: '@David_Ornstein', color: '#1DA1F2' },
+    { name: 'Gianluca Di Marzio', handle: '@DiMarzio', color: '#1565C0' },
+    { name: 'Ben Jacobs', handle: '@JacobsBen', color: '#2196F3' },
+    { name: 'Florian Plettenberg', handle: '@Plettigoal', color: '#E53935' },
+    { name: 'Nicolò Schira', handle: '@NicoSchira', color: '#FF9800' },
+    { name: 'Matteo Moretto', handle: '@MatteMoretto', color: '#42A5F5' },
+    { name: 'Sacha Tavolieri', handle: '@sachatavolieri', color: '#7E57C2' },
+    { name: 'Patrick Berger', handle: '@berger_pj', color: '#455A64' },
+    { name: 'Dean Jones', handle: '@DeanJonesSoccer', color: '#26A69A' },
+
+    // ===== UK FOOTBALL MEDIA =====
+    { name: 'Sky Sports News', handle: '@SkySportsNews', color: '#FF0000' },
+    { name: 'BBC Sport', handle: '@BBCSport', color: '#BB1919' },
+    { name: 'The Athletic FC', handle: '@TheAthleticFC', color: '#171717' },
+    { name: 'talkSPORT', handle: '@talkSPORT', color: '#00AEEF' },
+    { name: 'Sky Sports Premier League', handle: '@SkySportsPL', color: '#FF1744' },
+    { name: 'Manchester Evening News', handle: '@ManUtdMEN', color: '#D32F2F' },
+    { name: 'Football London', handle: '@Football_LDN', color: '#1976D2' },
+    { name: 'The Guardian Football', handle: '@guardian_sport', color: '#1565C0' },
+    { name: 'The Independent Sport', handle: '@IndySport', color: '#263238' },
+
+    // ===== INTERNATIONAL SPORTS MEDIA =====
+    { name: 'ESPN FC', handle: '@ESPNFC', color: '#FF0000' },
+    { name: 'TNT Sports', handle: '@footballontnt', color: '#FF007F' },
+    { name: 'GOAL', handle: '@goal', color: '#00CC66' },
+    { name: 'Bleacher Report Football', handle: '@brfootball', color: '#FFCC00' },
+    { name: 'beIN SPORTS', handle: '@beINSPORTS', color: '#9C27B0' },
+    { name: 'CBS Sports Golazo', handle: '@CBSSportsGolazo', color: '#1976D2' },
+    { name: 'NBC Sports Soccer', handle: '@NBCSportsSoccer', color: '#00843D' },
+    { name: 'Reuters Sports', handle: '@Reuters', color: '#FF8000' },
+    { name: 'Associated Press Sports', handle: '@AP_Sports', color: '#D32F2F' },
+    { name: 'OneFootball', handle: '@OneFootball', color: '#111111' },
+    { name: 'Transfermarkt', handle: '@Transfermarkt', color: '#008577' },
+    { name: 'World Soccer Talk', handle: '@worldsoccertalk', color: '#3949AB' },
+
+    // ===== SPAIN =====
+    { name: 'MARCA', handle: '@marca', color: '#D50000' },
+    { name: 'Diario AS', handle: '@diarioas', color: '#E53935' },
+    { name: 'Mundo Deportivo', handle: '@mundodeportivo', color: '#D50000' },
+    { name: 'SPORT', handle: '@sport', color: '#C62828' },
+    { name: 'Relevo', handle: '@relevo', color: '#F4511E' },
+    { name: 'El Chiringuito', handle: '@elchiringuitotv', color: '#212121' },
+
+    // ===== ITALY =====
+    { name: 'La Gazzetta dello Sport', handle: '@Gazzetta_it', color: '#F06292' },
+    { name: 'Corriere dello Sport', handle: '@CorSport', color: '#D32F2F' },
+    { name: 'Tuttosport', handle: '@tuttosport', color: '#E53935' },
+    { name: 'Football Italia', handle: '@footballitalia', color: '#009688' },
+    { name: 'Sky Sport Italia', handle: '@SkySport', color: '#1976D2' },
+
+    // ===== GERMANY =====
+    { name: 'Kicker', handle: '@kicker', color: '#D50000' },
+    { name: 'SPORT BILD', handle: '@SPORTBILD', color: '#D50000' },
+    { name: 'Sky Sport DE', handle: '@SkySportDE', color: '#263238' },
+    { name: 'Sport1', handle: '@SPORT1', color: '#FF6D00' },
+
+    // ===== FRANCE =====
+    { name: "L'Équipe", handle: '@lequipe', color: '#D50000' },
+    { name: 'RMC Sport', handle: '@RMCsport', color: '#E53935' },
+    { name: 'Foot Mercato', handle: '@footmercato', color: '#1565C0' },
+    { name: 'Actu Foot', handle: '@ActuFoot_', color: '#212121' },
+
+    // ===== PORTUGAL =====
+    { name: 'A Bola', handle: '@abolapt', color: '#D50000' },
+    { name: 'Record Portugal', handle: '@Record_Portugal', color: '#D50000' },
+    { name: 'O Jogo', handle: '@ojogo', color: '#00897B' },
+
+    // ===== NETHERLANDS =====
+    { name: 'Voetbal International', handle: '@VI_nl', color: '#FF6D00' },
+    { name: 'De Telegraaf Sport', handle: '@telegraaf', color: '#263238' },
+    { name: 'ESPN Nederland', handle: '@ESPNnl', color: '#D50000' },
+
+    // ===== TURKEY =====
+    { name: 'Fanatik', handle: '@fanatikcomtr', color: '#D50000' },
+    { name: 'TRT Spor', handle: '@trtspor', color: '#009688' },
+    { name: 'A Spor', handle: '@aspor', color: '#D50000' },
+
+    // ===== ARGENTINA & SOUTH AMERICA =====
+    { name: 'Diario Olé', handle: '@DiarioOle', color: '#FF6D00' },
+    { name: 'TyC Sports', handle: '@TyCSports', color: '#00AEEF' },
+    { name: 'ESPN Argentina', handle: '@ESPNArgentina', color: '#D50000' },
+    { name: 'TNT Sports Argentina', handle: '@TNTSportsAR', color: '#FF007F' },
+    { name: 'Globo Esporte', handle: '@geglobo', color: '#00A651' },
+    { name: 'ESPN Brasil', handle: '@ESPNBrasil', color: '#D50000' },
+    { name: 'UOL Esporte', handle: '@UOLEsporte', color: '#212121' },
+    { name: 'TNT Sports Brasil', handle: '@TNTSportsBR', color: '#FF007F' },
+    { name: 'Lance!', handle: '@lancenet', color: '#D50000' },
+
+    // ===== USA & NORTH AMERICA =====
+    { name: 'The Athletic', handle: '@TheAthletic', color: '#171717' },
+    { name: 'Sports Illustrated', handle: '@SInow', color: '#D50000' },
+    { name: 'Fox Soccer', handle: '@FOXSoccer', color: '#1565C0' },
+    { name: 'MLS', handle: '@MLS', color: '#212121' },
+    { name: 'Men in Blazers', handle: '@MenInBlazers', color: '#00897B' },
+    { name: 'Concacaf', handle: '@Concacaf', color: '#1565C0' },
+
+    // ===== ASIA: JAPAN & SOUTH KOREA =====
+    { name: 'J.League', handle: '@J_League', color: '#D50000' },
+    { name: 'DAZN Japan', handle: '@DAZN_JPN', color: '#111111' },
+    { name: 'Soccer King Japan', handle: '@SoccerKingJP', color: '#1976D2' },
+    { name: 'K League', handle: '@kleague', color: '#1565C0' },
+    { name: 'KFA', handle: '@theKFA', color: '#D50000' },
+    { name: 'Sports Seoul', handle: '@sportsseoul', color: '#263238' },
+
+    // ===== ASIA: SOUTH EAST ASIA =====
+    { name: 'BolaSport', handle: '@BolaSportcom', color: '#1565C0' },
+    { name: 'Bola.com', handle: '@bolacomID', color: '#00AEEF' },
+    { name: 'CNN Indonesia Sport', handle: '@CNNIndonesia', color: '#D50000' },
+    { name: 'Astro Arena', handle: '@ASTROARENA', color: '#E53935' },
+    { name: 'Makan Bola', handle: '@MakanBola', color: '#00AEEF' },
+    { name: 'Thai League', handle: '@thaileague', color: '#1565C0' },
+    { name: 'Vietnam Football', handle: '@vietnamfootball', color: '#D50000' },
+
+    // ===== MIDDLE EAST =====
+    { name: 'Arriyadiyah', handle: '@ariyadhiah', color: '#00897B' },
+    { name: 'Al Jazeera Sport', handle: '@AJArabic', color: '#D4A017' },
+    { name: 'Kooora', handle: '@kooora', color: '#00897B' },
+    { name: 'Abu Dhabi Sports', handle: '@ADSportsTV', color: '#1565C0' },
+    { name: 'Al Kass Sports', handle: '@alkasschannel', color: '#00897B' },
+
+    // ===== AFRICA =====
+    { name: 'SuperSport', handle: '@SuperSportTV', color: '#1565C0' },
+    { name: 'Africa Soccer', handle: '@AfricaSoccer', color: '#00897B' },
+    { name: 'CAF', handle: '@CAF_Online', color: '#00897B' },
+    { name: 'FIFA', handle: '@FIFAcom', color: '#1565C0' },
+    { name: 'SABC Sport', handle: '@SABC_Sport', color: '#D50000' },
+
+    // ===== GLOBAL FOOTBALL GOVERNING BODIES =====
+    { name: 'UEFA', handle: '@UEFA', color: '#1565C0' },
+    { name: 'Premier League', handle: '@premierleague', color: '#673AB7' },
+    { name: 'LaLiga', handle: '@LaLiga', color: '#FF6D00' },
+    { name: 'Serie A', handle: '@SerieA', color: '#1565C0' },
+    { name: 'Bundesliga', handle: '@Bundesliga_DE', color: '#D50000' },
+    { name: 'Ligue 1', handle: '@Ligue1', color: '#00897B' },
+    { name: 'CONMEBOL', handle: '@CONMEBOL', color: '#1565C0' },
+    { name: 'AFC', handle: '@theafcdotcom', color: '#D50000' }
+],
+
+            
+
+socialTemplates: [
+    // ===== RUMOR TRANSFER =====
+    "🚨 RUMOR: [CLUB_A] dikabarkan sedang memburu striker baru untuk memperkuat lini serang.",
+    "BREAKING: [CLUB_A] dikabarkan menyiapkan tawaran besar untuk pemain incaran mereka!",
+    "Bursa transfer memanas! [CLUB_A] dan [CLUB_B] dikabarkan bersaing mendapatkan pemain yang sama.",
+    "Rumor beredar bahwa [CLUB_A] ingin mendatangkan pemain bintang dari liga lain.",
+    "Kejutan transfer? [CLUB_A] disebut sedang mengincar pemain berpengalaman untuk memperkuat skuad.",
+    "Penggemar [CLUB_A] mulai berspekulasi setelah rumor kedatangan pemain baru semakin ramai.",
+    "Negosiasi dikabarkan sedang berlangsung. Apakah [CLUB_A] akan segera mengumumkan rekrutan baru?",
+    "HERE WE GO SOON? 👀 [CLUB_A] dikabarkan semakin dekat dengan kesepakatan transfer.",
+    "Rumor: [CLUB_B] siap melepas salah satu pemain andalannya jika tawaran yang datang sesuai harapan.",
+    "Deadline day semakin dekat! [CLUB_A] harus bergerak cepat jika ingin merekrut pemain baru.",
+
+    // ===== TRANSFER DAN KONTRAK =====
+    "RESMI! [CLUB_A] mengumumkan kedatangan pemain baru untuk memperkuat skuad musim ini.",
+    "[CLUB_A] dikabarkan sedang menyiapkan kontrak baru untuk mempertahankan pemain andalannya.",
+    "Transfer mengejutkan! [CLUB_A] berhasil merekrut pemain yang sebelumnya dikaitkan dengan beberapa klub.",
+    "Kesepakatan belum tercapai. Negosiasi transfer [CLUB_A] dikabarkan menemui hambatan.",
+    "Kabar transfer: [CLUB_A] mempertimbangkan opsi peminjaman untuk memperkuat kedalaman skuad.",
+    "Perombakan skuad dimulai! [CLUB_A] dikabarkan siap melepas sejumlah pemain pada bursa transfer.",
+    "[CLUB_B] dikabarkan menolak tawaran pertama yang diajukan oleh [CLUB_A].",
+    "Pengumuman resmi tinggal menunggu waktu? Penggemar [CLUB_A] mulai menantikan kabar transfer terbaru.",
+    "Transfer gagal! [CLUB_A] dikabarkan tidak mencapai kesepakatan dengan klub penjual.",
+    "Bursa transfer ditutup! Klub mana yang paling sukses memperkuat skuadnya?",
+
+    // ===== PERTANDINGAN =====
+    "FULL-TIME! [CLUB_A] berhasil meraih kemenangan penting atas [CLUB_B]!",
+    "HASIL AKHIR: [CLUB_A] dan [CLUB_B] bermain imbang setelah pertandingan sengit.",
+    "COMEBACK! [CLUB_A] berhasil membalikkan keadaan dalam pertandingan yang penuh drama!",
+    "Kekalahan menyakitkan bagi [CLUB_A]. Pendukung berharap tim segera bangkit.",
+    "Pertandingan dramatis! Hasil laga [CLUB_A] vs [CLUB_B] membuat persaingan liga semakin panas.",
+    "Gol di menit akhir mengubah segalanya! [CLUB_A] berhasil membawa pulang tiga poin.",
+    "Pertahanan solid [CLUB_A] berhasil meredam tekanan bertubi-tubi dari [CLUB_B].",
+    "Hujan gol! Duel [CLUB_A] melawan [CLUB_B] menjadi salah satu pertandingan paling menarik pekan ini.",
+    "Kemenangan besar! [CLUB_A] menunjukkan bahwa mereka layak diperhitungkan musim ini.",
+    "Kejutan pekan ini! [CLUB_B] berhasil mengalahkan lawan yang lebih diunggulkan.",
+
+    // ===== PELATIH DAN TAKTIK =====
+    "Kursi panas! Pelatih [CLUB_A] mulai mendapat tekanan setelah serangkaian hasil buruk.",
+    "Manajemen [CLUB_A] dikabarkan sedang mengevaluasi performa tim.",
+    "Apakah taktik [CLUB_A] mulai terbaca lawan? Hasil pertandingan terakhir memicu perdebatan.",
+    "Perubahan formasi menjadi kunci kemenangan [CLUB_A] pada pertandingan terakhir.",
+    "Pelatih [CLUB_B] mendapat pujian atas keberaniannya melakukan rotasi pemain.",
+    "Rumor pergantian pelatih semakin ramai setelah [CLUB_A] kembali kehilangan poin.",
+    "RESMI: [CLUB_A] mengumumkan perpisahan dengan pelatih kepala.",
+    "[CLUB_A] menunjuk pelatih baru untuk memulai proyek jangka panjang.",
+    "Tekanan meningkat! Fans [CLUB_A] menuntut perubahan strategi dan hasil yang lebih baik.",
+    "Analisis taktik: lini tengah menjadi faktor penting dalam kemenangan [CLUB_A].",
+
+    // ===== REAKSI FANS =====
+    "Fans [CLUB_A] mulai kehilangan kesabaran. Mereka menuntut manajemen segera melakukan perombakan!",
+    "Timeline ramai! Pendukung [CLUB_A] dan [CLUB_B] saling berdebat setelah hasil pertandingan terbaru.",
+    "Penggemar [CLUB_B] sedang berpesta setelah kemenangan penting tim kesayangan mereka.",
+    "Transfer ini masuk akal atau pemborosan? Fans masih terbelah dalam menilai kebijakan [CLUB_A].",
+    "Meme kekalahan [CLUB_A] mulai memenuhi media sosial. Rivalitas sepak bola memang tidak pernah sepi.",
+    "Fans meminta manajemen [CLUB_A] lebih serius membangun skuad untuk musim depan.",
+    "Kolom komentar memanas setelah keputusan kontroversial pelatih [CLUB_A].",
+    "Pendukung [CLUB_A] tetap memberikan dukungan meskipun tim sedang mengalami masa sulit.",
+    "Siapa yang salah? Fans memperdebatkan taktik, pemain, hingga keputusan manajemen [CLUB_A].",
+    "Rivalitas semakin panas! Pertemuan [CLUB_A] dan [CLUB_B] kembali menjadi bahan pembicaraan.",
+
+    // ===== WASIT DAN KONTROVERSI =====
+    "Kontroversi! Keputusan wasit dalam pertandingan [CLUB_A] vs [CLUB_B] memicu perdebatan.",
+    "VAR DRAMA! Pemeriksaan video mengubah jalannya pertandingan antara [CLUB_A] dan [CLUB_B].",
+    "Apakah seharusnya penalti? Insiden di kotak penalti menjadi topik hangat penggemar.",
+    "Keputusan kartu merah dalam laga [CLUB_A] vs [CLUB_B] menuai beragam reaksi.",
+    "Pelatih [CLUB_A] mempertanyakan sejumlah keputusan wasit setelah pertandingan berakhir.",
+    "Gol yang sempat dirayakan akhirnya dianulir. Drama VAR kembali terjadi!",
+
+    // ===== KLASMEN DAN PERSAINGAN =====
+    "PERSAINGAN GELAR MEMANAS! [CLUB_A] terus berjuang mempertahankan posisi di papan atas.",
+    "Zona Liga Champions semakin ketat. Setiap poin kini sangat berarti bagi [CLUB_A].",
+    "Ancaman degradasi semakin nyata bagi [CLUB_B] setelah kehilangan poin penting.",
+    "Kejutan musim ini! [CLUB_A] tampil melampaui ekspektasi banyak pengamat.",
+    "Persaingan gelar belum berakhir. Beberapa klub masih memiliki peluang menjadi juara.",
+    "Satu kekalahan dapat mengubah posisi klasemen. Persaingan liga semakin menegangkan.",
+    "Apakah [CLUB_A] mampu mempertahankan konsistensi hingga akhir musim?",
+    "Perburuan tiket kompetisi Eropa semakin panas setelah hasil pertandingan terbaru.",
+    "Zona degradasi semakin ketat. [CLUB_B] membutuhkan kemenangan untuk memperbaiki posisi.",
+    "Musim ini penuh kejutan! Peta persaingan liga masih bisa berubah kapan saja.",
+
+    // ===== CEDERA DAN SKUAD =====
+    "Kabar buruk bagi [CLUB_A]. Salah satu pemain penting mereka dikabarkan mengalami cedera.",
+    "[CLUB_B] harus memikirkan strategi baru setelah beberapa pemain tidak tersedia.",
+    "Kabar baik! Skuad [CLUB_A] mulai kembali lengkap menjelang pertandingan penting.",
+    "Rotasi pemain menjadi tantangan bagi pelatih [CLUB_A] di tengah jadwal padat.",
+    "Kebugaran pemain menjadi sorotan setelah [CLUB_A] menjalani rangkaian pertandingan berat.",
+    "Krisis pemain? [CLUB_B] dikabarkan memiliki sejumlah masalah menjelang laga berikutnya.",
+
+    // ===== AKADEMI DAN PEMAIN MUDA =====
+    "[CLUB_A] dikabarkan siap memberikan kesempatan kepada talenta muda dari akademi.",
+    "Masa depan cerah! Akademi [CLUB_B] terus berupaya menghasilkan pemain berkualitas.",
+    "Pemain muda mendapat kesempatan berharga untuk menembus skuad utama [CLUB_A].",
+    "Investasi akademi mulai menjadi prioritas bagi manajemen [CLUB_A].",
+    "Debut yang dinantikan! Seorang talenta muda berpeluang tampil bersama tim utama.",
+    "Pengembangan pemain muda bisa menjadi kunci kesuksesan jangka panjang [CLUB_B].",
+
+    // ===== REKOR DAN PENGHARGAAN =====
+    "Rekor baru tercipta! [CLUB_A] mencatat pencapaian penting dalam sejarah klub.",
+    "Kemenangan terbaru membawa [CLUB_A] semakin dekat dengan target musim ini.",
+    "Persaingan penghargaan pemain terbaik musim ini semakin menarik.",
+    "Gol spektakuler pekan ini menjadi bahan pembicaraan penggemar sepak bola.",
+    "Sejarah baru! [CLUB_B] berhasil mencapai pencapaian yang telah lama dinantikan.",
+    "Statistik terbaru menunjukkan [CLUB_A] tampil semakin konsisten sepanjang musim.",
+
+    // ===== DRAMA RUANG GANTI =====
+    "Rumor menyebut suasana ruang ganti [CLUB_A] sedang menjadi perhatian media.",
+    "Kapten [CLUB_A] meminta seluruh pemain tetap bersatu di tengah tekanan.",
+    "Menit bermain menjadi isu yang ramai dibicarakan di sekitar skuad [CLUB_B].",
+    "Pelatih [CLUB_A] menegaskan bahwa kepentingan tim tetap menjadi prioritas utama.",
+    "Situasi internal klub menjadi sorotan setelah [CLUB_A] kembali menelan kekalahan.",
+    "Manajemen [CLUB_B] berharap para pemain segera fokus kembali pada pertandingan.",
+
+    // ===== TIM NASIONAL =====
+    "Sejumlah pemain [CLUB_A] berpeluang mendapat panggilan tim nasional.",
+    "Jadwal internasional semakin dekat. Klub harus bersiap menghadapi kemungkinan absennya pemain.",
+    "Pemain dari [CLUB_B] menjadi sorotan setelah tampil impresif di level klub.",
+    "Persaingan untuk masuk skuad tim nasional semakin ketat menjelang turnamen besar.",
+    "Performa klub bisa menjadi faktor penting bagi pemain yang mengincar panggilan internasional.",
+
+    // ===== AKHIR MUSIM =====
+    "Musim hampir berakhir! Apakah [CLUB_A] berhasil mencapai target yang ditetapkan?",
+    "Evaluasi besar menanti [CLUB_B] setelah perjalanan musim yang penuh tantangan.",
+    "Jendela transfer berikutnya bisa menjadi momen penting bagi masa depan [CLUB_A].",
+    "Fans mulai berspekulasi tentang siapa saja yang akan meninggalkan [CLUB_B] musim depan.",
+    "Perburuan gelar memasuki fase krusial. Tidak ada lagi ruang untuk kesalahan.",
+    "Peluit akhir musim semakin dekat. Klub mana yang paling mengejutkan tahun ini?"
+],
+
             fanNames: ['BolaMania', 'UltrasSejati', 'FootyFanatic', 'CurvaSud12', 'TheSupporter', 'HooliganX', 'GilaBola99', 'Fans_GarisKeras'],
             brandsByCountry: { 'Indonesia': ['Indomie', 'Gojek', 'Tokopedia'], 'Inggris': ['Barclays', 'Vodafone'], 'Jepang': ['Sony', 'Toyota'] },
             brandsStd: ['Casio', 'New Balance', 'Spotify', 'Mastercard', 'Red Bull'],
@@ -683,21 +1552,303 @@
             injuryTraits: ['Anti Cedera', 'Jarang Cedera', 'Normal', 'Normal', 'Normal', 'Rentan Cedera'],
             esportsTeams: ['RRQ', 'EVOS', 'Navi', 'FaZe Clan', 'Team Liquid', 'T1'],
             mediaNetworks: ['Sky Sports', 'BBC Sport', 'ESPN', 'BeIN Sports', 'Fox Sports', 'TNT Sports', 'Goal TV', 'Eurosport'],
-            shopItems: [
-                { id: 'h2', name: 'Apartemen Studio', price: 80000, type: 'property' },
-                { id: 'h4', name: 'Apartemen Mewah Pusat Kota', price: 1200000, type: 'property' },
-                { id: 'h5', name: 'Mansion Megah', price: 5000000, type: 'property' },
-                { id: 'c2', name: 'Mobil Harian (Honda Civic)', price: 40000, type: 'vehicle' },
-                { id: 'c4', name: 'Sport Car (Porsche 911 GT3)', price: 250000, type: 'vehicle' },
-                { id: 'c5', name: 'Supercar (Ferrari SF90)', price: 500000, type: 'vehicle' },
-                { id: 'e1', name: 'Smartphone (Apple iPhone 15 Pro)', price: 1500, type: 'electronic' },
-                { id: 'e3', name: 'Laptop Gaming (ASUS ROG)', price: 4000, type: 'electronic' },
-                { id: 'f2', name: 'Sepatu (Nike Air Jordan)', price: 2000, type: 'fashion' },
-                { id: 'f4', name: 'Jam Tangan (Rolex Daytona)', price: 15000, type: 'fashion' }
-            ],
-            agentNamesLvl1: ["Budi Santoso", "John Smith", "Carlos Ruiz"],
-            agentNamesLvl2: ["Marco Van Ginkel", "David Levy", "Oliver Kahn"],
-            agentNamesLvl3: ["Mino Raiola (Legacy)", "Jorge Mendes", "Jonathan Barnett"]
+            
+shopItems: [
+    // ===== PROPERTY / PROPERTI =====
+    { id: 'h1', name: 'Kamar Kos Sederhana', price: 5000, type: 'property' },
+    { id: 'h2', name: 'Apartemen Studio', price: 80000, type: 'property' },
+    { id: 'h3', name: 'Rumah Minimalis', price: 180000, type: 'property' },
+    { id: 'h4', name: 'Apartemen Mewah Pusat Kota', price: 1200000, type: 'property' },
+    { id: 'h5', name: 'Mansion Megah', price: 5000000, type: 'property' },
+    { id: 'h6', name: 'Penthouse Super Mewah', price: 8500000, type: 'property' },
+    { id: 'h7', name: 'Villa Pribadi di Bali', price: 6500000, type: 'property' },
+    { id: 'h8', name: 'Rumah Pantai Eksklusif', price: 9000000, type: 'property' },
+    { id: 'h9', name: 'Istana Pribadi', price: 25000000, type: 'property' },
+    { id: 'h10', name: 'Private Island', price: 100000000, type: 'property' },
+
+    // ===== VEHICLE / KENDARAAN =====
+    { id: 'c1', name: 'Motor Harian (Honda Vario)', price: 3000, type: 'vehicle' },
+    { id: 'c2', name: 'Mobil Harian (Honda Civic)', price: 40000, type: 'vehicle' },
+    { id: 'c3', name: 'SUV Premium (BMW X5)', price: 120000, type: 'vehicle' },
+    { id: 'c4', name: 'Sport Car (Porsche 911 GT3)', price: 250000, type: 'vehicle' },
+    { id: 'c5', name: 'Supercar (Ferrari SF90)', price: 500000, type: 'vehicle' },
+    { id: 'c6', name: 'Lamborghini Revuelto', price: 750000, type: 'vehicle' },
+    { id: 'c7', name: 'Bugatti Chiron', price: 1800000, type: 'vehicle' },
+    { id: 'c8', name: 'Rolls-Royce Phantom', price: 900000, type: 'vehicle' },
+    { id: 'c9', name: 'Mercedes-Benz G-Class', price: 350000, type: 'vehicle' },
+    { id: 'c10', name: 'McLaren 750S', price: 650000, type: 'vehicle' },
+    { id: 'c11', name: 'Koleksi 5 Supercar', price: 5000000, type: 'vehicle' },
+    { id: 'c12', name: 'Private Jet', price: 25000000, type: 'vehicle' },
+    { id: 'c13', name: 'Helikopter Pribadi', price: 12000000, type: 'vehicle' },
+    { id: 'c14', name: 'Kapal Pesiar Mewah', price: 35000000, type: 'vehicle' },
+
+    // ===== ELECTRONIC / ELEKTRONIK =====
+    { id: 'e1', name: 'Smartphone (Apple iPhone 15 Pro)', price: 1500, type: 'electronic' },
+    { id: 'e2', name: 'Smartphone Flagship Terbaru', price: 2500, type: 'electronic' },
+    { id: 'e3', name: 'Laptop Gaming (ASUS ROG)', price: 4000, type: 'electronic' },
+    { id: 'e4', name: 'PC Gaming High-End', price: 8000, type: 'electronic' },
+    { id: 'e5', name: 'TV OLED 85 Inci', price: 6000, type: 'electronic' },
+    { id: 'e6', name: 'Home Theater Premium', price: 10000, type: 'electronic' },
+    { id: 'e7', name: 'Setup Gaming Streamer', price: 15000, type: 'electronic' },
+    { id: 'e8', name: 'Smart Home Otomatis', price: 25000, type: 'electronic' },
+    { id: 'e9', name: 'Studio Streaming Profesional', price: 50000, type: 'electronic' },
+    { id: 'e10', name: 'Ruang Hiburan Pribadi', price: 100000, type: 'electronic' },
+
+    // ===== FASHION / FESYEN =====
+    { id: 'f1', name: 'Kaos Premium', price: 500, type: 'fashion' },
+    { id: 'f2', name: 'Sepatu (Nike Air Jordan)', price: 2000, type: 'fashion' },
+    { id: 'f3', name: 'Jaket Desainer', price: 5000, type: 'fashion' },
+    { id: 'f4', name: 'Jam Tangan (Rolex Daytona)', price: 15000, type: 'fashion' },
+    { id: 'f5', name: 'Setelan Jas Eksklusif', price: 12000, type: 'fashion' },
+    { id: 'f6', name: 'Koleksi Sneakers Langka', price: 25000, type: 'fashion' },
+    { id: 'f7', name: 'Jam Tangan Patek Philippe', price: 150000, type: 'fashion' },
+    { id: 'f8', name: 'Koleksi Tas Desainer', price: 80000, type: 'fashion' },
+    { id: 'f9', name: 'Koleksi Fashion Mewah', price: 250000, type: 'fashion' },
+    { id: 'f10', name: 'Berlian dan Perhiasan Eksklusif', price: 500000, type: 'fashion' },
+
+    // ===== LIFESTYLE / GAYA HIDUP =====
+    { id: 'l1', name: 'Keanggotaan Gym Premium', price: 3000, type: 'lifestyle' },
+    { id: 'l2', name: 'Pelatih Kebugaran Pribadi', price: 15000, type: 'lifestyle' },
+    { id: 'l3', name: 'Koki Pribadi', price: 30000, type: 'lifestyle' },
+    { id: 'l4', name: 'Asisten Pribadi', price: 50000, type: 'lifestyle' },
+    { id: 'l5', name: 'Tim Keamanan Pribadi', price: 100000, type: 'lifestyle' },
+    { id: 'l6', name: 'Liburan Mewah ke Eropa', price: 25000, type: 'lifestyle' },
+    { id: 'l7', name: 'Liburan Keliling Dunia', price: 150000, type: 'lifestyle' },
+    { id: 'l8', name: 'Perawatan Atlet Eksklusif', price: 20000, type: 'lifestyle' },
+    { id: 'l9', name: 'Chef dan Staf Rumah Tangga', price: 250000, type: 'lifestyle' },
+    { id: 'l10', name: 'Gaya Hidup Miliarder', price: 1000000, type: 'lifestyle' },
+
+   
+],
+
+            
+agentNamesLvl1: [
+    // Indonesia
+    "Budi Santoso",
+    "Andi Pratama",
+    "Rizky Firmansyah",
+    "Dimas Saputra",
+    "Agus Setiawan",
+    "Fajar Ramadhan",
+    "Reza Mahendra",
+    "Arif Hidayat",
+    "Bayu Kurniawan",
+    "Rian Permana",
+
+    // Inggris & Eropa
+    "John Smith",
+    "James Wilson",
+    "Oliver Bennett",
+    "Harry Collins",
+    "Daniel Foster",
+    "Luca Moretti",
+    "Marco Rossi",
+    "Pierre Laurent",
+    "Thomas Schneider",
+    "Andreas Weber",
+    "Carlos Ruiz",
+    "Miguel Santos",
+    "Diego Navarro",
+    "Alejandro Torres",
+    "Pablo Fernandez",
+    "Joao Ferreira",
+    "Tiago Carvalho",
+    "Nicolas Martin",
+    "Antoine Bernard",
+    "Lucas Dubois",
+
+    // Amerika Latin
+    "Mateo Herrera",
+    "Gabriel Costa",
+    "Rafael Mendes",
+    "Bruno Oliveira",
+    "Thiago Ribeiro",
+    "Santiago Morales",
+    "Emiliano Castro",
+    "Lucas Pereira",
+    "Andres Mendoza",
+    "Facundo Silva",
+
+    // Asia
+    "Kenji Nakamura",
+    "Haruto Sato",
+    "Min-jun Kim",
+    "Ji-hoon Park",
+    "Wei Zhang",
+    "Jun-seo Lee",
+    "Arjun Sharma",
+    "Hiroshi Tanaka",
+    "Ahmad Rahman",
+    "Tan Wei Ming",
+
+    // Afrika & Timur Tengah
+    "Kwame Mensah",
+    "Samuel Okafor",
+    "Youssef Haddad",
+    "Omar Khalil",
+    "Amadou Diallo",
+    "Ibrahim Hassan",
+    "Chinedu Okoro",
+    "Kofi Boateng",
+    "Karim Benali",
+    "Tariq Mansour"
+],
+
+agentNamesLvl2: [
+    // Inggris & Eropa
+    "Marco Van Ginkel",
+    "David Levy",
+    "Oliver Kahn",
+    "Richard Williams",
+    "Jonathan Pierce",
+    "Michael Donovan",
+    "Edward Mitchell",
+    "Sebastian Fischer",
+    "Matteo Conti",
+    "Alessandro Romano",
+    "Lorenzo Bianchi",
+    "Gabriel Laurent",
+    "Philippe Moreau",
+    "Fernando Castillo",
+    "Adrian Vargas",
+    "Carlos Mendoza",
+    "Rui Almeida",
+    "Henrik Larsen",
+    "Stefan Petrovic",
+    "Nikola Kovacevic",
+
+    // Spanyol & Portugal
+    "Javier Morales",
+    "Sergio Dominguez",
+    "Manuel Ortega",
+    "Rafael Campos",
+    "Goncalo Pereira",
+    "Diogo Martins",
+    "Francisco Costa",
+    "Ricardo Carvalho",
+    "Andres Romero",
+    "Luis Fernandez",
+
+    // Italia & Jerman
+    "Giovanni Esposito",
+    "Federico Marchetti",
+    "Luca Ferraro",
+    "Claudio Ricci",
+    "Tobias Schneider",
+    "Felix Hartmann",
+    "Maximilian Vogel",
+    "Lukas Hoffmann",
+    "Niklas Berger",
+    "Leon Fischer",
+
+    // Amerika Latin
+    "Esteban Cabrera",
+    "Martin Quiroga",
+    "Agustin Benitez",
+    "Nicolas Ferreyra",
+    "Matias Cardoso",
+    "Rodrigo Salazar",
+    "Eduardo Nascimento",
+    "Leonardo Barbosa",
+    "Vinicius Almeida",
+    "Fernando Batista",
+
+    // Asia & Timur Tengah
+    "Takeshi Watanabe",
+    "Daichi Kobayashi",
+    "Park Sung-ho",
+    "Lee Min-seok",
+    "Zhang Weihao",
+    "Chen Jun",
+    "Ravi Malhotra",
+    "Omar Al-Farsi",
+    "Khalid Al-Mansouri",
+    "Faisal Rahman",
+
+    // Afrika & Amerika Utara
+    "Kwesi Appiah",
+    "Joseph Mensah",
+    "Samuel Adeyemi",
+    "Emeka Nwosu",
+    "Daniel Campbell",
+    "Marcus Johnson",
+    "Anthony Brooks",
+    "Gabriel Thompson",
+    "Luis Herrera",
+    "Andres Valdez"
+],
+
+agentNamesLvl3: [
+    // Agen elite dunia nyata
+    "Jorge Mendes",
+    "Jonathan Barnett",
+    "Mino Raiola (Legacy)",
+    "Pini Zahavi",
+    "Kia Joorabchian",
+    "Federico Pastorello",
+    "Giovanni Branchini",
+    "Ali Barat",
+    "Volker Struth",
+    "Fali Ramadani",
+
+    // Agen elite fiktif: Eropa
+    "Alexander Sterling",
+    "Sebastian Rothschild",
+    "Maximilian Devereux",
+    "Leonardo Castellani",
+    "Adrian Beaumont",
+    "Victor Laurent",
+    "Dominic Ashford",
+    "Christian Falkenberg",
+    "Matteo Bellini",
+    "Nicolas Fontaine",
+    "Eduardo Valenti",
+    "Frederik Rosenberg",
+    "Damien Sinclair",
+    "Lucien Moreau",
+    "Rafael Montclair",
+
+    // Agen elite fiktif: Spanyol & Portugal
+    "Alejandro Del Castillo",
+    "Fernando De La Vega",
+    "Santiago Valderrama",
+    "Rui Vasconcelos",
+    "Gonzalo De Mendoza",
+    "Ricardo Salvatierra",
+    "Miguel De Carvalho",
+    "Diego Santillan",
+
+    // Agen elite fiktif: Amerika Latin
+    "Esteban Montenegro",
+    "Thiago Albuquerque",
+    "Gabriel De Souza",
+    "Sebastian Villanueva",
+    "Nicolas Santoro",
+    "Rafael De Oliveira",
+    "Emiliano Del Toro",
+    "Matias Montenegro",
+
+    // Agen elite fiktif: Asia & Timur Tengah
+    "Kenji Takamura",
+    "Park Joon-hyuk",
+    "Zhang Tianyu",
+    "Arjun Kapoor",
+    "Khalid Al-Rashid",
+    "Omar Al-Najjar",
+    "Faisal Al-Hamadi",
+    "Takeshi Fujimoto",
+
+    // Agen elite fiktif: Afrika & Amerika Utara
+    "Kwame Osei",
+    "Chukwuemeka Nnamdi",
+    "Malik Washington",
+    "Alexander Kingsley",
+    "Nathaniel Brooks",
+    "Marcus Wellington",
+    "Samuel Okonkwo",
+    "Daniel Kensington"
+]
+
         };
 
         let p = {
